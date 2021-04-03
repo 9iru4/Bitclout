@@ -27,12 +27,18 @@ namespace Bitclout
             ChromeOptions options = new ChromeOptions();
             if (isProxyUsed)
             {
-                if (MainWindowViewModel.settings.CurrentProxy == null || MainWindowViewModel.settings.CurrentProxy.AccountsRegistred > 2)
+                if (MainWindowViewModel.settings.CurrentProxy == null || MainWindowViewModel.settings.CurrentProxy.AccountsRegistred > 2)//если нету или активаций больше двух
                 {
-                    MainWindowViewModel.settings.CurrentProxy = ProxyWorker.GetProxy();
+                    if (MainWindowViewModel.settings.CurrentProxy.AccountsRegistred > 2)//Удаляем прокси с сайта
+                    {
+                        if (ProxyWorker.DeleteProxy(MainWindowViewModel.settings.CurrentProxy))//если удалили занулляем
+                            MainWindowViewModel.settings.CurrentProxy = null;
+                    }
+                    MainWindowViewModel.settings.CurrentProxy = ProxyWorker.GetProxy();//получаем новый прокси
                     MainWindowViewModel.settings.SaveSettings();
-                    ProxyWorker.UpdateProxyExtension();
+                    ProxyWorker.UpdateProxyExtension();//Обновляем расширение для прокси
                 }
+
                 options.AddArguments("--proxy-server=http://" + MainWindowViewModel.settings.CurrentProxy.GetAddress());
                 options.AddExtension("proxy.zip");
             }

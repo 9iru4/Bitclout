@@ -42,6 +42,33 @@ namespace Bitclout.Worker
         }
 
         /// <summary>
+        /// Удаление прокси
+        /// </summary>
+        /// <returns>Прокси</returns>
+        public static bool DeleteProxy(Proxy proxy)
+        {
+
+            WebRequest request = WebRequest.Create("https://proxy6.net/api/" + MainWindowViewModel.settings.ProxyApiKey + "/delete?ids=" + proxy.ID);
+            WebResponse response = request.GetResponse();
+            using (Stream stream = response.GetResponseStream())
+            {
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    dynamic data = Json.Decode(reader.ReadToEnd());
+                    if (data.status == "yes")
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        //Сделать логирование
+                        throw new Exception("Не удалось получить прокси");
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Обновление данных прокси в файле расширения
         /// </summary>
         /// <returns>Обновлены ли данные</returns>
