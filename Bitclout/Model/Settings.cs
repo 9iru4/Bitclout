@@ -1,16 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
+using System.IO;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Bitclout.Model
 {
+    /// <summary>
+    /// Настройки программы
+    /// </summary>
+    [Serializable]
     public class Settings : INotifyPropertyChanged
     {
         string _SMSApiKey;
+        /// <summary>
+        /// Ключ апи для смс
+        /// </summary>
         public string SMSApiKey
         {
             get
@@ -23,7 +27,11 @@ namespace Bitclout.Model
                 OnPropertyChanged("SMSApiKey");
             }
         }
+
         string _TwitterApiKey;
+        /// <summary>
+        /// Ключ апи для твиттера
+        /// </summary>
         public string TwitterApiKey
         {
             get
@@ -33,11 +41,31 @@ namespace Bitclout.Model
             set
             {
                 _TwitterApiKey = value;
-                OnPropertyChanged("TwitterApiKey    ");
+                OnPropertyChanged("TwitterApiKey");
+            }
+        }
+
+        string _ProxyApiKey;
+        /// <summary>
+        /// Ключ апи для прокси
+        /// </summary>
+        public string ProxyApiKey
+        {
+            get
+            {
+                return _ProxyApiKey;
+            }
+            set
+            {
+                _ProxyApiKey = value;
+                OnPropertyChanged("ProxyApiKey");
             }
         }
 
         string _ChromePath;
+        /// <summary>
+        /// Путь к хрому
+        /// </summary>
         public string ChromePath
         {
             get
@@ -50,7 +78,11 @@ namespace Bitclout.Model
                 OnPropertyChanged("ChromePath");
             }
         }
+
         string _PhotosPath;
+        /// <summary>
+        /// Путь к папке фото
+        /// </summary>
         public string PhotosPath
         {
             get
@@ -64,7 +96,127 @@ namespace Bitclout.Model
             }
         }
 
+        string _TwitterUserName;
+        /// <summary>
+        /// Имя пользователя Твиттера
+        /// </summary>
+        public string TwitterUserName
+        {
+            get
+            {
+                return _TwitterUserName;
+            }
+            set
+            {
+                _TwitterUserName = value;
+                OnPropertyChanged("TwitterUserName");
+            }
+        }
 
+        string _TwitterPassword;
+        /// <summary>
+        /// Пароль пользователя Твиттера
+        /// </summary>
+        public string TwitterPassword
+        {
+            get
+            {
+                return _TwitterPassword;
+            }
+            set
+            {
+                _TwitterPassword = value;
+                OnPropertyChanged("TwitterPassword");
+            }
+        }
+
+        string _BitcloutSeedPhrase;
+        /// <summary>
+        /// Логин Bitclout
+        /// </summary>
+        public string BitcloutSeedPhrase
+        {
+            get
+            {
+                return _BitcloutSeedPhrase;
+            }
+            set
+            {
+                _BitcloutSeedPhrase = value;
+                OnPropertyChanged("BitcloutSeedPhrase");
+            }
+        }
+
+        Proxy _CurrentProxy;
+        /// <summary>
+        /// Текущий прокси
+        /// </summary>
+        public Proxy CurrentProxy
+        {
+            get
+            {
+                return _CurrentProxy;
+            }
+            set
+            {
+                _CurrentProxy = value;
+                OnPropertyChanged("CurrentProxy");
+            }
+        }
+
+        public Settings()
+        {
+            SMSApiKey = "";
+            TwitterApiKey = "";
+            ProxyApiKey = "";
+            ChromePath = "";
+            PhotosPath = "";
+            TwitterUserName = "";
+            TwitterPassword = "";
+            BitcloutSeedPhrase = "";
+            CurrentProxy = null;
+        }
+
+        /// <summary>
+        /// Загрузка настроек из файла
+        /// </summary>
+        /// <returns>Загруженные настройки</returns>
+        public static Settings LoadSettings()
+        {
+            try
+            {
+                using (StreamReader sr = new StreamReader("bin\\Settings.dat"))
+                {
+                    return SerializeHelper.Desirialize<Settings>(sr.ReadToEnd());
+                }
+            }
+            catch (Exception ex)
+            {
+                //Сделать логирование
+                return new Settings();
+            }
+        }
+
+        /// <summary>
+        /// Сохранение настроек в файл
+        /// </summary>
+        /// <returns></returns>
+        public bool SaveSettings()
+        {
+            try
+            {
+                using (StreamWriter sw = new StreamWriter("bin\\Settings.dat"))
+                {
+                    sw.Write(SerializeHelper.Serialize(this));
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                //Сделать логирование
+                return false;
+            }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

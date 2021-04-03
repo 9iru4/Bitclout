@@ -14,7 +14,31 @@
                 </Grid>
             </TabItem>
             <TabItem Header="Настройки">
-                <Grid Background="#FFE5E5E5"/>
+                <Grid Background="#FFE5E5E5">
+                    <TextBox Text="{Binding settings.SMSApiKey}" HorizontalAlignment="Left" Height="23" Margin="174,67,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
+                    <TextBox Text="{Binding settings.TwitterApiKey}" HorizontalAlignment="Left" Height="23" Margin="174,95,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
+                    <TextBox Text="{Binding settings.ProxyApiKey}" HorizontalAlignment="Left" Height="23" Margin="174,123,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
+                    <TextBox Text="{Binding settings.ChromePath}" HorizontalAlignment="Left" Height="23" Margin="174,151,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
+                    <TextBox Text="{Binding settings.PhotosPath}" HorizontalAlignment="Left" Height="23" Margin="174,182,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
+                    <TextBox Text="{Binding settings.TwitterUserName}" HorizontalAlignment="Left" Height="23" Margin="174,210,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
+                    <TextBox Text="{Binding settings.TwitterPassword}" HorizontalAlignment="Left" Height="23" Margin="174,238,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
+                    <TextBox Text="{Binding settings.BitcloutSeedPhrase}" HorizontalAlignment="Left" Height="23" Margin="174,266,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
+                    <Button Command="{Binding SaveCommand}" Content="Сохранить" HorizontalAlignment="Left" Margin="207,337,0,0" VerticalAlignment="Top" Width="75"/>
+                    <Label Content="SMSApiKey" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,67,0,0" Height="23"/>
+                    <Label Content="TwitterApiKey" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,95,0,0" Height="23"/>
+                    <Label Content="ProxyApiKey" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,123,0,0" Height="23"/>
+                    <Label Content="ChromePath" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,151,0,0" Height="23"/>
+                    <Label Content="PhotosPath" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,182,0,0" Height="23"/>
+                    <Label Content="TwitterUserName" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,210,0,0" Height="23"/>
+                    <Label Content="TwitterPassword" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,238,0,0" Height="23"/>
+                    <Label Content="BitcloutSeedPhrase" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,266,0,0" Height="23"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Пользователи">
+                <Grid Background="#FFE5E5E5">
+                    <DataGrid ItemsSource="{Binding RegistrationInfo}" HorizontalAlignment="Left" Height="267" Margin="31,27,0,0" VerticalAlignment="Top" Width="581"/>
+                    <Button Content="Добавить" Command="{Binding AddUsersCommand}" HorizontalAlignment="Left" Margin="279,322,0,0" VerticalAlignment="Top" Width="75"/>
+                </Grid>
             </TabItem>
         </TabControl>
 
