@@ -17,7 +17,7 @@ namespace Bitclout.Worker
         public static Proxy GetProxy()
         {
 
-            WebRequest request = WebRequest.Create("https://proxy6.net/api/" + MainWindowViewModel.settings.ProxyApiKey + "/buy?count=1&period=3&country=ru");
+            WebRequest request = WebRequest.Create("https://proxy6.net/api/" + MainWindowViewModel.settings.ProxyApiKey + "/buy?count=1&period=3&country=gb");
             WebResponse response = request.GetResponse();
             using (Stream stream = response.GetResponseStream())
             {
@@ -77,7 +77,7 @@ namespace Bitclout.Worker
             try
             {
                 List<string> background = new List<string>();
-                using (StreamReader sr = new StreamReader(@"proxy\background.js"))
+                using (StreamReader sr = new StreamReader(@"C:\Users\Yegor\AppData\Local\Temp\scoped_dir7924_664568716\extension_hmchdglfpilogbogekbnnbbkdnabkiia\background.js"))
                 {
                     while (!sr.EndOfStream)
                     {
@@ -88,17 +88,19 @@ namespace Bitclout.Worker
                 background[5] = $"      port: parseInt({MainWindowViewModel.settings.CurrentProxy.Port})";
                 background[18] = $"      username: \"{MainWindowViewModel.settings.CurrentProxy.UserName}\",";
                 background[19] = $"      password: \"{MainWindowViewModel.settings.CurrentProxy.Pass}\"";
-                using (StreamWriter sw = new StreamWriter(@"proxy\background.js"))
+                using (StreamWriter sw = new StreamWriter(@"C:\Users\Yegor\AppData\Local\Temp\scoped_dir7924_664568716\extension_hmchdglfpilogbogekbnnbbkdnabkiia\background.js"))
                 {
                     foreach (var str in background)
                     {
                         sw.WriteLine(str);
                     }
                 }
-                string startPath = @"proxy";
-                string zipPath = @"proxy.zip";
 
-                ZipFile.CreateFromDirectory(startPath, zipPath);
+                //string startPath = "proxy";
+                //string zipPath = "proxy.zip";
+
+                //File.Delete("proxy.zip");
+                //ZipFile.CreateFromDirectory(startPath, zipPath);
                 return true;
             }
             catch (Exception ex)
@@ -106,7 +108,7 @@ namespace Bitclout.Worker
                 //Реализовать логирование
                 return false;
             }
-            
+
         }
     }
 }

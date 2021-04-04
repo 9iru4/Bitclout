@@ -61,11 +61,11 @@ namespace Bitclout.Model
             }
         }
 
-        double _USDBuy;
+        int _USDBuy;
         /// <summary>
         /// Долларов портачено
         /// </summary>
-        public double USDBuy
+        public int USDBuy
         {
             get
             {
@@ -78,11 +78,11 @@ namespace Bitclout.Model
             }
         }
 
-        double _USDSell;
+        int _USDSell;
         /// <summary>
         /// Долларов получено
         /// </summary>
-        public double USDSell
+        public int USDSell
         {
             get
             {
@@ -92,6 +92,57 @@ namespace Bitclout.Model
             {
                 _USDSell = value;
                 OnPropertyChanged("USDSell");
+            }
+        }
+
+        string _PublicKey;
+        /// <summary>
+        /// Публичный ключ
+        /// </summary>
+        public string PublicKey
+        {
+            get
+            {
+                return _PublicKey;
+            }
+            set
+            {
+                _PublicKey = value;
+                OnPropertyChanged("PublicKey");
+            }
+        }
+
+        string _UserPhotoPath;
+        /// <summary>
+        /// Путь к фото профиля
+        /// </summary>
+        public string UserPhotoPath
+        {
+            get
+            {
+                return _UserPhotoPath;
+            }
+            set
+            {
+                _UserPhotoPath = value;
+                OnPropertyChanged("UserPhotoPath");
+            }
+        }
+
+        string _BitcloutSreenPath;
+        /// <summary>
+        /// Путь к Скриншоту профиля bitclout
+        /// </summary>
+        public string BitcloutSreenPath
+        {
+            get
+            {
+                return _BitcloutSreenPath;
+            }
+            set
+            {
+                _BitcloutSreenPath = value;
+                OnPropertyChanged("BitcloutSreenPath");
             }
         }
 
@@ -113,7 +164,7 @@ namespace Bitclout.Model
         /// <returns>Строка с разделителями ;</returns>
         public string ToLogFile()
         {
-            return $"{Name};{Description};{BitcloutSeedPhrase};{USDBuy};{USDSell}";
+            return $"{Name};{Description};{BitcloutSeedPhrase};{USDBuy};{USDSell};{PublicKey}";
         }
     }
 }

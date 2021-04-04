@@ -49,7 +49,7 @@ namespace Bitclout.Worker
                     }
                     else
                     {
-                        throw new Exception("Не удалось получить номер");
+                        return null;
                     }
                 }
             }
@@ -98,6 +98,7 @@ namespace Bitclout.Worker
                     else
                     {
                         phoneNumber.StatusCode = result;
+                        phoneNumber.Code = "";
                     }
                     return phoneNumber;
                 }

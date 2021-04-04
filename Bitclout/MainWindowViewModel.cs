@@ -26,10 +26,12 @@ namespace Bitclout
                 return _TestCommand ??
                     (_TestCommand = new RelayCommand(obj =>
                     {
+                        chromeWorker.StartMainChromeDriver();
                         var user = RegistrationInfo[0];
                         RegistrationInfo.RemoveAt(0);
                         UserRegistrationInfo.SaveUsers(RegistrationInfo.ToList());
-                        chromeWorker.RegisterBitClout(user);
+                        RegistredUsers.Add(chromeWorker.RegisterNewBitClout(user));
+                        SaveRegistredUser();
                     }));
             }
         }
@@ -62,6 +64,17 @@ namespace Bitclout
         public MainWindowViewModel()
         {
             PhoneWorker.ApiKey = settings.SMSApiKey;
+        }
+
+        void SaveRegistredUser()
+        {
+            foreach (var item in RegistredUsers)
+            {
+                using(StreamWriter sw = new StreamWriter(@"bin\RegistredUsers.dat",true))
+                {
+                    sw.WriteLine(item.ToLogFile());
+                }
+            }
         }
 
         void GetUsersFromFile()
