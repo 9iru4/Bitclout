@@ -104,6 +104,22 @@ namespace Bitclout.Model
                 _Pass = value;
             }
         }
+        string _StatusCode;
+        /// <summary>
+        /// Пароль прокси
+        /// </summary>
+        public string StatusCode
+        {
+            get
+            {
+                return _StatusCode;
+            }
+            set
+            {
+                _StatusCode = value;
+            }
+        }
+
 
         uint _AccountsRegistred;
         /// <summary>

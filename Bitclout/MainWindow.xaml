@@ -10,7 +10,9 @@
         <TabControl HorizontalAlignment="Left" Height="420" VerticalAlignment="Top" Width="794" Margin="0,0,-0.4,0">
             <TabItem Header="Работа программы">
                 <Grid Background="#FFE5E5E5">
-                    <Button Content="Button" Command="{Binding TestCommand}" HorizontalAlignment="Left" Margin="339,227,0,0" VerticalAlignment="Top" Width="75"/>
+                    <Button Content="Бот старт" Command="{Binding StartBotCommand}" HorizontalAlignment="Left" Margin="339,227,0,0" VerticalAlignment="Top" Width="75"/>
+                    <Button Content="Твитер старт" Command="{Binding StartTwitterCommand}" HorizontalAlignment="Left" Margin="213,168,0,0" VerticalAlignment="Top" Width="75"/>
+                    <Button Content="Bitclout старт" Command="{Binding StartBitcloutCommand}" HorizontalAlignment="Left" Margin="307,168,0,0" VerticalAlignment="Top" Width="75"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Настройки">

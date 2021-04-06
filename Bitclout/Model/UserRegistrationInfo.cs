@@ -28,6 +28,23 @@ namespace Bitclout.Model
                 OnPropertyChanged("Name");
             }
         }
+        string _TwitterName;
+
+        /// <summary>
+        /// Имя пользователя Твиттера
+        /// </summary>
+        public string TwitterName
+        {
+            get
+            {
+                return _TwitterName;
+            }
+            set
+            {
+                _TwitterName = value;
+                OnPropertyChanged("TwitterName");
+            }
+        }
 
         string _Description;
         /// <summary>
@@ -63,16 +80,35 @@ namespace Bitclout.Model
             }
         }
 
+        string _TweetMessage;
+        /// <summary>
+        /// Сообщение для твита
+        /// </summary>
+        public string TweetMessage
+        {
+            get
+            {
+                return _TweetMessage;
+            }
+            set
+            {
+                _TweetMessage = value;
+                OnPropertyChanged("TweetMessage");
+            }
+        }
+
         public UserRegistrationInfo()
         {
 
         }
 
-        public UserRegistrationInfo(string name, string description, string photoPath)
+        public UserRegistrationInfo(string name, string description, string photoPath, string twitterName, string tweetMessage)
         {
             Name = name;
             Description = description;
             PhotoPath = photoPath;
+            TwitterName = twitterName;
+            TweetMessage = tweetMessage;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -97,7 +133,7 @@ namespace Bitclout.Model
             }
             catch (Exception ex)
             {
-                //сделать логирование
+                NLog.LogManager.GetCurrentClassLogger().Info(ex, "Не удалось загрузить пользователей.");
                 return new List<UserRegistrationInfo>();
             }
         }
@@ -119,7 +155,7 @@ namespace Bitclout.Model
             }
             catch (Exception ex)
             {
-                //Сделать логирование
+                NLog.LogManager.GetCurrentClassLogger().Info(ex, "Не удалось сохранить пользователей.");
                 return false;
             }
         }

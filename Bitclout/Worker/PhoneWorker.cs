@@ -30,28 +30,38 @@ namespace Bitclout.Worker
         /// </summary>
         public static PhoneNumber GetPhoneNumber(ServiceCodes serviceCode)
         {
-            //WebRequest request = WebRequest.Create("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiKey + "&action=getNumber&service=fx&operator=any&country=0");//get number
-            WebRequest request = WebRequest.Create("https://smshub.org/stubs/handler_api.php?api_key=" + ApiKey + "&action=getNumber&service=" + serviceCode.ToString() + "&operator=any&country=0");
-            WebResponse response = request.GetResponse();
-            using (Stream stream = response.GetResponseStream())
+            try
             {
-                using (StreamReader reader = new StreamReader(stream))
+                NLog.LogManager.GetCurrentClassLogger().Info($"Получаем номер телефона для сервиса {serviceCode} ->");
+                WebRequest request = WebRequest.Create("https://smshub.org/stubs/handler_api.php?api_key=" + ApiKey + "&action=getNumber&service=" + serviceCode.ToString() + "&operator=any&country=0");
+                WebResponse response = request.GetResponse();
+                using (Stream stream = response.GetResponseStream())
                 {
-                    var result = reader.ReadToEnd();
-                    if (result.Contains("ACCESS_NUMBER"))
+                    using (StreamReader reader = new StreamReader(stream))
                     {
-                        var num = result.Split(':');
-                        if (num[2][0] == '7')
+                        var result = reader.ReadToEnd();
+                        if (result.Contains("ACCESS_NUMBER"))
                         {
-                            num[2] = num[2].Remove(0, 1);
+                            var num = result.Split(':');
+                            if (num[2][0] == '7')
+                            {
+                                num[2] = num[2].Remove(0, 1);
+                            }
+                            NLog.LogManager.GetCurrentClassLogger().Info($"Номер {num[2]} получен с результатом {num[0]}");
+                            return new PhoneNumber(num[1], num[2], num[0]);
                         }
-                        return new PhoneNumber(num[1], num[2], num[0]);
-                    }
-                    else
-                    {
-                        return null;
+                        else
+                        {
+                            NLog.LogManager.GetCurrentClassLogger().Info($"Не удалось получить номер с результатом {result}");
+                            return null;
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                NLog.LogManager.GetCurrentClassLogger().Info(ex, $"Ошибка при получении номера");
+                return null;
             }
         }
 
@@ -60,18 +70,26 @@ namespace Bitclout.Worker
         /// </summary>
         public static PhoneNumber MessageSend(PhoneNumber phoneNumber)
         {
-            //WebRequest request = WebRequest.Create("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiKey + "&action=setStatus&status=1&id=" + Id);//activate number
-            WebRequest request = WebRequest.Create("https://smshub.org/stubs/handler_api.php?api_key=" + ApiKey + "&action=setStatus&status=1&id=" + phoneNumber.ID);
-
-            WebResponse response = request.GetResponse();
-            using (Stream stream = response.GetResponseStream())
+            try
             {
-                using (StreamReader reader = new StreamReader(stream))
+                WebRequest request = WebRequest.Create("https://smshub.org/stubs/handler_api.php?api_key=" + ApiKey + "&action=setStatus&status=1&id=" + phoneNumber.ID);
+
+                WebResponse response = request.GetResponse();
+                using (Stream stream = response.GetResponseStream())
                 {
-                    var result = reader.ReadToEnd();
-                    phoneNumber.StatusCode = result;
-                    return phoneNumber;
+                    using (StreamReader reader = new StreamReader(stream))
+                    {
+                        var result = reader.ReadToEnd();
+                        phoneNumber.StatusCode = result;
+
+                        return phoneNumber;
+                    }
                 }
+            }
+            catch (Exception)
+            {
+
+                throw;
             }
         }
 
@@ -80,77 +98,70 @@ namespace Bitclout.Worker
         /// </summary>
         public static PhoneNumber GetCode(PhoneNumber phoneNumber)
         {
-            //WebRequest request = WebRequest.Create("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiKey + "&action=getStatus&id=" + Id);//get message
-            WebRequest request = WebRequest.Create("https://smshub.org/stubs/handler_api.php?api_key=" + ApiKey + "&action=getStatus&id=" + phoneNumber.ID);//get message
-
-            WebResponse response = request.GetResponse();
-            using (Stream stream = response.GetResponseStream())
+            try
             {
-                using (StreamReader reader = new StreamReader(stream))
+                NLog.LogManager.GetCurrentClassLogger().Info($"Получаем код от сервиса для телефона {phoneNumber.Number} ->");
+                WebRequest request = WebRequest.Create("https://smshub.org/stubs/handler_api.php?api_key=" + ApiKey + "&action=getStatus&id=" + phoneNumber.ID);//get message
+
+                WebResponse response = request.GetResponse();
+                using (Stream stream = response.GetResponseStream())
                 {
-                    var result = reader.ReadToEnd();
-                    if (result.Contains("STATUS_OK"))
+                    using (StreamReader reader = new StreamReader(stream))
                     {
-                        var res = result.Split(':');
-                        phoneNumber.StatusCode = res[0];
-                        phoneNumber.Code = res[1];
+                        var result = reader.ReadToEnd();
+                        if (result.Contains("STATUS_OK"))
+                        {
+                            var res = result.Split(':');
+                            phoneNumber.StatusCode = res[0];
+                            phoneNumber.Code = res[1];
+                            NLog.LogManager.GetCurrentClassLogger().Info($"Для номера {phoneNumber.Number} успешно получен код {phoneNumber.Code} результатом {phoneNumber.StatusCode}");
+                        }
+                        else
+                        {
+                            phoneNumber.StatusCode = result;
+                            phoneNumber.Code = "";
+                            NLog.LogManager.GetCurrentClassLogger().Info($"Для номера {phoneNumber.Number} не удалось получить код с результатом {phoneNumber.StatusCode}");
+                        }
+                        return phoneNumber;
                     }
-                    else
-                    {
-                        phoneNumber.StatusCode = result;
-                        phoneNumber.Code = "";
-                    }
-                    return phoneNumber;
                 }
             }
+            catch (Exception ex)
+            {
+                NLog.LogManager.GetCurrentClassLogger().Info(ex, $"Произошла ошибка при попытке получения кода");
+                return null;
+            }
         }
-
-        ///// <summary>
-        ///// Повторная попытка получения кода
-        ///// </summary>
-        ///// <returns>Получен ли код</returns>
-        //public bool RetryCode()
-        //{
-        //    //WebRequest request = WebRequest.Create("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiKey + "&action=setStatus&status=3&id=" + Id);//activate number
-        //    WebRequest request = WebRequest.Create("https://smshub.org/stubs/handler_api.php?api_key=" + ApiKey + "&action=setStatus&status=3&id=" + Id);
-        //    WebResponse response = request.GetResponse();
-        //    using (Stream stream = response.GetResponseStream())
-        //    {
-        //        using (StreamReader reader = new StreamReader(stream))
-        //        {
-
-        //            var result = reader.ReadToEnd();
-        //            StatusCode = result;
-        //            if (result.Contains("ACCESS_RETRY_GET"))
-        //            {
-        //                return true;
-        //            }
-        //            else
-        //            {
-        //                return false;
-        //            }
-        //        }
-        //    }
-        //}
 
         /// <summary>
         /// Сообщаем об успешном использовании номера
         /// </summary>
         public static PhoneNumber NumberConformation(PhoneNumber phoneNumber)
         {
-            //WebRequest request = WebRequest.Create("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiKey + "&action=setStatus&status=6&id=" + Id);//activate number
-            WebRequest request = WebRequest.Create("https://smshub.org/stubs/handler_api.php?api_key=" + ApiKey + "&action=setStatus&status=6&id=" + phoneNumber.ID);
-
-            WebResponse response = request.GetResponse();
-            using (Stream stream = response.GetResponseStream())
+            try
             {
-                using (StreamReader reader = new StreamReader(stream))
+                NLog.LogManager.GetCurrentClassLogger().Info($"Подтверждаем телефон {phoneNumber.Number} ->");
+
+                WebRequest request = WebRequest.Create("https://smshub.org/stubs/handler_api.php?api_key=" + ApiKey + "&action=setStatus&status=6&id=" + phoneNumber.ID);
+
+                WebResponse response = request.GetResponse();
+                using (Stream stream = response.GetResponseStream())
                 {
-                    var result = reader.ReadToEnd();
-                    phoneNumber.StatusCode = result;
-                    return phoneNumber;
+                    using (StreamReader reader = new StreamReader(stream))
+                    {
+                        var result = reader.ReadToEnd();
+                        phoneNumber.StatusCode = result;
+                        NLog.LogManager.GetCurrentClassLogger().Info($"Телефон {phoneNumber.Number} подтвержден со статусом {phoneNumber.StatusCode} ->");
+                        return phoneNumber;
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                NLog.LogManager.GetCurrentClassLogger().Info(ex, $"Произошла ошибка при подтверждении использования номера");
+                return null;
+            }
+            
         }
 
         /// <summary>

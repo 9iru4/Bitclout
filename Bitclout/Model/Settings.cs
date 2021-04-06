@@ -192,7 +192,7 @@ namespace Bitclout.Model
             }
             catch (Exception ex)
             {
-                //Сделать логирование
+                NLog.LogManager.GetCurrentClassLogger().Info(ex, $"Не удалось загрузить настройки.");
                 return new Settings();
             }
         }
@@ -213,7 +213,7 @@ namespace Bitclout.Model
             }
             catch (Exception ex)
             {
-                //Сделать логирование
+                NLog.LogManager.GetCurrentClassLogger().Info(ex, $"Не удалось сохранить настройки.");
                 return false;
             }
         }

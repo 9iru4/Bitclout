@@ -1,8 +1,6 @@
 ﻿using Bitclout.Model;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Net;
 using System.Web.Helpers;
 
@@ -16,28 +14,42 @@ namespace Bitclout.Worker
         /// <returns>Прокси</returns>
         public static Proxy GetProxy()
         {
-
-            WebRequest request = WebRequest.Create("https://proxy6.net/api/" + MainWindowViewModel.settings.ProxyApiKey + "/buy?count=1&period=3&country=gb");
-            WebResponse response = request.GetResponse();
-            using (Stream stream = response.GetResponseStream())
+            Proxy prx = new Proxy();
+            try
             {
-                using (StreamReader reader = new StreamReader(stream))
+                NLog.LogManager.GetCurrentClassLogger().Info($"Делаем запрос на получение прокси ->");
+                WebRequest request = WebRequest.Create("https://proxy6.net/api/" + MainWindowViewModel.settings.ProxyApiKey + "/buy?count=1&period=3&country=gb");
+                WebResponse response = request.GetResponse();
+                using (Stream stream = response.GetResponseStream())
                 {
-                    dynamic data = Json.Decode(reader.ReadToEnd());
-                    if (data.status == "yes")
+                    using (StreamReader reader = new StreamReader(stream))
                     {
-                        foreach (var item in data.list)
+                        dynamic data = Json.Decode(reader.ReadToEnd());
+                        if (data.status == "yes")
                         {
-                            var proxy = item.Value;
-                            return new Proxy(proxy.id, proxy.ip, proxy.host, proxy.port, proxy.user, proxy.pass);
+                            dynamic proxy = data;
+                            foreach (var item in data.list)
+                            {
+                                proxy = item.Value;
+                                prx = new Proxy(proxy.id, proxy.ip, proxy.host, proxy.port, proxy.user, proxy.pass);
+                                prx.StatusCode = data.status;
+                                return prx;
+                            }
+                            throw new Exception($"Ошибка обработки данных прокси {proxy}");
                         }
-                        throw new Exception("Не удалось получить прокси");
-                    }
-                    else
-                    {
-                        throw new Exception("Не удалось получить прокси");
+                        else
+                        {
+                            prx.StatusCode = data.error;
+                            NLog.LogManager.GetCurrentClassLogger().Info($"Ошибка получения прокси {data.error}");
+                            return prx;
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                NLog.LogManager.GetCurrentClassLogger().Info(ex, $"Ошибка в методе получения прокси {ex.Message}");
+                return null;
             }
         }
 
@@ -47,68 +59,34 @@ namespace Bitclout.Worker
         /// <returns>Прокси</returns>
         public static bool DeleteProxy(Proxy proxy)
         {
-
-            WebRequest request = WebRequest.Create("https://proxy6.net/api/" + MainWindowViewModel.settings.ProxyApiKey + "/delete?ids=" + proxy.ID);
-            WebResponse response = request.GetResponse();
-            using (Stream stream = response.GetResponseStream())
-            {
-                using (StreamReader reader = new StreamReader(stream))
-                {
-                    dynamic data = Json.Decode(reader.ReadToEnd());
-                    if (data.status == "yes")
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        //Сделать логирование
-                        throw new Exception("Не удалось получить прокси");
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Обновление данных прокси в файле расширения
-        /// </summary>
-        /// <returns>Обновлены ли данные</returns>
-        public static bool UpdateProxyExtension()
-        {
             try
             {
-                List<string> background = new List<string>();
-                using (StreamReader sr = new StreamReader(@"C:\Users\Yegor\AppData\Local\Temp\scoped_dir7924_664568716\extension_hmchdglfpilogbogekbnnbbkdnabkiia\background.js"))
+                NLog.LogManager.GetCurrentClassLogger().Info($"Делаем запрос на удаление использованного прокси {proxy.IP} ->");
+                WebRequest request = WebRequest.Create("https://proxy6.net/api/" + MainWindowViewModel.settings.ProxyApiKey + "/delete?ids=" + proxy.ID);
+                WebResponse response = request.GetResponse();
+                using (Stream stream = response.GetResponseStream())
                 {
-                    while (!sr.EndOfStream)
+                    using (StreamReader reader = new StreamReader(stream))
                     {
-                        background.Add(sr.ReadLine());
+                        dynamic data = Json.Decode(reader.ReadToEnd());
+                        if (data.status == "yes")
+                        {
+                            NLog.LogManager.GetCurrentClassLogger().Info($"Прокси успешно удален");
+                            return true;
+                        }
+                        else
+                        {
+                            NLog.LogManager.GetCurrentClassLogger().Info($"Не удалось удалить прокси {data.error}");
+                            throw new Exception("Не удалось удалить прокси {data.error}");
+                        }
                     }
                 }
-                background[4] = $"      host: \"{MainWindowViewModel.settings.CurrentProxy.Host}\",";
-                background[5] = $"      port: parseInt({MainWindowViewModel.settings.CurrentProxy.Port})";
-                background[18] = $"      username: \"{MainWindowViewModel.settings.CurrentProxy.UserName}\",";
-                background[19] = $"      password: \"{MainWindowViewModel.settings.CurrentProxy.Pass}\"";
-                using (StreamWriter sw = new StreamWriter(@"C:\Users\Yegor\AppData\Local\Temp\scoped_dir7924_664568716\extension_hmchdglfpilogbogekbnnbbkdnabkiia\background.js"))
-                {
-                    foreach (var str in background)
-                    {
-                        sw.WriteLine(str);
-                    }
-                }
-
-                //string startPath = "proxy";
-                //string zipPath = "proxy.zip";
-
-                //File.Delete("proxy.zip");
-                //ZipFile.CreateFromDirectory(startPath, zipPath);
-                return true;
             }
             catch (Exception ex)
             {
-                //Реализовать логирование
+                NLog.LogManager.GetCurrentClassLogger().Info(ex, $"Не удалось удалить прокси {ex.Message}");
                 return false;
             }
-
         }
     }
 }
