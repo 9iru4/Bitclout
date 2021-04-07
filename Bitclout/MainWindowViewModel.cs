@@ -3,24 +3,42 @@ using Bitclout.Worker;
 using Microsoft.Win32;
 using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace Bitclout
 {
-    public class MainWindowViewModel
+    public class MainWindowViewModel:INotifyPropertyChanged
     {
         ChromeWorker chromeWorker = new ChromeWorker();
         public static Settings settings { get; set; } = Settings.LoadSettings();
 
         bool bitclout = false;
         bool twitter = false;
+        bool stop = false;
 
         public ObservableCollection<UserRegistrationInfo> RegistrationInfo { get; set; } = new ObservableCollection<UserRegistrationInfo>(UserRegistrationInfo.LoadUsers());
 
         public static ObservableCollection<UserInfo> RegistredUsers { get; set; } = new ObservableCollection<UserInfo>();
+
+        bool _StartEnabled = true;
+
+        public bool StartEnabled
+        {
+            get
+            {
+                return _StartEnabled;
+            }
+            set
+            {
+                _StartEnabled = value;
+                OnPropertyChanged("StartEnabled");
+            }
+        }
 
         private RelayCommand _StartBotCommand;
         public RelayCommand StartBotCommand
@@ -30,19 +48,49 @@ namespace Bitclout
                 return _StartBotCommand ??
                     (_StartBotCommand = new RelayCommand(obj =>
                     {
-                        if (twitter && bitclout)
+                        Task.Run(() =>
                         {
-                            NLog.LogManager.GetCurrentClassLogger().Info("Запуск автоматической регистрации ->");
-                            BotStart();
-                        }
-                        else
-                        {
-                            NLog.LogManager.GetCurrentClassLogger().Info($"Не запущен Twitter {twitter} или Bitclout {bitclout}");
-                            MessageBox.Show("Не запущен твитер или битклоут");
-                        }
+                            StartEnabled = false;
+                            stop = false;
+                            while (!stop)
+                            {
+                                if (twitter && bitclout)
+                                {
+                                    NLog.LogManager.GetCurrentClassLogger().Info("Запуск автоматической регистрации ->");
+                                    BotStart();
+                                }
+                                else
+                                {
+                                    NLog.LogManager.GetCurrentClassLogger().Info($"Не запущен Twitter {twitter} или Bitclout {bitclout}");
+                                    MessageBox.Show("Не запущен твитер или битклоут");
+                                    stop = true;
+                                    StartEnabled = true;
+                                }
+                            }
+                        });
+
                     }));
             }
         }
+
+        private RelayCommand _StopBotCommand;
+        public RelayCommand StopBotCommand
+        {
+            get
+            {
+                return _StopBotCommand ??
+                    (_StopBotCommand = new RelayCommand(obj =>
+                    {
+                        Task.Run(() =>
+                        {
+                            stop = true;
+                            StartEnabled = true;
+                        });
+
+                    }));
+            }
+        }
+
         private RelayCommand _StartTwitterCommand;
         public RelayCommand StartTwitterCommand
         {
@@ -97,6 +145,13 @@ namespace Bitclout
                         GetUsersFromFile();
                     }));
             }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void OnPropertyChanged([CallerMemberName] string prop = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
         public MainWindowViewModel()
@@ -168,7 +223,7 @@ namespace Bitclout
             {
                 NLog.LogManager.GetCurrentClassLogger().Info(ex, $"Произошла ошибка при регистрации");
             }
-           
+
         }
     }
 }

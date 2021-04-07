@@ -23,6 +23,8 @@ namespace Bitclout
         /// </summary>
         IWebDriver TwitterChromeDriver { get; set; }
 
+        bool IsTweetSend = false;
+
         public ChromeWorker()
         {
         }
@@ -115,13 +117,20 @@ namespace Bitclout
             }
         }
 
-        public void EndRegistration()
+        public void EndRegistration(string TwitterName)
         {
             NLog.LogManager.GetCurrentClassLogger().Info("Очистка куки ->");
             RegChromeDriver.Navigate().GoToUrl($"https://bitclout.com/");
             Thread.Sleep(MainWindowViewModel.settings.DelayTime);
             RegChromeDriver.Manage().Cookies.DeleteAllCookies();
             RegChromeDriver.Quit();
+
+            if(IsTweetSend)
+            {
+                DeleteTweet(TwitterName);
+                NLog.LogManager.GetCurrentClassLogger().Info("Последний твит удален");
+            }
+
             MainWindowViewModel.settings.CurrentProxy.AccountsRegistred++;
             MainWindowViewModel.settings.SaveSettings();
             NLog.LogManager.GetCurrentClassLogger().Info("Драйвер регистрации закрыт, количество использований прокси увеличено на 1");
@@ -296,12 +305,12 @@ namespace Bitclout
                         }
                     }
                 }
-                EndRegistration();
+                EndRegistration(user.Name);
                 return userInfo;
             }
             catch (Exception ex)
             {
-                EndRegistration();
+                EndRegistration(user.Name);
                 NLog.LogManager.GetCurrentClassLogger().Info(ex, $"Ошибка на этапе регистрации аккаунта");
                 return userInfo;
             }
@@ -703,6 +712,7 @@ namespace Bitclout
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Tweet успешно отправлен");
+                IsTweetSend = true;
                 return true;
             }
             catch (Exception ex)
@@ -734,6 +744,7 @@ namespace Bitclout
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Tweet Успешно удален");
+                IsTweetSend = false;
                 return true;
             }
             catch (Exception ex)
