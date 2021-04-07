@@ -24,8 +24,10 @@
                     <TextBox Text="{Binding settings.PhotosPath}" HorizontalAlignment="Left" Height="23" Margin="174,182,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
                     <TextBox Text="{Binding settings.TwitterUserName}" HorizontalAlignment="Left" Height="23" Margin="174,210,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
                     <TextBox Text="{Binding settings.TwitterPassword}" HorizontalAlignment="Left" Height="23" Margin="174,238,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
-                    <TextBox Text="{Binding settings.BitcloutSeedPhrase}" HorizontalAlignment="Left" Height="23" Margin="174,266,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
-                    <Button Command="{Binding SaveCommand}" Content="Сохранить" HorizontalAlignment="Left" Margin="207,337,0,0" VerticalAlignment="Top" Width="75"/>
+                    <TextBox Text="{Binding settings.TwitterEmail}" HorizontalAlignment="Left" Height="23" Margin="174,266,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
+                    <TextBox Text="{Binding settings.BitcloutSeedPhrase}" HorizontalAlignment="Left" Height="23" Margin="174,294,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
+                    <TextBox Text="{Binding settings.DelayTime}" HorizontalAlignment="Left" Height="23" Margin="174,322,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
+                    
                     <Label Content="SMSApiKey" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,67,0,0" Height="23"/>
                     <Label Content="TwitterApiKey" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,95,0,0" Height="23"/>
                     <Label Content="ProxyApiKey" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,123,0,0" Height="23"/>
@@ -33,7 +35,11 @@
                     <Label Content="PhotosPath" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,182,0,0" Height="23"/>
                     <Label Content="TwitterUserName" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,210,0,0" Height="23"/>
                     <Label Content="TwitterPassword" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,238,0,0" Height="23"/>
-                    <Label Content="BitcloutSeedPhrase" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,266,0,0" Height="23"/>
+                    <Label Content="TwitterEmail" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,266,0,0" Height="23"/>
+                    <Label Content="BitcloutSeedPhrase" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,294,0,0" Height="23"/>
+                    <Label Content="DelayTime" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,322,0,0" Height="23"/>
+
+                    <Button Command="{Binding SaveCommand}" Content="Сохранить" HorizontalAlignment="Left" Margin="351,363,0,0" VerticalAlignment="Top" Width="75"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Пользователи">

@@ -152,15 +152,23 @@ namespace Bitclout
 
         void BotStart()
         {
-            var user = RegistrationInfo[0];
-            NLog.LogManager.GetCurrentClassLogger().Info($"Используются следующие данные для регистрации {user.Name}");
-            UserRegistrationInfo.SaveUsers(RegistrationInfo.ToList());
-            var usr = chromeWorker.RegisterNewBitсlout(user);
-            NLog.LogManager.GetCurrentClassLogger().Info($"При регистрации получены данные для пользователя {usr.Name}");
-            RegistredUsers.Add(usr);
-            RegistrationInfo.RemoveAt(0);
-            SaveRegistredUser();
-            NLog.LogManager.GetCurrentClassLogger().Info($"Конец автоматической регистрации");
+            try
+            {
+                var user = RegistrationInfo[0];
+                NLog.LogManager.GetCurrentClassLogger().Info($"Используются следующие данные для регистрации {user.Name}");
+                UserRegistrationInfo.SaveUsers(RegistrationInfo.ToList());
+                var usr = chromeWorker.RegisterNewBitсlout(user);
+                NLog.LogManager.GetCurrentClassLogger().Info($"При регистрации получены данные для пользователя {usr.Name}");
+                RegistredUsers.Add(usr);
+                RegistrationInfo.RemoveAt(0);
+                SaveRegistredUser();
+                NLog.LogManager.GetCurrentClassLogger().Info($"Конец автоматической регистрации");
+            }
+            catch (Exception ex)
+            {
+                NLog.LogManager.GetCurrentClassLogger().Info(ex, $"Произошла ошибка при регистрации");
+            }
+           
         }
     }
 }

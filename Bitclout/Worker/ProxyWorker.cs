@@ -18,7 +18,7 @@ namespace Bitclout.Worker
             try
             {
                 NLog.LogManager.GetCurrentClassLogger().Info($"Делаем запрос на получение прокси ->");
-                WebRequest request = WebRequest.Create("https://proxy6.net/api/" + MainWindowViewModel.settings.ProxyApiKey + "/buy?count=1&period=3&country=gb");
+                WebRequest request = WebRequest.Create("https://proxy6.net/api/" + MainWindowViewModel.settings.ProxyApiKey + "/buy?count=1&period=3&country=us");
                 WebResponse response = request.GetResponse();
                 using (Stream stream = response.GetResponseStream())
                 {
@@ -33,6 +33,7 @@ namespace Bitclout.Worker
                                 proxy = item.Value;
                                 prx = new Proxy(proxy.id, proxy.ip, proxy.host, proxy.port, proxy.user, proxy.pass);
                                 prx.StatusCode = data.status;
+                                NLog.LogManager.GetCurrentClassLogger().Info($"Прокси {proxy.ip} успешно получен с кодом {data.status}");
                                 return prx;
                             }
                             throw new Exception($"Ошибка обработки данных прокси {proxy}");

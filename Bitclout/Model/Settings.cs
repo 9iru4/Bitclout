@@ -130,6 +130,23 @@ namespace Bitclout.Model
             }
         }
 
+        string _TwitterEmail;
+        /// <summary>
+        /// Twitter Email
+        /// </summary>
+        public string TwitterEmail
+        {
+            get
+            {
+                return _TwitterEmail;
+            }
+            set
+            {
+                _TwitterEmail = value;
+                OnPropertyChanged("TwitterEmail");
+            }
+        }
+
         string _BitcloutSeedPhrase;
         /// <summary>
         /// Логин Bitclout
@@ -164,6 +181,21 @@ namespace Bitclout.Model
             }
         }
 
+        int _DelayTime = 5000;
+
+        public int DelayTime
+        {
+            get
+            {
+                return _DelayTime;
+            }
+            set
+            {
+                _DelayTime = value;
+                OnPropertyChanged("DelayTime");
+            }
+        }
+
         public Settings()
         {
             SMSApiKey = "";
@@ -173,6 +205,7 @@ namespace Bitclout.Model
             PhotosPath = "";
             TwitterUserName = "";
             TwitterPassword = "";
+            TwitterEmail = "";
             BitcloutSeedPhrase = "";
             CurrentProxy = null;
         }
