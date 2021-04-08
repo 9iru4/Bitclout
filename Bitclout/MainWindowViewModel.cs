@@ -6,13 +6,14 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
 namespace Bitclout
 {
-    public class MainWindowViewModel:INotifyPropertyChanged
+    public class MainWindowViewModel : INotifyPropertyChanged
     {
         ChromeWorker chromeWorker = new ChromeWorker();
         public static Settings settings { get; set; } = Settings.LoadSettings();
@@ -169,6 +170,7 @@ namespace Bitclout
                     NLog.LogManager.GetCurrentClassLogger().Info($"Зарегистрированный пользователь {item.Name} успешно сохранен.");
                 }
             }
+            RegistredUsers.Clear();
         }
 
         void GetUsersFromFile()
@@ -210,17 +212,31 @@ namespace Bitclout
             try
             {
                 var user = RegistrationInfo[0];
+
                 NLog.LogManager.GetCurrentClassLogger().Info($"Используются следующие данные для регистрации {user.Name}");
-                UserRegistrationInfo.SaveUsers(RegistrationInfo.ToList());
+
+               
+
                 var usr = chromeWorker.RegisterNewBitсlout(user);
                 NLog.LogManager.GetCurrentClassLogger().Info($"При регистрации получены данные для пользователя {usr.Name}");
+
                 RegistredUsers.Add(usr);
+
                 RegistrationInfo.RemoveAt(0);
+
+                UserRegistrationInfo.SaveUsers(RegistrationInfo.ToList());
+
                 SaveRegistredUser();
+
                 NLog.LogManager.GetCurrentClassLogger().Info($"Конец автоматической регистрации");
             }
             catch (Exception ex)
             {
+                if (RegistrationInfo.Count == 0)
+                {
+                    stop = true;
+                    StartEnabled = true;
+                }
                 NLog.LogManager.GetCurrentClassLogger().Info(ex, $"Произошла ошибка при регистрации");
             }
 
