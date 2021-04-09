@@ -127,7 +127,8 @@ namespace Bitclout
 
             if (IsTweetSend)
             {
-                DeleteTweet(TwitterName);
+                if (!DeleteTweet(TwitterName))
+                    DeleteTweet(TwitterName);
                 NLog.LogManager.GetCurrentClassLogger().Info("Последний твит удален");
             }
 
@@ -278,6 +279,7 @@ namespace Bitclout
                 catch (Exception ex)
                 {
                     NLog.LogManager.GetCurrentClassLogger().Info(ex, $"Произошла ошбка в отправке Bitclout на аккаунт");
+                    throw new Exception("Не удалось отправить Bitclout");
                 }
 
                 if (MakeScreenshot(userInfo.Name))//Пробуем сделать скриншот
@@ -302,7 +304,6 @@ namespace Bitclout
                                     if (SellCreatorCoins(userInfo.Name))//Продаем коины
                                     {
                                         NLog.LogManager.GetCurrentClassLogger().Info($"Creator Сoins проданы успешно");
-                                        DeleteTweet(user.Name);
                                     }
                                 }
                             }
@@ -512,8 +513,13 @@ namespace Bitclout
                         return true;
                     }
                 }
-                if (DeleteTweet(user.Name))
-                    SendTweet(user.TweetMessage, userInfo.BitcloutSreenPath);
+                if (!DeleteTweet(user.Name))
+                {
+                    if (DeleteTweet(user.Name))
+                        SendTweet(user.TweetMessage, userInfo.BitcloutSreenPath);
+                    else
+                        NLog.LogManager.GetCurrentClassLogger().Info($"Не удалось повторно удалить твит.");
+                }
 
                 for (int i = 0; i < 24; i++)
                 {
@@ -746,6 +752,7 @@ namespace Bitclout
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Жмем удалить");
 
+                bool deleted = false;
                 try
                 {
                     var elements = TwitterChromeDriver.FindElements(By.XPath("//div[@class='css-1dbjc4n r-1loqt21 r-18u37iz r-1ny4l3l r-ymttw5 r-1yzf0co r-o7ynqc r-6416eg r-13qz1uu']"));
@@ -754,9 +761,11 @@ namespace Bitclout
                         if (item.Text.Contains("Удалить"))
                         {
                             item.Click();
+                            deleted = true;
                             break;
                         }
                     }
+                    if (!deleted) throw new Exception("Твит не удален.");
                     Thread.Sleep(MainWindowViewModel.settings.DelayTime);
                 }
                 catch (Exception)
@@ -767,10 +776,13 @@ namespace Bitclout
                         if (item.Text.Contains("Удалить"))
                         {
                             item.Click();
+                            deleted = true;
                             break;
                         }
                     }
+                    if (!deleted) throw new Exception("Твит не удален.");
                     Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+
                 }
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Подтверждаем");
@@ -786,9 +798,20 @@ namespace Bitclout
                     Thread.Sleep(MainWindowViewModel.settings.DelayTime);
                 }
 
-                NLog.LogManager.GetCurrentClassLogger().Info($"Tweet Успешно удален");
-                IsTweetSend = false;
-                return true;
+                try
+                {
+                    if (TwitterChromeDriver.FindElement(By.XPath("//div[@class='css-18t94o4 css-1dbjc4n r-1ucxkr8 r-42olwf r-sdzlij r-1phboty r-rs99b7 r-16y2uox r-1w2pmg r-ero68b r-1gg2371 r-1ny4l3l r-1fneopy r-o7ynqc r-6416eg r-lrvibr']")) != null)
+                    {
+                        IsTweetSend = false;
+                        NLog.LogManager.GetCurrentClassLogger().Info($"Tweet Успешно удален");
+                        return true;
+                    }
+                    else throw new Exception("Твит не удален");
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
             }
             catch (Exception ex)
             {
