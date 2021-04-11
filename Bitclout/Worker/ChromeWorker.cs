@@ -306,14 +306,14 @@ namespace Bitclout
                 RegChromeDriver.FindElement(By.XPath("//a[@class='btn btn-primary btn-lg font-weight-bold fs-15px mt-5px']")).Click();//Пробем сохранить
 
                 bool buy = false;
-                for (int i = 0; i < MainWindowViewModel.settings.DelayTime * 2 / 100; i++)
+                for (int i = 0; i < MainWindowViewModel.settings.DelayTime * 2 / 1000; i++)
                 {
                     if (RegChromeDriver.FindElements(By.XPath("//i[@class='far fa-check-circle fa-lg fc-blue ml-10px']")).Count == 1 || RegChromeDriver.FindElements(By.XPath("//i[@class='far fa-check-circle fa-lg fc-blue ml-10px ng-star-inserted']")).Count == 1)
                     {
                         buy = ConfirmBuy();
                         break;
                     }
-                    Thread.Sleep(100);
+                    Thread.Sleep(1000);
                 }
 
                 //Thread.Sleep(1000);
@@ -491,6 +491,12 @@ namespace Bitclout
             try
             {
                 NLog.LogManager.GetCurrentClassLogger().Info($"Продаем Creator Coins {userName} ->");
+
+                BitcloutChromeDriver.Navigate().GoToUrl($"https://bitclout.com/u/" + userName + @"/sell");
+                Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+
+                BitcloutChromeDriver.FindElement(By.XPath("//a[@class='text-grey7']")).Click();
+                Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime);
                 BitcloutChromeDriver.FindElement(By.XPath("//a[@class='btn btn-primary font-weight-bold w-60']")).Click();
