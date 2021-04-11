@@ -11,7 +11,6 @@
             <TabItem Header="Работа программы">
                 <Grid Background="#FFE5E5E5">
                     <Button Content="Бот старт" IsEnabled="{Binding StartEnabled}" Command="{Binding StartBotCommand}" HorizontalAlignment="Left" Margin="339,227,0,0" VerticalAlignment="Top" Width="75"/>
-                    <Button Content="Твитер старт" Command="{Binding StartTwitterCommand}" HorizontalAlignment="Left" Margin="213,168,0,0" VerticalAlignment="Top" Width="75"/>
                     <Button Content="Bitclout старт"  Command="{Binding StartBitcloutCommand}" HorizontalAlignment="Left" Margin="307,168,0,0" VerticalAlignment="Top" Width="75"/>
                     <Button Content="Бот стоп"  Command="{Binding StopBotCommand}" HorizontalAlignment="Left" Margin="434,227,0,0" VerticalAlignment="Top" Width="75"/>
                 </Grid>

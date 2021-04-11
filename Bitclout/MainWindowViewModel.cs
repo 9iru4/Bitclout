@@ -19,7 +19,6 @@ namespace Bitclout
         public static Settings settings { get; set; } = Settings.LoadSettings();
 
         bool bitclout = false;
-        bool twitter = false;
         bool stop = false;
 
         ObservableCollection<UserRegistrationInfo> _RegistrationInfo = new ObservableCollection<UserRegistrationInfo>(UserRegistrationInfo.LoadUsers());
@@ -69,7 +68,7 @@ namespace Bitclout
                             stop = false;
                             while (!stop)
                             {
-                                if (twitter && bitclout)
+                                if (bitclout)
                                 {
                                     NLog.LogManager.GetCurrentClassLogger().Info("Запуск автоматической регистрации ->");
                                     BotStart();
@@ -102,20 +101,6 @@ namespace Bitclout
                             StartEnabled = true;
                         });
 
-                    }));
-            }
-        }
-
-        private RelayCommand _StartTwitterCommand;
-        public RelayCommand StartTwitterCommand
-        {
-            get
-            {
-                return _StartTwitterCommand ??
-                    (_StartTwitterCommand = new RelayCommand(obj =>
-                    {
-                        NLog.LogManager.GetCurrentClassLogger().Info("Запуск твитера драйвера для Twitter ->");
-                        twitter = chromeWorker.StartTwitterDriver();
                     }));
             }
         }

@@ -268,6 +268,7 @@ namespace Bitclout
                     NLog.LogManager.GetCurrentClassLogger().Info($"Пробуем найти окно с ошибкой");
                     if (RegChromeDriver.FindElements(By.XPath("//div[@class='swal2-html-container']")).Count != 0)//Если есть элемнт неудачного сохранения
                     {
+                        throw new Exception("Не прислал мерлин");
                         if (SendBitCloud(userInfo.PublicKey))//Переводим бабло
                         {
                             NLog.LogManager.GetCurrentClassLogger().Info($"Закрываем окно с сообщением об ошибке");
