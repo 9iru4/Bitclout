@@ -196,6 +196,36 @@ namespace Bitclout.Model
             }
         }
 
+        int _MinUSD = 3;
+
+        public int MinUSD
+        {
+            get
+            {
+                return _MinUSD;
+            }
+            set
+            {
+                _MinUSD = value;
+                OnPropertyChanged("MinUSD");
+            }
+        }
+
+        int _MaxUSD = 7;
+
+        public int MaxUSD
+        {
+            get
+            {
+                return _MaxUSD;
+            }
+            set
+            {
+                _MaxUSD = value;
+                OnPropertyChanged("MaxUSD");
+            }
+        }
+
         public Settings()
         {
             SMSApiKey = "";
