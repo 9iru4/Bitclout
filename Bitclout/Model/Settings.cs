@@ -196,6 +196,51 @@ namespace Bitclout.Model
             }
         }
 
+        bool _IsSecondBuy = false;
+
+        public bool IsSecondBuy
+        {
+            get
+            {
+                return _IsSecondBuy;
+            }
+            set
+            {
+                _IsSecondBuy = value;
+                OnPropertyChanged("IsSecondBuy");
+            }
+        }
+
+        int _BuyWait = 10000;
+
+        public int BuyWait
+        {
+            get
+            {
+                return _BuyWait;
+            }
+            set
+            {
+                _BuyWait = value;
+                OnPropertyChanged("BuyWait");
+            }
+        }
+
+        int _SellWait = 10000;
+
+        public int SellWait
+        {
+            get
+            {
+                return _SellWait;
+            }
+            set
+            {
+                _SellWait = value;
+                OnPropertyChanged("SellWait");
+            }
+        }
+
         int _MinUSD = 3;
 
         public int MinUSD

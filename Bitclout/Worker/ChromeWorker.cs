@@ -309,6 +309,21 @@ namespace Bitclout
 
                 if (!SellCreatorCoins(userInfo.Name))
                     SellCreatorCoins(userInfo.Name);
+
+                if (MainWindowViewModel.settings.IsSecondBuy)
+                {
+
+                    Thread.Sleep(MainWindowViewModel.settings.BuyWait);
+
+                    userInfo.USDBuy = BuyCreatorCoins(userInfo.Name);
+                    bool buy1 = ConfirmBuy();
+
+                    Thread.Sleep(MainWindowViewModel.settings.SellWait);
+
+                    if (!SellCreatorCoins(userInfo.Name))
+                        SellCreatorCoins(userInfo.Name);
+                }
+
                 EndRegistration(user.Name);
                 return userInfo;
             }

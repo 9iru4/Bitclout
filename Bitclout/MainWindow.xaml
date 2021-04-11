@@ -14,15 +14,18 @@
                     <Button Content="Bitclout старт"  Command="{Binding StartBitcloutCommand}" HorizontalAlignment="Left" Margin="307,168,0,0" VerticalAlignment="Top" Width="75"/>
                     <Button Content="Бот стоп"  Command="{Binding StopBotCommand}" HorizontalAlignment="Left" Margin="434,227,0,0" VerticalAlignment="Top" Width="75"/>
 
-                    <CheckBox Content="Повторная покупка и продажа" HorizontalAlignment="Left" Margin="484,20,0,0" VerticalAlignment="Top"/>
-                    <Label Content="Задержка до покупки" HorizontalAlignment="Left" Margin="484,40,0,0" VerticalAlignment="Top"/>
-                    <Label Content="Задержка до продажи" HorizontalAlignment="Left" Margin="484,71,0,0" VerticalAlignment="Top"/>
-                    <TextBox HorizontalAlignment="Left" Height="23" Margin="619,42,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="82"/>
-                    <TextBox HorizontalAlignment="Left" Height="23" Margin="621,71,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="80"/>
+
                 </Grid>
             </TabItem>
             <TabItem Header="Настройки">
                 <Grid Background="#FFE5E5E5">
+
+                    <CheckBox Content="Повторная покупка и продажа" IsChecked="{Binding settings.IsSecondBuy}" HorizontalAlignment="Left" Margin="583,10,0,0" VerticalAlignment="Top" Width="195"/>
+                    <Label Content="Задержка до покупки" HorizontalAlignment="Left" Margin="574,30,0,0" VerticalAlignment="Top" Width="130"/>
+                    <Label Content="Задержка до продажи" HorizontalAlignment="Left" Margin="576,61,0,0" VerticalAlignment="Top" Width="140"/>
+                    <TextBox HorizontalAlignment="Left" Height="23" Margin="721,32,0,0" TextWrapping="Wrap" Text="{Binding settings.BuyWait}" VerticalAlignment="Top" Width="64"/>
+                    <TextBox HorizontalAlignment="Left" Height="23" Margin="721,61,0,0" TextWrapping="Wrap" Text="{ Binding settings.SellWait}" VerticalAlignment="Top" Width="64"/>
+
                     <TextBox Text="{Binding settings.SMSApiKey}" HorizontalAlignment="Left" Height="23" Margin="174,67,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
                     <TextBox Text="{Binding settings.TwitterApiKey}" HorizontalAlignment="Left" Height="23" Margin="174,95,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
                     <TextBox Text="{Binding settings.ProxyApiKey}" HorizontalAlignment="Left" Height="23" Margin="174,123,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
@@ -33,7 +36,7 @@
                     <TextBox Text="{Binding settings.TwitterEmail}" HorizontalAlignment="Left" Height="23" Margin="174,266,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
                     <TextBox Text="{Binding settings.BitcloutSeedPhrase}" HorizontalAlignment="Left" Height="23" Margin="174,294,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
                     <TextBox Text="{Binding settings.DelayTime}" HorizontalAlignment="Left" Height="23" Margin="174,322,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
-                    
+
                     <Label Content="SMSApiKey" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,67,0,0" Height="23"/>
                     <Label Content="TwitterApiKey" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,95,0,0" Height="23"/>
                     <Label Content="ProxyApiKey" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,123,0,0" Height="23"/>
@@ -45,10 +48,10 @@
                     <Label Content="BitcloutSeedPhrase" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,294,0,0" Height="23"/>
                     <Label Content="DelayTime" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,322,0,0" Height="23"/>
 
-                    
-                    
+
+
                     <Button Command="{Binding SaveCommand}" Content="Сохранить" HorizontalAlignment="Left" Margin="351,363,0,0" VerticalAlignment="Top" Width="75"/>
-                    
+
                     <Label Content="USD Range" HorizontalAlignment="Left" Margin="51,36,0,0" VerticalAlignment="Top" Width="82"/>
                     <TextBox HorizontalAlignment="Left" Text="{Binding settings.MinUSD}" Height="23" Margin="174,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="54"/>
                     <TextBox HorizontalAlignment="Left" Text="{Binding settings.MaxUSD}" Height="23" Margin="233,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="54"/>
