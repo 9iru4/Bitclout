@@ -75,7 +75,7 @@ namespace Bitclout
                                 }
                                 else
                                 {
-                                    NLog.LogManager.GetCurrentClassLogger().Info($"Не запущен Twitter {twitter} или Bitclout {bitclout}");
+                                    NLog.LogManager.GetCurrentClassLogger().Info($"Не запущен Bitclout {bitclout}");
                                     MessageBox.Show("Не запущен твитер или битклоут");
                                     stop = true;
                                     StartEnabled = true;

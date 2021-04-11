@@ -269,18 +269,6 @@ namespace Bitclout
                     if (RegChromeDriver.FindElements(By.XPath("//div[@class='swal2-html-container']")).Count != 0)//Если есть элемнт неудачного сохранения
                     {
                         throw new Exception("Не прислал мерлин");
-                        if (SendBitCloud(userInfo.PublicKey))//Переводим бабло
-                        {
-                            NLog.LogManager.GetCurrentClassLogger().Info($"Закрываем окно с сообщением об ошибке");
-                            RegChromeDriver.FindElement(By.XPath("//button[@class='swal2-cancel btn btn-light no swal2-styled']")).Click();//Закрываем окно с сообщением
-                            Thread.Sleep(MainWindowViewModel.settings.DelayTime);
-
-                            NLog.LogManager.GetCurrentClassLogger().Info($"Сохраняем профиль");
-                            RegChromeDriver.FindElement(By.XPath("//a[@class='btn btn-primary btn-lg font-weight-bold fs-15px mt-5px']")).Click();//Пробем сохранить еще раз
-                            Thread.Sleep(MainWindowViewModel.settings.DelayTime);
-                        }
-                        else
-                            throw new Exception("Не удалось отправить Bitclout");
                     }
                 }
                 catch (Exception ex)
