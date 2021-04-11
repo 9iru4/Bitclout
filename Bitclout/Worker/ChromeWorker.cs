@@ -434,7 +434,7 @@ namespace Bitclout
                 BitcloutChromeDriver.Navigate().GoToUrl($"https://bitclout.com/u/" + userName + @"/buy");
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime * 2);
 
-                var send = new Random().Next(3, 7);
+                var send = new Random().Next(MainWindowViewModel.settings.MinUSD, MainWindowViewModel.settings.MaxUSD);
                 NLog.LogManager.GetCurrentClassLogger().Info($"Сгенерировали число {send}");
                 BitcloutChromeDriver.FindElement(By.XPath("//input[@class='form-control w-50 fs-15px text-right d-inline-block ng-untouched ng-pristine ng-invalid']")).SendKeys(send.ToString());
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime);
