@@ -48,6 +48,12 @@
                     
                     
                     <Button Command="{Binding SaveCommand}" Content="Сохранить" HorizontalAlignment="Left" Margin="351,363,0,0" VerticalAlignment="Top" Width="75"/>
+                    
+                    <Label Content="USD Range" HorizontalAlignment="Left" Margin="51,36,0,0" VerticalAlignment="Top" Width="82"/>
+                    <TextBox HorizontalAlignment="Left" Text="{Binding settings.MinUSD}" Height="23" Margin="174,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="54"/>
+                    <TextBox HorizontalAlignment="Left" Text="{Binding settings.MaxUSD}" Height="23" Margin="233,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="54"/>
+                    <Label Content="Min" HorizontalAlignment="Left" Margin="174,14,0,0" VerticalAlignment="Top"/>
+                    <Label Content="Max" HorizontalAlignment="Left" Margin="233,14,0,0" VerticalAlignment="Top"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Пользователи">
