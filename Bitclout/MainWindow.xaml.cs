@@ -17,13 +17,6 @@ namespace Bitclout
         {
             try
             {
-                (DataContext as MainWindowViewModel).chromeWorker.TwitterChromeDriver.Quit();
-            }
-            catch (System.Exception)
-            {
-            }
-            try
-            {
                 (DataContext as MainWindowViewModel).chromeWorker.RegChromeDriver.Quit();
             }
             catch (System.Exception)
