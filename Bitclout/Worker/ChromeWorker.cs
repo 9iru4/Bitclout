@@ -221,9 +221,17 @@ namespace Bitclout
                 RegChromeDriver.FindElement(By.XPath("//a[@class='btn btn-primary font-weight-bold fs-15px ml-10px']")).Click();//Кликаем дальше
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
-                NLog.LogManager.GetCurrentClassLogger().Info($"Кликаем скип");
-                RegChromeDriver.FindElement(By.XPath("//button[@class='btn btn-outline-primary font-weight-bold fs-15px']")).Click();//Кликаем скип
-                Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+                try
+                {
+                    NLog.LogManager.GetCurrentClassLogger().Info($"Кликаем скип");
+                    RegChromeDriver.FindElement(By.XPath("//button[@class='btn btn-outline-primary font-weight-bold fs-15px']")).Click();//Кликаем скип
+                    Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+                }
+                catch (Exception ex)
+                {
+                    MainWindowViewModel.settings.CurrentProxy.AccountsRegistred = 2;
+                    throw ex;
+                }
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Кликаем изменить профиль");
                 RegChromeDriver.FindElement(By.XPath("//button[@class='btn btn-outline-primary font-weight-bold fs-15px mt-5px mr-15px mb-5px']")).Click();//Кликаем изменить профиль
