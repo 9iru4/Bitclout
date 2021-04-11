@@ -13,6 +13,12 @@
                     <Button Content="Бот старт" IsEnabled="{Binding StartEnabled}" Command="{Binding StartBotCommand}" HorizontalAlignment="Left" Margin="339,227,0,0" VerticalAlignment="Top" Width="75"/>
                     <Button Content="Bitclout старт"  Command="{Binding StartBitcloutCommand}" HorizontalAlignment="Left" Margin="307,168,0,0" VerticalAlignment="Top" Width="75"/>
                     <Button Content="Бот стоп"  Command="{Binding StopBotCommand}" HorizontalAlignment="Left" Margin="434,227,0,0" VerticalAlignment="Top" Width="75"/>
+
+                    <CheckBox Content="Повторная покупка и продажа" HorizontalAlignment="Left" Margin="484,20,0,0" VerticalAlignment="Top"/>
+                    <Label Content="Задержка до покупки" HorizontalAlignment="Left" Margin="484,40,0,0" VerticalAlignment="Top"/>
+                    <Label Content="Задержка до продажи" HorizontalAlignment="Left" Margin="484,71,0,0" VerticalAlignment="Top"/>
+                    <TextBox HorizontalAlignment="Left" Height="23" Margin="619,42,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="82"/>
+                    <TextBox HorizontalAlignment="Left" Height="23" Margin="621,71,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="80"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Настройки">
@@ -39,6 +45,8 @@
                     <Label Content="BitcloutSeedPhrase" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,294,0,0" Height="23"/>
                     <Label Content="DelayTime" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,322,0,0" Height="23"/>
 
+                    
+                    
                     <Button Command="{Binding SaveCommand}" Content="Сохранить" HorizontalAlignment="Left" Margin="351,363,0,0" VerticalAlignment="Top" Width="75"/>
                 </Grid>
             </TabItem>
