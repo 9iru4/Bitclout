@@ -316,9 +316,6 @@ namespace Bitclout
                     Thread.Sleep(1000);
                 }
 
-                //Thread.Sleep(1000);
-                //buy = ConfirmBuy();
-
                 if (!buy) throw new Exception("Не удалось продать");
 
                 if (!SellCreatorCoins(userInfo.Name))
