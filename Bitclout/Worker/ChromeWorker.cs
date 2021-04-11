@@ -13,15 +13,15 @@ namespace Bitclout
         /// <summary>
         /// Веб драйвер
         /// </summary>
-        IWebDriver RegChromeDriver { get; set; }
+        public IWebDriver RegChromeDriver { get; set; }
         /// <summary>
         /// Веб драйвер
         /// </summary>
-        IWebDriver BitcloutChromeDriver { get; set; }
+        public IWebDriver BitcloutChromeDriver { get; set; }
         /// <summary>
         /// Веб драйвер
         /// </summary>
-        IWebDriver TwitterChromeDriver { get; set; }
+        public IWebDriver TwitterChromeDriver { get; set; }
 
         bool IsTweetSend = false;
 
@@ -168,7 +168,6 @@ namespace Bitclout
                 userInfo.BitcloutSeedPhrase = RegChromeDriver.FindElement(By.XPath("//div[@class='p-15px ng-star-inserted']")).Text;//Получаем фразу
                 NLog.LogManager.GetCurrentClassLogger().Info($"Получаем фразу-логин {userInfo.BitcloutSeedPhrase}");
 
-
                 NLog.LogManager.GetCurrentClassLogger().Info($"Кликаем дальше");
                 RegChromeDriver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ng-star-inserted']")).Click();//Кликаем дальше
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime);
@@ -219,7 +218,7 @@ namespace Bitclout
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Кликаем дальше");
                 RegChromeDriver.FindElement(By.XPath("//a[@class='btn btn-primary font-weight-bold fs-15px ml-10px']")).Click();//Кликаем дальше
-                Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+                Thread.Sleep(MainWindowViewModel.settings.DelayTime * 2);
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Кликаем скип");
                 RegChromeDriver.FindElement(By.XPath("//button[@class='btn btn-outline-primary font-weight-bold fs-15px']")).Click();//Кликаем скип
@@ -245,7 +244,7 @@ namespace Bitclout
                 RegChromeDriver.FindElement(By.XPath("//input[@class='form-control fs-15px lh-15px p-10px w-25 text-right ng-untouched ng-pristine ng-valid']")).Clear();//Очищаем ввод процента
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
-                RegChromeDriver.FindElement(By.XPath("//input[@class='form-control fs-15px lh-15px p-10px w-25 text-right ng-pristine ng-valid ng-touched']")).SendKeys("0");//Ставим 0
+                RegChromeDriver.FindElement(By.XPath("//input[@class='form-control fs-15px lh-15px p-10px w-25 text-right ng-pristine ng-valid ng-touched']")).SendKeys("99");//Ставим 0
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Копируем публичный код");
@@ -254,13 +253,12 @@ namespace Bitclout
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Пробуем сохранить профиль");
                 RegChromeDriver.FindElement(By.XPath("//a[@class='btn btn-primary btn-lg font-weight-bold fs-15px mt-5px']")).Click();//Пробем сохранить
-                Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+                Thread.Sleep(MainWindowViewModel.settings.DelayTime * 2);
 
                 try
                 {
                     NLog.LogManager.GetCurrentClassLogger().Info($"Пробуем найти окно с ошибкой");
-                    var tst = RegChromeDriver.FindElement(By.XPath("//div[@class='swal2-html-container']"));
-                    if (tst != null)//Если есть элемнт неудачного сохранения
+                    if (RegChromeDriver.FindElements(By.XPath("//div[@class='swal2-html-container']")).Count != 0)//Если есть элемнт неудачного сохранения
                     {
                         if (SendBitCloud(userInfo.PublicKey))//Переводим бабло
                         {
@@ -282,34 +280,41 @@ namespace Bitclout
                     throw new Exception("Не удалось отправить Bitclout");
                 }
 
-                if (MakeScreenshot(userInfo.Name))//Пробуем сделать скриншот
-                    userInfo.BitcloutSreenPath = Directory.GetCurrentDirectory() + $"\\screenshots\\{userInfo.Name}.png";
-                else
+                userInfo.USDBuy = BuyCreatorCoins(userInfo.Name);//Покупаем коины пользователя
+
+                NLog.LogManager.GetCurrentClassLogger().Info($"Обновляем страницу профиля");
+                RegChromeDriver.Navigate().GoToUrl($"https://bitclout.com/update-profile");//Страница реги
+                Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+
+                NLog.LogManager.GetCurrentClassLogger().Info($"Изменяем комиссию");
+                RegChromeDriver.FindElement(By.XPath("//input[@class='form-control fs-15px lh-15px p-10px w-25 text-right ng-untouched ng-pristine ng-valid']")).Clear();//Очищаем ввод процента
+                Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+
+                NLog.LogManager.GetCurrentClassLogger().Info($"Ставим комиссию 0");
+                RegChromeDriver.FindElement(By.XPath("//input[@class='form-control fs-15px lh-15px p-10px w-25 text-right ng-pristine ng-valid ng-touched']")).SendKeys("0");//Ставим 0
+                Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+
+                NLog.LogManager.GetCurrentClassLogger().Info($"Пробуем сохранить профиль");
+                RegChromeDriver.FindElement(By.XPath("//a[@class='btn btn-primary btn-lg font-weight-bold fs-15px mt-5px']")).Click();//Пробем сохранить
+
+                bool buy = false;
+                for (int i = 0; i < MainWindowViewModel.settings.DelayTime * 2 / 100; i++)
                 {
-                    NLog.LogManager.GetCurrentClassLogger().Info($"Не удалось сделать скриншот");
-                    throw new Exception("Не удалось сделать скриншот");
+                    if (RegChromeDriver.FindElements(By.XPath("//i[@class='far fa-check-circle fa-lg fc-blue ml-10px']")).Count == 1 || RegChromeDriver.FindElements(By.XPath("//i[@class='far fa-check-circle fa-lg fc-blue ml-10px ng-star-inserted']")).Count == 1)
+                    {
+                        buy = ConfirmBuy();
+                        break;
+                    }
+                    Thread.Sleep(100);
                 }
 
-                userInfo.USDBuy = BuyCreatorCoins(userInfo.Name);//Покупаем коины пользователя
-                if (userInfo.USDBuy != 0)
-                {
-                    if (ChangeTwitterAccount(user))//Меняем данные твиттера
-                    {
-                        if (ChangeTwitterProfile(user))
-                        {
-                            if (SendTweet(user.TweetMessage, userInfo.BitcloutSreenPath))//Шлем твит
-                            {
-                                if (WaitUntilPriceChanged(user, userInfo))
-                                {
-                                    if (SellCreatorCoins(userInfo.Name))//Продаем коины
-                                    {
-                                        NLog.LogManager.GetCurrentClassLogger().Info($"Creator Сoins проданы успешно");
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                //Thread.Sleep(1000);
+                //buy = ConfirmBuy();
+
+                if (!buy) throw new Exception("Не удалось продать");
+
+                if (!SellCreatorCoins(userInfo.Name))
+                    SellCreatorCoins(userInfo.Name);
                 EndRegistration(user.Name);
                 return userInfo;
             }
@@ -397,8 +402,17 @@ namespace Bitclout
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Подтверждаем");
-                BitcloutChromeDriver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ml-15px py-10px mt-5px ng-star-inserted']")).Click();
-                Thread.Sleep(MainWindowViewModel.settings.DelayTime * 4);
+
+                try
+                {
+                    BitcloutChromeDriver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ml-15px py-10px mt-5px ng-star-inserted']")).Click();
+                    Thread.Sleep(MainWindowViewModel.settings.DelayTime * 4);
+                }
+                catch (Exception)
+                {
+                    BitcloutChromeDriver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ml-15px py-10px mt-5px']")).Click();
+                    Thread.Sleep(MainWindowViewModel.settings.DelayTime * 4);
+                }
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Подтвержаем");
                 BitcloutChromeDriver.FindElement(By.XPath("//button[@class='swal2-confirm btn btn-light swal2-styled']")).Click();
@@ -424,7 +438,7 @@ namespace Bitclout
                 NLog.LogManager.GetCurrentClassLogger().Info($"Покупаем Creator Coins {userName} ->");
 
                 BitcloutChromeDriver.Navigate().GoToUrl($"https://bitclout.com/u/" + userName + @"/buy");
-                Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+                Thread.Sleep(MainWindowViewModel.settings.DelayTime * 2);
 
                 var send = new Random().Next(3, 7);
                 NLog.LogManager.GetCurrentClassLogger().Info($"Сгенерировали число {send}");
@@ -434,21 +448,33 @@ namespace Bitclout
                 NLog.LogManager.GetCurrentClassLogger().Info($"Покупаем");
                 BitcloutChromeDriver.FindElement(By.XPath("//a[@class='btn btn-primary font-weight-bold w-60']")).Click();
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+                return send;
+            }
+            catch (Exception ex)
+            {
+                NLog.LogManager.GetCurrentClassLogger().Info(ex, $"Ошибка при покупке Creator Coins");
+                return 0;
+            }
+        }
 
+        public bool ConfirmBuy()
+        {
+            try
+            {
                 BitcloutChromeDriver.FindElement(By.XPath("//button[@class='btn btn-primary w-100 h-100']")).Click();
-                Thread.Sleep(MainWindowViewModel.settings.DelayTime * 5);
+                Thread.Sleep(MainWindowViewModel.settings.DelayTime * 4);
 
                 if (BitcloutChromeDriver.FindElement(By.XPath("//span[@class='ml-10px text-primary']")).Text.Contains("Success!"))
                 {
                     NLog.LogManager.GetCurrentClassLogger().Info($"Покупка успешна");
-                    return send;
+                    return true;
                 }
                 else throw new Exception("Не успешная покупка");
             }
             catch (Exception ex)
             {
                 NLog.LogManager.GetCurrentClassLogger().Info(ex, $"Ошибка при покупке Creator Coins");
-                return 0;
+                return false;
             }
         }
 
@@ -458,7 +484,7 @@ namespace Bitclout
             {
                 NLog.LogManager.GetCurrentClassLogger().Info($"Продаем Creator Coins {userName} ->");
 
-
+                Thread.Sleep(MainWindowViewModel.settings.DelayTime);
                 BitcloutChromeDriver.FindElement(By.XPath("//a[@class='btn btn-primary font-weight-bold w-60']")).Click();
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime * 2);
 
@@ -515,11 +541,9 @@ namespace Bitclout
                 }
                 if (!DeleteTweet(user.Name))
                 {
-                    if (DeleteTweet(user.Name))
-                        SendTweet(user.TweetMessage, userInfo.BitcloutSreenPath);
-                    else
-                        NLog.LogManager.GetCurrentClassLogger().Info($"Не удалось повторно удалить твит.");
+                    DeleteTweet(user.Name);
                 }
+                SendTweet(user.TweetMessage, userInfo.BitcloutSreenPath);
 
                 for (int i = 0; i < 24; i++)
                 {
@@ -629,7 +653,7 @@ namespace Bitclout
                 }
                 catch (Exception ex)
                 {
-                    NLog.LogManager.GetCurrentClassLogger().Info(ex, $"Ошибка в блоке подтверждения парол для Twitter или его не нужно вводить");
+                    NLog.LogManager.GetCurrentClassLogger().Info(ex, $"Ошибка в блоке подтверждения пароля для Twitter или его не нужно вводить");
                 }
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Переходим на страницу смены");
@@ -755,10 +779,10 @@ namespace Bitclout
                 bool deleted = false;
                 try
                 {
-                    var elements = TwitterChromeDriver.FindElements(By.XPath("//div[@class='css-1dbjc4n r-1loqt21 r-18u37iz r-1ny4l3l r-ymttw5 r-1yzf0co r-o7ynqc r-6416eg r-13qz1uu']"));
+                    var elements = TwitterChromeDriver.FindElements(By.XPath("//div[@class='css-1dbjc4n r-1panhkp r-1loqt21 r-18u37iz r-1ny4l3l r-ymttw5 r-1yzf0co r-o7ynqc r-6416eg r-13qz1uu']"));
                     foreach (var item in elements)
                     {
-                        if (item.Text.Contains("Удалить"))
+                        if (item.Text.Contains("Удалить") || item.Text.Contains("Delete"))
                         {
                             item.Click();
                             deleted = true;
@@ -770,10 +794,11 @@ namespace Bitclout
                 }
                 catch (Exception)
                 {
-                    var elements = TwitterChromeDriver.FindElements(By.XPath("//div[@class='css-1dbjc4n r-1panhkp r-1loqt21 r-18u37iz r-1ny4l3l r-ymttw5 r-1yzf0co r-o7ynqc r-6416eg r-13qz1uu']"));
+                    //var elements = TwitterChromeDriver.FindElements(By.XPath("//div[@class='css-1dbjc4n r-1panhkp r-1loqt21 r-18u37iz r-1ny4l3l r-ymttw5 r-1yzf0co r-o7ynqc r-6416eg r-13qz1uu']"));
+                    var elements = TwitterChromeDriver.FindElements(By.XPath("//div[@class='css-1dbjc4n r-1loqt21 r-18u37iz r-1ny4l3l r-ymttw5 r-1yzf0co r-o7ynqc r-6416eg r-13qz1uu']"));
                     foreach (var item in elements)
                     {
-                        if (item.Text.Contains("Удалить"))
+                        if (item.Text.Contains("Удалить") || item.Text.Contains("Delete"))
                         {
                             item.Click();
                             deleted = true;
@@ -782,7 +807,6 @@ namespace Bitclout
                     }
                     if (!deleted) throw new Exception("Твит не удален.");
                     Thread.Sleep(MainWindowViewModel.settings.DelayTime);
-
                 }
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Подтверждаем");
@@ -790,28 +814,15 @@ namespace Bitclout
                 try
                 {
                     TwitterChromeDriver.FindElement(By.XPath("//div[@class='css-18t94o4 css-1dbjc4n r-1dgebii r-42olwf r-sdzlij r-1phboty r-rs99b7 r-16y2uox r-1w2pmg r-ero68b r-1gg2371 r-1ny4l3l r-1fneopy r-o7ynqc r-6416eg r-lrvibr']")).Click();
-                    Thread.Sleep(MainWindowViewModel.settings.DelayTime);
                 }
                 catch (Exception)
                 {
                     TwitterChromeDriver.FindElement(By.XPath("//div[@class='css-18t94o4 css-1dbjc4n r-1ucxkr8 r-42olwf r-sdzlij r-1phboty r-rs99b7 r-16y2uox r-1w2pmg r-ero68b r-1gg2371 r-1ny4l3l r-1fneopy r-o7ynqc r-6416eg r-lrvibr']")).Click();
-                    Thread.Sleep(MainWindowViewModel.settings.DelayTime);
                 }
 
-                try
-                {
-                    if (TwitterChromeDriver.FindElement(By.XPath("//div[@class='css-18t94o4 css-1dbjc4n r-1ucxkr8 r-42olwf r-sdzlij r-1phboty r-rs99b7 r-16y2uox r-1w2pmg r-ero68b r-1gg2371 r-1ny4l3l r-1fneopy r-o7ynqc r-6416eg r-lrvibr']")) != null)
-                    {
-                        IsTweetSend = false;
-                        NLog.LogManager.GetCurrentClassLogger().Info($"Tweet Успешно удален");
-                        return true;
-                    }
-                    else throw new Exception("Твит не удален");
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
+                IsTweetSend = false;
+                NLog.LogManager.GetCurrentClassLogger().Info($"Tweet Успешно удален");
+                return true;
             }
             catch (Exception ex)
             {

@@ -12,5 +12,30 @@ namespace Bitclout
             InitializeComponent();
             DataContext = new MainWindowViewModel();
         }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            try
+            {
+                (DataContext as MainWindowViewModel).chromeWorker.TwitterChromeDriver.Quit();
+            }
+            catch (System.Exception)
+            {
+            }
+            try
+            {
+                (DataContext as MainWindowViewModel).chromeWorker.RegChromeDriver.Quit();
+            }
+            catch (System.Exception)
+            {
+            }
+            try
+            {
+                (DataContext as MainWindowViewModel).chromeWorker.BitcloutChromeDriver.Quit();
+            }
+            catch (System.Exception)
+            {
+            }
+        }
     }
 }

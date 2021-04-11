@@ -15,14 +15,28 @@ namespace Bitclout
 {
     public class MainWindowViewModel : INotifyPropertyChanged
     {
-        ChromeWorker chromeWorker = new ChromeWorker();
+        public ChromeWorker chromeWorker = new ChromeWorker();
         public static Settings settings { get; set; } = Settings.LoadSettings();
 
         bool bitclout = false;
         bool twitter = false;
         bool stop = false;
 
-        public ObservableCollection<UserRegistrationInfo> RegistrationInfo { get; set; } = new ObservableCollection<UserRegistrationInfo>(UserRegistrationInfo.LoadUsers());
+        ObservableCollection<UserRegistrationInfo> _RegistrationInfo = new ObservableCollection<UserRegistrationInfo>(UserRegistrationInfo.LoadUsers());
+
+        public ObservableCollection<UserRegistrationInfo> RegistrationInfo
+        {
+            get
+            {
+                return _RegistrationInfo;
+            }
+            set
+            {
+                _RegistrationInfo = value;
+                if (value != null)
+                    UserRegistrationInfo.SaveUsers(RegistrationInfo.ToList());
+            }
+        }
 
         public static ObservableCollection<UserInfo> RegistredUsers { get; set; } = new ObservableCollection<UserInfo>();
 
@@ -215,7 +229,7 @@ namespace Bitclout
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Используются следующие данные для регистрации {user.Name}");
 
-               
+
 
                 var usr = chromeWorker.RegisterNewBitсlout(user);
                 NLog.LogManager.GetCurrentClassLogger().Info($"При регистрации получены данные для пользователя {usr.Name}");
