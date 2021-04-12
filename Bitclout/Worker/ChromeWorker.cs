@@ -252,77 +252,47 @@ namespace Bitclout
                 RegChromeDriver.FindElement(By.XPath("//input[@class='form-control fs-15px lh-15px p-10px w-25 text-right ng-untouched ng-pristine ng-valid']")).Clear();//Очищаем ввод процента
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
-                RegChromeDriver.FindElement(By.XPath("//input[@class='form-control fs-15px lh-15px p-10px w-25 text-right ng-pristine ng-valid ng-touched']")).SendKeys("99");//Ставим 0
+                RegChromeDriver.FindElement(By.XPath("//input[@class='form-control fs-15px lh-15px p-10px w-25 text-right ng-pristine ng-valid ng-touched']")).SendKeys("0");//Ставим 0
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Копируем публичный код");
                 userInfo.PublicKey = RegChromeDriver.FindElement(By.XPath("//div[@class='mt-10px d-flex align-items-center update-profile__pub-key fc-muted fs-110px']")).Text;//Копируем публичный ключ
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
-                NLog.LogManager.GetCurrentClassLogger().Info($"Пробуем сохранить профиль");
-                RegChromeDriver.FindElement(By.XPath("//a[@class='btn btn-primary btn-lg font-weight-bold fs-15px mt-5px']")).Click();//Пробем сохранить
-                Thread.Sleep(MainWindowViewModel.settings.DelayTime * 2);
-
-                try
-                {
-                    NLog.LogManager.GetCurrentClassLogger().Info($"Пробуем найти окно с ошибкой");
-                    if (RegChromeDriver.FindElements(By.XPath("//div[@class='swal2-html-container']")).Count != 0)//Если есть элемнт неудачного сохранения
-                    {
-                        throw new Exception("Не прислал мерлин");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    NLog.LogManager.GetCurrentClassLogger().Info(ex, $"Произошла ошбка в отправке Bitclout на аккаунт");
-                    throw new Exception("Не удалось отправить Bitclout");
-                }
-
-                userInfo.USDBuy = BuyCreatorCoins(userInfo.Name);//Покупаем коины пользователя
-
-                NLog.LogManager.GetCurrentClassLogger().Info($"Обновляем страницу профиля");
-                RegChromeDriver.Navigate().GoToUrl($"https://bitclout.com/update-profile");//Страница реги
-                Thread.Sleep(MainWindowViewModel.settings.DelayTime);
-
-                NLog.LogManager.GetCurrentClassLogger().Info($"Изменяем комиссию");
-                RegChromeDriver.FindElement(By.XPath("//input[@class='form-control fs-15px lh-15px p-10px w-25 text-right ng-untouched ng-pristine ng-valid']")).Clear();//Очищаем ввод процента
-                Thread.Sleep(MainWindowViewModel.settings.DelayTime);
-
-                NLog.LogManager.GetCurrentClassLogger().Info($"Ставим комиссию 0");
-                RegChromeDriver.FindElement(By.XPath("//input[@class='form-control fs-15px lh-15px p-10px w-25 text-right ng-pristine ng-valid ng-touched']")).SendKeys("0");//Ставим 0
-                Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+                userInfo.USDBuy = BuyCreatorCoins(userInfo.Name);
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Пробуем сохранить профиль");
                 RegChromeDriver.FindElement(By.XPath("//a[@class='btn btn-primary btn-lg font-weight-bold fs-15px mt-5px']")).Click();//Пробем сохранить
 
                 bool buy = false;
-                for (int i = 0; i < MainWindowViewModel.settings.DelayTime * 2 / 1000; i++)
+                for (int i = 0; i < MainWindowViewModel.settings.DelayTime * 2 / 100; i++)
                 {
                     if (RegChromeDriver.FindElements(By.XPath("//i[@class='far fa-check-circle fa-lg fc-blue ml-10px']")).Count == 1 || RegChromeDriver.FindElements(By.XPath("//i[@class='far fa-check-circle fa-lg fc-blue ml-10px ng-star-inserted']")).Count == 1)
                     {
                         buy = ConfirmBuy();
                         break;
                     }
-                    Thread.Sleep(1000);
+                    Thread.Sleep(100);
                 }
 
-                if (!buy) throw new Exception("Не удалось продать");
-
-                if (!SellCreatorCoins(userInfo.Name))
-                    SellCreatorCoins(userInfo.Name);
-
-                if (MainWindowViewModel.settings.IsSecondBuy)
+                if (buy)
                 {
-                    userInfo.USDBuy = BuyCreatorCoins(userInfo.Name);
-                    Thread.Sleep(MainWindowViewModel.settings.BuyWait);
-
-                    bool buy1 = ConfirmBuy();
-
-                    Thread.Sleep(MainWindowViewModel.settings.SellWait);
-
-                    if (buy)
-                        if (!SellCreatorCoins(userInfo.Name))
-                            SellCreatorCoins(userInfo.Name);
+                    try
+                    {
+                        NLog.LogManager.GetCurrentClassLogger().Info($"Пробуем найти окно с ошибкой");
+                        if (RegChromeDriver.FindElements(By.XPath("//div[@class='swal2-html-container']")).Count != 0)//Если есть элемнт неудачного сохранения
+                        {
+                            throw new Exception("Не прислал мерлин");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        NLog.LogManager.GetCurrentClassLogger().Info(ex, $"Произошла ошбка в отправке Bitclout на аккаунт");
+                        throw new Exception("Не удалось отправить Bitclout");
+                    }
                 }
+
+                if (!buy) throw new Exception("Не удалось купить");
 
                 EndRegistration(user.Name);
                 return userInfo;
