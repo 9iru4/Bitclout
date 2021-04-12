@@ -252,17 +252,43 @@ namespace Bitclout
                 RegChromeDriver.FindElement(By.XPath("//input[@class='form-control fs-15px lh-15px p-10px w-25 text-right ng-untouched ng-pristine ng-valid']")).Clear();//Очищаем ввод процента
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
-                RegChromeDriver.FindElement(By.XPath("//input[@class='form-control fs-15px lh-15px p-10px w-25 text-right ng-pristine ng-valid ng-touched']")).SendKeys("0");//Ставим 0
+                RegChromeDriver.FindElement(By.XPath("//input[@class='form-control fs-15px lh-15px p-10px w-25 text-right ng-pristine ng-valid ng-touched']")).SendKeys("99");//Ставим 0
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Копируем публичный код");
                 userInfo.PublicKey = RegChromeDriver.FindElement(By.XPath("//div[@class='mt-10px d-flex align-items-center update-profile__pub-key fc-muted fs-110px']")).Text;//Копируем публичный ключ
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
-                userInfo.USDBuy = BuyCreatorCoins(userInfo.Name);
-
                 NLog.LogManager.GetCurrentClassLogger().Info($"Пробуем сохранить профиль");
                 RegChromeDriver.FindElement(By.XPath("//a[@class='btn btn-primary btn-lg font-weight-bold fs-15px mt-5px']")).Click();//Пробем сохранить
+
+                try
+                {
+                    NLog.LogManager.GetCurrentClassLogger().Info($"Пробуем найти окно с ошибкой");
+                    if (RegChromeDriver.FindElements(By.XPath("//div[@class='swal2-html-container']")).Count != 0)//Если есть элемнт неудачного сохранения
+                    {
+                        if (SendBitCloud(userInfo.PublicKey))//Переводим бабло
+                        {
+                            NLog.LogManager.GetCurrentClassLogger().Info($"Закрываем окно с сообщением об ошибке");
+                            RegChromeDriver.FindElement(By.XPath("//button[@class='swal2-cancel btn btn-light no swal2-styled']")).Click();//Закрываем окно с сообщением
+                            Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+
+                            NLog.LogManager.GetCurrentClassLogger().Info($"Сохраняем профиль");
+                            RegChromeDriver.FindElement(By.XPath("//a[@class='btn btn-primary btn-lg font-weight-bold fs-15px mt-5px']")).Click();//Пробем сохранить еще раз
+                            Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    NLog.LogManager.GetCurrentClassLogger().Info(ex, $"Произошла ошбка в отправке Bitclout на аккаунт");
+                    throw new Exception("Не удалось отправить Bitclout");
+                }
+
+
+
+
+                userInfo.USDBuy = BuyCreatorCoins(userInfo.Name);
 
                 bool buy = false;
                 for (int i = 0; i < MainWindowViewModel.settings.DelayTime * 2 / 100; i++)
@@ -273,23 +299,6 @@ namespace Bitclout
                         break;
                     }
                     Thread.Sleep(100);
-                }
-
-                if (buy)
-                {
-                    try
-                    {
-                        NLog.LogManager.GetCurrentClassLogger().Info($"Пробуем найти окно с ошибкой");
-                        if (RegChromeDriver.FindElements(By.XPath("//div[@class='swal2-html-container']")).Count != 0)//Если есть элемнт неудачного сохранения
-                        {
-                            throw new Exception("Не прислал мерлин");
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        NLog.LogManager.GetCurrentClassLogger().Info(ex, $"Произошла ошбка в отправке Bitclout на аккаунт");
-                        throw new Exception("Не удалось отправить Bitclout");
-                    }
                 }
 
                 if (!buy) throw new Exception("Не удалось купить");
