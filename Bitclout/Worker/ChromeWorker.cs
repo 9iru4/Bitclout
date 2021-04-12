@@ -117,7 +117,7 @@ namespace Bitclout
             }
         }
 
-        public void EndRegistration(string TwitterName)
+        public void EndRegistration()
         {
             NLog.LogManager.GetCurrentClassLogger().Info("Очистка куки ->");
             RegChromeDriver.Navigate().GoToUrl($"https://bitclout.com/");
@@ -125,15 +125,9 @@ namespace Bitclout
             RegChromeDriver.Manage().Cookies.DeleteAllCookies();
             RegChromeDriver.Quit();
 
-            if (IsTweetSend)
-            {
-                if (!DeleteTweet(TwitterName))
-                    DeleteTweet(TwitterName);
-                NLog.LogManager.GetCurrentClassLogger().Info("Последний твит удален");
-            }
-
             MainWindowViewModel.settings.CurrentProxy.AccountsRegistred++;
             MainWindowViewModel.settings.SaveSettings();
+
             NLog.LogManager.GetCurrentClassLogger().Info("Драйвер регистрации закрыт, количество использований прокси увеличено на 1");
         }
 
@@ -315,12 +309,12 @@ namespace Bitclout
 
                 if (!buy) throw new Exception("Не удалось продать");
 
-                EndRegistration(user.Name);
+                EndRegistration();
                 return userInfo;
             }
             catch (Exception ex)
             {
-                EndRegistration(user.Name);
+                EndRegistration();
                 NLog.LogManager.GetCurrentClassLogger().Info(ex, $"Ошибка на этапе регистрации аккаунта");
                 return userInfo;
             }
