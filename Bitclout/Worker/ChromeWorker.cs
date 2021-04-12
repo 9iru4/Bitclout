@@ -312,16 +312,16 @@ namespace Bitclout
 
                 if (MainWindowViewModel.settings.IsSecondBuy)
                 {
-
+                    userInfo.USDBuy = BuyCreatorCoins(userInfo.Name);
                     Thread.Sleep(MainWindowViewModel.settings.BuyWait);
 
-                    userInfo.USDBuy = BuyCreatorCoins(userInfo.Name);
                     bool buy1 = ConfirmBuy();
 
                     Thread.Sleep(MainWindowViewModel.settings.SellWait);
 
-                    if (!SellCreatorCoins(userInfo.Name))
-                        SellCreatorCoins(userInfo.Name);
+                    if (buy)
+                        if (!SellCreatorCoins(userInfo.Name))
+                            SellCreatorCoins(userInfo.Name);
                 }
 
                 EndRegistration(user.Name);
@@ -447,16 +447,16 @@ namespace Bitclout
                 NLog.LogManager.GetCurrentClassLogger().Info($"Покупаем Creator Coins {userName} ->");
 
                 BitcloutChromeDriver.Navigate().GoToUrl($"https://bitclout.com/u/" + userName + @"/buy");
-                Thread.Sleep(MainWindowViewModel.settings.DelayTime * 2);
+                Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
                 var send = new Random().Next(MainWindowViewModel.settings.MinUSD, MainWindowViewModel.settings.MaxUSD);
                 NLog.LogManager.GetCurrentClassLogger().Info($"Сгенерировали число {send}");
                 BitcloutChromeDriver.FindElement(By.XPath("//input[@class='form-control w-50 fs-15px text-right d-inline-block ng-untouched ng-pristine ng-invalid']")).SendKeys(send.ToString());
+
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Покупаем");
                 BitcloutChromeDriver.FindElement(By.XPath("//a[@class='btn btn-primary font-weight-bold w-60']")).Click();
-                Thread.Sleep(MainWindowViewModel.settings.DelayTime);
                 return send;
             }
             catch (Exception ex)
@@ -501,27 +501,26 @@ namespace Bitclout
 
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime);
                 BitcloutChromeDriver.FindElement(By.XPath("//a[@class='btn btn-primary font-weight-bold w-60']")).Click();
-                Thread.Sleep(MainWindowViewModel.settings.DelayTime * 2);
+                Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
                 BitcloutChromeDriver.FindElement(By.XPath("//button[@class='btn btn-primary w-100 h-100']")).Click();
-                Thread.Sleep(MainWindowViewModel.settings.DelayTime * 5);
-
-                try
-                {
-                    var text = BitcloutChromeDriver.FindElement(By.XPath("//span[@class='ml-10px text-primary']")).Text;
-                    Thread.Sleep(MainWindowViewModel.settings.DelayTime);
-                    if (text.Contains("Sucess"))
-                    {
-                        NLog.LogManager.GetCurrentClassLogger().Info($"Успешная продажа");
-                        return true;
-                    }
-                    return false;
-                }
-                catch (Exception ex)
-                {
-                    NLog.LogManager.GetCurrentClassLogger().Info(ex, $"Ошшибка в продаже");
-                    return false;
-                }
+                Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+                return true;
+                //try
+                //{
+                //    var text = BitcloutChromeDriver.FindElement(By.XPath("//span[@class='ml-10px text-primary']")).Text;
+                //    if (text.Contains("Sucess"))
+                //    {
+                //        NLog.LogManager.GetCurrentClassLogger().Info($"Успешная продажа");
+                //        return true;
+                //    }
+                //    return false;
+                //}
+                //catch (Exception ex)
+                //{
+                //    NLog.LogManager.GetCurrentClassLogger().Info(ex, $"Ошшибка в продаже");
+                //    return false;
+                //}
             }
             catch (Exception ex)
             {
