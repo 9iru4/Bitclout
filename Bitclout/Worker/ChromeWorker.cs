@@ -285,10 +285,22 @@ namespace Bitclout
                     throw new Exception("Не удалось отправить Bitclout");
                 }
 
+                userInfo.USDBuy = BuyCreatorCoins(userInfo.Name);//Покупаем коины пользователя
 
+                NLog.LogManager.GetCurrentClassLogger().Info($"Обновляем страницу профиля");
+                RegChromeDriver.Navigate().GoToUrl($"https://bitclout.com/update-profile");//Страница реги
+                Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
+                NLog.LogManager.GetCurrentClassLogger().Info($"Изменяем комиссию");
+                RegChromeDriver.FindElement(By.XPath("//input[@class='form-control fs-15px lh-15px p-10px w-25 text-right ng-untouched ng-pristine ng-valid']")).Clear();//Очищаем ввод процента
+                Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
-                userInfo.USDBuy = BuyCreatorCoins(userInfo.Name);
+                NLog.LogManager.GetCurrentClassLogger().Info($"Ставим комиссию 0");
+                RegChromeDriver.FindElement(By.XPath("//input[@class='form-control fs-15px lh-15px p-10px w-25 text-right ng-pristine ng-valid ng-touched']")).SendKeys("0");//Ставим 0
+                Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+
+                NLog.LogManager.GetCurrentClassLogger().Info($"Пробуем сохранить профиль");
+                RegChromeDriver.FindElement(By.XPath("//a[@class='btn btn-primary btn-lg font-weight-bold fs-15px mt-5px']")).Click();//Пробем сохранить
 
                 bool buy = false;
                 for (int i = 0; i < MainWindowViewModel.settings.DelayTime * 2 / 100; i++)
@@ -301,7 +313,7 @@ namespace Bitclout
                     Thread.Sleep(100);
                 }
 
-                if (!buy) throw new Exception("Не удалось купить");
+                if (!buy) throw new Exception("Не удалось продать");
 
                 EndRegistration(user.Name);
                 return userInfo;
