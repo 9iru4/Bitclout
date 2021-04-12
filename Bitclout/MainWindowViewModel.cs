@@ -218,7 +218,7 @@ namespace Bitclout
             }
             catch (Exception ex)
             {
-                if (RegistrationInfo.Count == 0)
+                if (ex.Message == "noproxy" ||RegistrationInfo.Count == 0)
                 {
                     stop = true;
                     StartEnabled = true;

@@ -18,7 +18,7 @@ namespace Bitclout.Worker
             try
             {
                 NLog.LogManager.GetCurrentClassLogger().Info($"Делаем запрос на получение прокси ->");
-                WebRequest request = WebRequest.Create("https://proxy6.net/api/" + MainWindowViewModel.settings.ProxyApiKey + "/buy?count=1&period=3&country=us");
+                WebRequest request = WebRequest.Create("https://proxy6.net/api/" + MainWindowViewModel.settings.ProxyApiKey + "/buy?count=1&period=3&country=" + MainWindowViewModel.settings.ProxyCode);
                 WebResponse response = request.GetResponse();
                 using (Stream stream = response.GetResponseStream())
                 {

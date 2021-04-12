@@ -169,7 +169,6 @@ namespace Bitclout.Worker
         /// </summary>
         public static PhoneNumber DeclinePhone(PhoneNumber phoneNumber)
         {
-            //WebRequest request = WebRequest.Create("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiKey + "&action=setStatus&status=-1&id=" + Id);//activate number
             WebRequest request = WebRequest.Create("https://smshub.org/stubs/handler_api.php?api_key=" + ApiKey + "&action=setStatus&status=8&id=" + phoneNumber.ID);
             WebResponse response = request.GetResponse();
             using (Stream stream = response.GetResponseStream())

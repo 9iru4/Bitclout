@@ -50,6 +50,8 @@
                     <TextBox HorizontalAlignment="Left" Text="{Binding settings.MaxUSD}" Height="23" Margin="233,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="54"/>
                     <Label Content="Min" HorizontalAlignment="Left" Margin="174,14,0,0" VerticalAlignment="Top"/>
                     <Label Content="Max" HorizontalAlignment="Left" Margin="233,14,0,0" VerticalAlignment="Top"/>
+                    <Label Content="ProxyCode" HorizontalAlignment="Left" Margin="454,39,0,0" VerticalAlignment="Top"/>
+                    <TextBox HorizontalAlignment="Left" Height="23" Margin="526,39,0,0" TextWrapping="Wrap" Text="{Binding settings.ProxyCode}" VerticalAlignment="Top" Width="50"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Пользователи">

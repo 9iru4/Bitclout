@@ -40,7 +40,7 @@ namespace Bitclout
                 ChromeOptions options = new ChromeOptions();
                 if (MainWindowViewModel.settings.CurrentProxy == null || MainWindowViewModel.settings.CurrentProxy.AccountsRegistred > 1)//если нету или активаций больше двух
                 {
-                    if (MainWindowViewModel.settings.CurrentProxy.AccountsRegistred > 1)//Удаляем прокси с сайта
+                    if (MainWindowViewModel.settings.CurrentProxy != null && MainWindowViewModel.settings.CurrentProxy.AccountsRegistred > 1)//Удаляем прокси с сайта
                     {
                         if (ProxyWorker.DeleteProxy(MainWindowViewModel.settings.CurrentProxy))//если удалили занулляем
                             MainWindowViewModel.settings.CurrentProxy = null;
@@ -49,6 +49,8 @@ namespace Bitclout
                     MainWindowViewModel.settings.SaveSettings();
                 }
 
+                if (MainWindowViewModel.settings.CurrentProxy.StatusCode == "Error active proxy allow ")
+                    throw new Exception("noproxy");
                 options.AddArguments("--proxy-server=http://" + MainWindowViewModel.settings.CurrentProxy.GetAddress());
                 //options.AddExtension("proxy.zip");
                 options.AddArguments("--incognito");
@@ -143,9 +145,10 @@ namespace Bitclout
             userInfo.Description = user.Description;
             userInfo.UserPhotoPath = user.PhotoPath;
 
+            PhoneNumber pn = null;
             try
             {
-                PhoneNumber pn = null;
+
                 while (pn == null)//Получаем номер, пока не получим
                 {
                     pn = PhoneWorker.GetPhoneNumber(ServiceCodes.lt);
@@ -153,7 +156,7 @@ namespace Bitclout
                 }
 
                 if (!InitializeRegChromeDriver())
-                    throw new Exception("Не удалось инициализировать драйвер регистрации");
+                    throw new Exception("noproxy");
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Переходим на страницу регистрации");
                 RegChromeDriver.Navigate().GoToUrl($"https://bitclout.com/sign-up");//Страница реги
@@ -255,6 +258,7 @@ namespace Bitclout
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Пробуем сохранить профиль");
                 RegChromeDriver.FindElement(By.XPath("//a[@class='btn btn-primary btn-lg font-weight-bold fs-15px mt-5px']")).Click();//Пробем сохранить
+                Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
                 try
                 {
@@ -280,6 +284,9 @@ namespace Bitclout
                 }
 
                 userInfo.USDBuy = BuyCreatorCoins(userInfo.Name);//Покупаем коины пользователя
+
+                if (userInfo.USDBuy == 0)
+                    throw new Exception("Не удалось купить коины");
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Обновляем страницу профиля");
                 RegChromeDriver.Navigate().GoToUrl($"https://bitclout.com/update-profile");//Страница реги
@@ -315,6 +322,9 @@ namespace Bitclout
             catch (Exception ex)
             {
                 EndRegistration();
+                if (pn.Number == pn.Code)
+                    PhoneWorker.DeclinePhone(pn);
+                throw ex;
                 NLog.LogManager.GetCurrentClassLogger().Info(ex, $"Ошибка на этапе регистрации аккаунта");
                 return userInfo;
             }
@@ -430,6 +440,9 @@ namespace Bitclout
             try
             {
                 NLog.LogManager.GetCurrentClassLogger().Info($"Покупаем Creator Coins {userName} ->");
+
+                BitcloutChromeDriver.Navigate().GoToUrl($"https://bitclout.com/u/" + userName + @"/buy");
+                Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
                 BitcloutChromeDriver.Navigate().GoToUrl($"https://bitclout.com/u/" + userName + @"/buy");
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime);

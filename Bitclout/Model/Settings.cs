@@ -241,6 +241,23 @@ namespace Bitclout.Model
             }
         }
 
+        string _ProxyCode = "us";
+        /// <summary>
+        /// КОд страны прокси
+        /// </summary>
+        public string ProxyCode
+        {
+            get
+            {
+                return _ProxyCode;
+            }
+            set
+            {
+                _ProxyCode = value;
+                OnPropertyChanged("ProxyCode");
+            }
+        }
+
         public Settings()
         {
             SMSApiKey = "";
