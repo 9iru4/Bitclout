@@ -67,21 +67,8 @@ namespace Bitclout
                         {
                             StartEnabled = false;
                             stop = false;
-                            while (!stop)
-                            {
-                                if (bitclout)
-                                {
-                                    NLog.LogManager.GetCurrentClassLogger().Info("Запуск автоматической регистрации ->");
-                                    BotStart();
-                                }
-                                else
-                                {
-                                    NLog.LogManager.GetCurrentClassLogger().Info($"Не запущен Bitclout {bitclout}");
-                                    MessageBox.Show("Не запущен твитер или битклоут");
-                                    stop = true;
-                                    StartEnabled = true;
-                                }
-                            }
+
+                            BotStart();
                         });
 
                     }));
@@ -216,6 +203,20 @@ namespace Bitclout
 
                     NLog.LogManager.GetCurrentClassLogger().Info($"Конец автоматической регистрации");
                 }
+                catch (OutOfProxyException ex)
+                {
+                    if (ProxyWorker.ChangeProxyCountry())
+                    {
+                        NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
+                        continue;
+                    }
+                    else
+                    {
+                        NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
+                        MessageBox.Show(ex.Message);
+                        break;
+                    }
+                }
                 catch (FailedInitializeBitcloutChromeDriver ex)
                 {
                     NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
@@ -267,6 +268,21 @@ namespace Bitclout
                     continue;
                 }
                 catch (FailConfirmBuyException ex)
+                {
+                    NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
+                    continue;
+                }
+                catch (FailInitializeRegChromeDriverException ex)
+                {
+                    NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
+                    continue;
+                }
+                catch (FailedSaveProfileException ex)
+                {
+                    NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
+                    continue;
+                }
+                catch (Exception ex)
                 {
                     NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
                     continue;
