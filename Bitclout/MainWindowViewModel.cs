@@ -1,4 +1,5 @@
-﻿using Bitclout.Model;
+﻿using Bitclout.Exceptions;
+using Bitclout.Model;
 using Bitclout.Worker;
 using Microsoft.Win32;
 using System;
@@ -100,21 +101,6 @@ namespace Bitclout
                             stop = true;
                             StartEnabled = true;
                         });
-
-                    }));
-            }
-        }
-
-        private RelayCommand _StartBitcloutCommand;
-        public RelayCommand StartBitcloutCommand
-        {
-            get
-            {
-                return _StartBitcloutCommand ??
-                    (_StartBitcloutCommand = new RelayCommand(obj =>
-                    {
-                        NLog.LogManager.GetCurrentClassLogger().Info("Запуск драйвера для Bitclout ->");
-                        bitclout = chromeWorker.StartBitcloutChromeDriver();
                     }));
             }
         }
@@ -189,7 +175,7 @@ namespace Bitclout
                             var str = sr.ReadLine().Split('|');
                             if (RegistrationInfo.Where(x => x.Name == str[0]).FirstOrDefault() == null)
                             {
-                                RegistrationInfo.Add(new UserRegistrationInfo(str[0], str[1], str[2], str[3], str[4]));
+                                RegistrationInfo.Add(new UserRegistrationInfo(str[0], str[1]));
                                 NLog.LogManager.GetCurrentClassLogger().Info($"Данные для {str[0]} успешно считаны");
                             }
                         }
@@ -208,24 +194,92 @@ namespace Bitclout
 
         void BotStart()
         {
-            try
+            while (!stop)
             {
-                RegistredUsers.Add(chromeWorker.RegisterNewBitсlout(RegistrationInfo[0]));
-                Application.Current.Dispatcher.Invoke(() => { RegistrationInfo.RemoveAt(0); });
-                UserRegistrationInfo.SaveUsers(RegistrationInfo.ToList());
-                SaveRegistredUser();
-                NLog.LogManager.GetCurrentClassLogger().Info($"Конец автоматической регистрации");
-            }
-            catch (Exception ex)
-            {
-                if (ex.Message == "noproxy" ||RegistrationInfo.Count == 0)
+                try
                 {
-                    stop = true;
-                    StartEnabled = true;
-                }
-                NLog.LogManager.GetCurrentClassLogger().Info(ex, $"Произошла ошибка при регистрации");
-            }
+                    NLog.LogManager.GetCurrentClassLogger().Info("Запуск драйвера для Bitclout ->");
 
+                    if (!bitclout)
+                    {
+                        chromeWorker.InitializeBitcloutChromeDriver();
+                        chromeWorker.LoginToBitclout();
+                        bitclout = true;
+                    }
+
+                    if (RegistrationInfo.Count == 0)
+                        throw new OutOfRegistrationInfoException("Закончились аккаунты для регистрации");
+
+
+                    RegistredUsers.Add(chromeWorker.RegisterNewBitсlout(RegistrationInfo[0]));
+
+
+                    NLog.LogManager.GetCurrentClassLogger().Info($"Конец автоматической регистрации");
+                }
+                catch (FailedInitializeBitcloutChromeDriver ex)
+                {
+                    NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
+                    MessageBox.Show(ex.Message);
+                    break;
+                }
+                catch (OutOfRegistrationInfoException ex)
+                {
+                    NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
+                    MessageBox.Show(ex.Message);
+                    break;
+                }
+                catch (FailToStartBitcloutChromeDriverException ex)
+                {
+                    NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
+                    MessageBox.Show(ex.Message);
+                    break;
+                }
+                catch (NoPhoneBalanceException ex)
+                {
+                    NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
+                    MessageBox.Show(ex.Message);
+                    break;
+                }
+                catch (PhoneCodeNotSendException ex)
+                {
+                    NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
+                    continue;
+                }
+                catch (BadProxyException ex)
+                {
+                    NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
+                    settings.CurrentProxy.AccountsRegistred = 2;
+                    continue;
+                }
+                catch (NameAlreadyExistException ex)
+                {
+                    NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
+                    continue;
+                }
+                catch (FailSendBitcloutException ex)
+                {
+                    NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
+                    continue;
+                }
+                catch (FailPrepareToBuyCreatorCoinsException ex)
+                {
+                    NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
+                    continue;
+                }
+                catch (FailConfirmBuyException ex)
+                {
+                    NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
+                    continue;
+                }
+                finally
+                {
+                    Application.Current.Dispatcher.Invoke(() => { RegistrationInfo.RemoveAt(0); });
+
+                    UserRegistrationInfo.SaveUsers(RegistrationInfo.ToList());
+
+                    SaveRegistredUser();
+                }
+            }
         }
     }
 }

@@ -5,59 +5,48 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Bitclout"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" Closing="Window_Closing">
+        ResizeMode="NoResize"
+        Title="MainWindow" Height="322" Width="553.6" Closing="Window_Closing">
     <Grid>
-        <TabControl HorizontalAlignment="Left" Height="420" VerticalAlignment="Top" Width="794" Margin="0,0,-0.4,0">
+        <TabControl HorizontalAlignment="Left" Height="292" VerticalAlignment="Top" Width="547">
             <TabItem Header="Работа программы">
                 <Grid Background="#FFE5E5E5">
-                    <Button Content="Бот старт" IsEnabled="{Binding StartEnabled}" Command="{Binding StartBotCommand}" HorizontalAlignment="Left" Margin="339,227,0,0" VerticalAlignment="Top" Width="75"/>
-                    <Button Content="Bitclout старт"  Command="{Binding StartBitcloutCommand}" HorizontalAlignment="Left" Margin="307,168,0,0" VerticalAlignment="Top" Width="75"/>
-                    <Button Content="Бот стоп"  Command="{Binding StopBotCommand}" HorizontalAlignment="Left" Margin="434,227,0,0" VerticalAlignment="Top" Width="75"/>
-
-
+                    <Button Content="Бот старт" IsEnabled="{Binding StartEnabled}" Command="{Binding StartBotCommand}" HorizontalAlignment="Left" Margin="240,86,0,0" VerticalAlignment="Top" Width="75"/>
+                    <Button Content="Бот стоп"  Command="{Binding StopBotCommand}" HorizontalAlignment="Left" Margin="240,110,0,0" VerticalAlignment="Top" Width="75"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Настройки">
                 <Grid Background="#FFE5E5E5">
-                    <TextBox Text="{Binding settings.SMSApiKey}" HorizontalAlignment="Left" Height="23" Margin="174,67,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
-                    <TextBox Text="{Binding settings.TwitterApiKey}" HorizontalAlignment="Left" Height="23" Margin="174,95,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
-                    <TextBox Text="{Binding settings.ProxyApiKey}" HorizontalAlignment="Left" Height="23" Margin="174,123,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
-                    <TextBox Text="{Binding settings.ChromePath}" HorizontalAlignment="Left" Height="23" Margin="174,151,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
-                    <TextBox Text="{Binding settings.PhotosPath}" HorizontalAlignment="Left" Height="23" Margin="174,182,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
-                    <TextBox Text="{Binding settings.TwitterUserName}" HorizontalAlignment="Left" Height="23" Margin="174,210,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
-                    <TextBox Text="{Binding settings.TwitterPassword}" HorizontalAlignment="Left" Height="23" Margin="174,238,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
-                    <TextBox Text="{Binding settings.TwitterEmail}" HorizontalAlignment="Left" Height="23" Margin="174,266,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
-                    <TextBox Text="{Binding settings.BitcloutSeedPhrase}" HorizontalAlignment="Left" Height="23" Margin="174,294,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
-                    <TextBox Text="{Binding settings.DelayTime}" HorizontalAlignment="Left" Height="23" Margin="174,322,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
+                    <TextBox Text="{Binding settings.SMSApiKey}" HorizontalAlignment="Left" Height="23" Margin="127,69,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
+                    <TextBox Text="{Binding settings.ProxyApiKey}" HorizontalAlignment="Left" Height="23" Margin="127,97,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
+                    <TextBox Text="{Binding settings.ChromePath}" HorizontalAlignment="Left" Height="23" Margin="127,123,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
+                    <TextBox Text="{Binding settings.PhotosPath}" HorizontalAlignment="Left" Height="23" Margin="127,151,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
+                    <TextBox Text="{Binding settings.BitcloutSeedPhrase}" HorizontalAlignment="Left" Height="23" Margin="127,179,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
+                    <TextBox Text="{Binding settings.DelayTime}" HorizontalAlignment="Left" Height="27" Margin="310,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="91"/>
 
-                    <Label Content="SMSApiKey" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,67,0,0" Height="23"/>
-                    <Label Content="TwitterApiKey" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,95,0,0" Height="23"/>
-                    <Label Content="ProxyApiKey" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,123,0,0" Height="23"/>
-                    <Label Content="ChromePath" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,151,0,0" Height="23"/>
-                    <Label Content="PhotosPath" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,182,0,0" Height="23"/>
-                    <Label Content="TwitterUserName" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,210,0,0" Height="23"/>
-                    <Label Content="TwitterPassword" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,238,0,0" Height="23"/>
-                    <Label Content="TwitterEmail" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,266,0,0" Height="23"/>
-                    <Label Content="BitcloutSeedPhrase" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,294,0,0" Height="23"/>
-                    <Label Content="DelayTime" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,322,0,0" Height="23"/>
+                    <Label Content="SMSApiKey" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,68,0,0" Height="29"/>
+                    <Label Content="ProxyApiKey" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,97,0,0" Height="28"/>
+                    <Label Content="ChromePath" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,123,0,0" Height="26"/>
+                    <Label Content="PhotosPath" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,146,0,0" Height="28"/>
+                    <Label Content="" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,210,0,0" Height="23"/>
+                    <Label Content="Bitclout" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,174,0,0" Height="28"/>
+                    <Label Content="DelayTime" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="239,40,0,0" Height="27"/>
 
 
 
-                    <Button Command="{Binding SaveCommand}" Content="Сохранить" HorizontalAlignment="Left" Margin="351,363,0,0" VerticalAlignment="Top" Width="75"/>
+                    <Button Command="{Binding SaveCommand}" Content="Сохранить" HorizontalAlignment="Left" Margin="239,207,0,0" VerticalAlignment="Top" Width="75"/>
 
-                    <Label Content="USD Range" HorizontalAlignment="Left" Margin="51,36,0,0" VerticalAlignment="Top" Width="82"/>
-                    <TextBox HorizontalAlignment="Left" Text="{Binding settings.MinUSD}" Height="23" Margin="174,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="54"/>
-                    <TextBox HorizontalAlignment="Left" Text="{Binding settings.MaxUSD}" Height="23" Margin="233,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="54"/>
-                    <Label Content="Min" HorizontalAlignment="Left" Margin="174,14,0,0" VerticalAlignment="Top"/>
-                    <Label Content="Max" HorizontalAlignment="Left" Margin="233,14,0,0" VerticalAlignment="Top"/>
-                    <Label Content="ProxyCode" HorizontalAlignment="Left" Margin="454,39,0,0" VerticalAlignment="Top"/>
-                    <TextBox HorizontalAlignment="Left" Height="23" Margin="526,39,0,0" TextWrapping="Wrap" Text="{Binding settings.ProxyCode}" VerticalAlignment="Top" Width="50"/>
+                    <Label Content="USD Range" HorizontalAlignment="Left" Margin="51,40,0,0" VerticalAlignment="Top" Width="70" Height="27"/>
+                    <TextBox HorizontalAlignment="Left" Text="{Binding settings.MinUSD}" Height="27" Margin="127,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="54"/>
+                    <TextBox HorizontalAlignment="Left" Text="{Binding settings.MaxUSD}" Height="27" Margin="185,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="54"/>
+                    <Label Content="Min" HorizontalAlignment="Left" Margin="127,14,0,0" VerticalAlignment="Top"/>
+                    <Label Content="Max" HorizontalAlignment="Left" Margin="186,14,0,0" VerticalAlignment="Top"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Пользователи">
                 <Grid Background="#FFE5E5E5">
-                    <DataGrid ItemsSource="{Binding RegistrationInfo}" HorizontalAlignment="Left" Height="267" Margin="31,27,0,0" VerticalAlignment="Top" Width="581"/>
-                    <Button Content="Добавить" Command="{Binding AddUsersCommand}" HorizontalAlignment="Left" Margin="279,322,0,0" VerticalAlignment="Top" Width="75"/>
+                    <DataGrid ItemsSource="{Binding RegistrationInfo}" HorizontalAlignment="Left" Height="191" Margin="31,27,0,0" VerticalAlignment="Top" Width="483"/>
+                    <Button Content="Добавить" Command="{Binding AddUsersCommand}" HorizontalAlignment="Left" Margin="241,232,0,0" VerticalAlignment="Top" Width="75"/>
                 </Grid>
             </TabItem>
         </TabControl>

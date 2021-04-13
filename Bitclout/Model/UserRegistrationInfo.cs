@@ -28,23 +28,6 @@ namespace Bitclout.Model
                 OnPropertyChanged("Name");
             }
         }
-        string _TwitterName;
-
-        /// <summary>
-        /// Имя пользователя Твиттера
-        /// </summary>
-        public string TwitterName
-        {
-            get
-            {
-                return _TwitterName;
-            }
-            set
-            {
-                _TwitterName = value;
-                OnPropertyChanged("TwitterName");
-            }
-        }
 
         string _Description;
         /// <summary>
@@ -63,52 +46,15 @@ namespace Bitclout.Model
             }
         }
 
-        string _PhotoPath;
-        /// <summary>
-        /// Путь к фото пользователя
-        /// </summary>
-        public string PhotoPath
-        {
-            get
-            {
-                return _PhotoPath;
-            }
-            set
-            {
-                _PhotoPath = value;
-                OnPropertyChanged("PhotoPath");
-            }
-        }
-
-        string _TweetMessage;
-        /// <summary>
-        /// Сообщение для твита
-        /// </summary>
-        public string TweetMessage
-        {
-            get
-            {
-                return _TweetMessage;
-            }
-            set
-            {
-                _TweetMessage = value;
-                OnPropertyChanged("TweetMessage");
-            }
-        }
-
         public UserRegistrationInfo()
         {
 
         }
 
-        public UserRegistrationInfo(string name, string description, string photoPath, string twitterName, string tweetMessage)
+        public UserRegistrationInfo(string name, string description)
         {
             Name = name;
             Description = description;
-            PhotoPath = photoPath;
-            TwitterName = twitterName;
-            TweetMessage = tweetMessage;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -116,6 +62,15 @@ namespace Bitclout.Model
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+        }
+
+        public static string GeneratePhotoPath()
+        {
+            var files = Directory.GetFiles(MainWindowViewModel.settings.PhotosPath);
+
+            var rnd = new Random(DateTime.Now.Second);
+
+            return files[rnd.Next(0, files.Length)];
         }
 
         /// <summary>

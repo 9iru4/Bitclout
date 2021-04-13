@@ -93,6 +93,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Exceptions\BadProxyException.cs" />
+    <Compile Include="Exceptions\FailConfirmBuyException.cs" />
+    <Compile Include="Exceptions\FailedInitializeBitcloutChromeDriver.cs" />
+    <Compile Include="Exceptions\FailPrepareToBuyCreatorCoinsException.cs" />
+    <Compile Include="Exceptions\FailSendBitcloutException.cs" />
+    <Compile Include="Exceptions\FailToStartBitcloutChromeDriverException.cs" />
+    <Compile Include="Exceptions\NameAlreadyExistException.cs" />
+    <Compile Include="Exceptions\NoPhoneBalanceException.cs" />
+    <Compile Include="Exceptions\OutOfProxyException.cs" />
+    <Compile Include="Exceptions\OutOfRegistrationInfoException.cs" />
+    <Compile Include="Exceptions\PhoneCodeNotSendException.cs" />
     <Compile Include="Model\Proxy.cs" />
     <Compile Include="Worker\ChromeWorker.cs" />
     <Compile Include="Model\PhoneNumber.cs" />

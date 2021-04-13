@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -25,23 +26,6 @@ namespace Bitclout.Model
             {
                 _SMSApiKey = value;
                 OnPropertyChanged("SMSApiKey");
-            }
-        }
-
-        string _TwitterApiKey;
-        /// <summary>
-        /// Ключ апи для твиттера
-        /// </summary>
-        public string TwitterApiKey
-        {
-            get
-            {
-                return _TwitterApiKey;
-            }
-            set
-            {
-                _TwitterApiKey = value;
-                OnPropertyChanged("TwitterApiKey");
             }
         }
 
@@ -96,57 +80,6 @@ namespace Bitclout.Model
             }
         }
 
-        string _TwitterUserName;
-        /// <summary>
-        /// Имя пользователя Твиттера
-        /// </summary>
-        public string TwitterUserName
-        {
-            get
-            {
-                return _TwitterUserName;
-            }
-            set
-            {
-                _TwitterUserName = value;
-                OnPropertyChanged("TwitterUserName");
-            }
-        }
-
-        string _TwitterPassword;
-        /// <summary>
-        /// Пароль пользователя Твиттера
-        /// </summary>
-        public string TwitterPassword
-        {
-            get
-            {
-                return _TwitterPassword;
-            }
-            set
-            {
-                _TwitterPassword = value;
-                OnPropertyChanged("TwitterPassword");
-            }
-        }
-
-        string _TwitterEmail;
-        /// <summary>
-        /// Twitter Email
-        /// </summary>
-        public string TwitterEmail
-        {
-            get
-            {
-                return _TwitterEmail;
-            }
-            set
-            {
-                _TwitterEmail = value;
-                OnPropertyChanged("TwitterEmail");
-            }
-        }
-
         string _BitcloutSeedPhrase;
         /// <summary>
         /// Логин Bitclout
@@ -196,21 +129,6 @@ namespace Bitclout.Model
             }
         }
 
-        bool _IsSecondBuy = false;
-
-        public bool IsSecondBuy
-        {
-            get
-            {
-                return _IsSecondBuy;
-            }
-            set
-            {
-                _IsSecondBuy = value;
-                OnPropertyChanged("IsSecondBuy");
-            }
-        }
-
         int _MinUSD = 3;
 
         public int MinUSD
@@ -241,33 +159,12 @@ namespace Bitclout.Model
             }
         }
 
-        string _ProxyCode = "us";
-        /// <summary>
-        /// КОд страны прокси
-        /// </summary>
-        public string ProxyCode
-        {
-            get
-            {
-                return _ProxyCode;
-            }
-            set
-            {
-                _ProxyCode = value;
-                OnPropertyChanged("ProxyCode");
-            }
-        }
-
         public Settings()
         {
             SMSApiKey = "";
-            TwitterApiKey = "";
             ProxyApiKey = "";
             ChromePath = "";
             PhotosPath = "";
-            TwitterUserName = "";
-            TwitterPassword = "";
-            TwitterEmail = "";
             BitcloutSeedPhrase = "";
             CurrentProxy = null;
         }

@@ -1,4 +1,5 @@
-﻿using Bitclout.Model;
+﻿using Bitclout.Exceptions;
+using Bitclout.Model;
 using System;
 using System.IO;
 using System.Net;
@@ -30,38 +31,32 @@ namespace Bitclout.Worker
         /// </summary>
         public static PhoneNumber GetPhoneNumber(ServiceCodes serviceCode)
         {
-            try
+            NLog.LogManager.GetCurrentClassLogger().Info($"Получаем номер телефона для сервиса {serviceCode} ->");
+            WebRequest request = WebRequest.Create("https://smshub.org/stubs/handler_api.php?api_key=" + ApiKey + "&action=getNumber&service=" + serviceCode.ToString() + "&operator=any&country=0");
+            WebResponse response = request.GetResponse();
+            using (Stream stream = response.GetResponseStream())
             {
-                NLog.LogManager.GetCurrentClassLogger().Info($"Получаем номер телефона для сервиса {serviceCode} ->");
-                WebRequest request = WebRequest.Create("https://smshub.org/stubs/handler_api.php?api_key=" + ApiKey + "&action=getNumber&service=" + serviceCode.ToString() + "&operator=any&country=0");
-                WebResponse response = request.GetResponse();
-                using (Stream stream = response.GetResponseStream())
+                using (StreamReader reader = new StreamReader(stream))
                 {
-                    using (StreamReader reader = new StreamReader(stream))
+                    var result = reader.ReadToEnd();
+                    if (result.Contains("ACCESS_NUMBER"))
                     {
-                        var result = reader.ReadToEnd();
-                        if (result.Contains("ACCESS_NUMBER"))
+                        var num = result.Split(':');
+                        if (num[2][0] == '7')
                         {
-                            var num = result.Split(':');
-                            if (num[2][0] == '7')
-                            {
-                                num[2] = num[2].Remove(0, 1);
-                            }
-                            NLog.LogManager.GetCurrentClassLogger().Info($"Номер {num[2]} получен с результатом {num[0]}");
-                            return new PhoneNumber(num[1], num[2], num[0]);
+                            num[2] = num[2].Remove(0, 1);
                         }
-                        else
-                        {
-                            NLog.LogManager.GetCurrentClassLogger().Info($"Не удалось получить номер с результатом {result}");
-                            return null;
-                        }
+                        NLog.LogManager.GetCurrentClassLogger().Info($"Номер {num[2]} получен с результатом {num[0]}");
+                        return new PhoneNumber(num[1], num[2], num[0]);
+                    }
+                    else
+                    {
+                        NLog.LogManager.GetCurrentClassLogger().Info($"Не удалось получить номер с результатом {result}");
+                        if (result.Contains("NO_BALANCE"))
+                            throw new NoPhoneBalanceException("Недостаточно денег на телефоне.");
+                        return null;
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                NLog.LogManager.GetCurrentClassLogger().Info(ex, $"Ошибка при получении номера");
-                return null;
             }
         }
 
@@ -70,26 +65,18 @@ namespace Bitclout.Worker
         /// </summary>
         public static PhoneNumber MessageSend(PhoneNumber phoneNumber)
         {
-            try
-            {
-                WebRequest request = WebRequest.Create("https://smshub.org/stubs/handler_api.php?api_key=" + ApiKey + "&action=setStatus&status=1&id=" + phoneNumber.ID);
+            WebRequest request = WebRequest.Create("https://smshub.org/stubs/handler_api.php?api_key=" + ApiKey + "&action=setStatus&status=1&id=" + phoneNumber.ID);
 
-                WebResponse response = request.GetResponse();
-                using (Stream stream = response.GetResponseStream())
+            WebResponse response = request.GetResponse();
+            using (Stream stream = response.GetResponseStream())
+            {
+                using (StreamReader reader = new StreamReader(stream))
                 {
-                    using (StreamReader reader = new StreamReader(stream))
-                    {
-                        var result = reader.ReadToEnd();
-                        phoneNumber.StatusCode = result;
+                    var result = reader.ReadToEnd();
+                    phoneNumber.StatusCode = result;
 
-                        return phoneNumber;
-                    }
+                    return phoneNumber;
                 }
-            }
-            catch (Exception)
-            {
-
-                throw;
             }
         }
 
@@ -98,38 +85,30 @@ namespace Bitclout.Worker
         /// </summary>
         public static PhoneNumber GetCode(PhoneNumber phoneNumber)
         {
-            try
-            {
-                NLog.LogManager.GetCurrentClassLogger().Info($"Получаем код от сервиса для телефона {phoneNumber.Number} ->");
-                WebRequest request = WebRequest.Create("https://smshub.org/stubs/handler_api.php?api_key=" + ApiKey + "&action=getStatus&id=" + phoneNumber.ID);//get message
+            NLog.LogManager.GetCurrentClassLogger().Info($"Получаем код от сервиса для телефона {phoneNumber.Number} ->");
+            WebRequest request = WebRequest.Create("https://smshub.org/stubs/handler_api.php?api_key=" + ApiKey + "&action=getStatus&id=" + phoneNumber.ID);//get message
 
-                WebResponse response = request.GetResponse();
-                using (Stream stream = response.GetResponseStream())
-                {
-                    using (StreamReader reader = new StreamReader(stream))
-                    {
-                        var result = reader.ReadToEnd();
-                        if (result.Contains("STATUS_OK"))
-                        {
-                            var res = result.Split(':');
-                            phoneNumber.StatusCode = res[0];
-                            phoneNumber.Code = res[1];
-                            NLog.LogManager.GetCurrentClassLogger().Info($"Для номера {phoneNumber.Number} успешно получен код {phoneNumber.Code} результатом {phoneNumber.StatusCode}");
-                        }
-                        else
-                        {
-                            phoneNumber.StatusCode = result;
-                            phoneNumber.Code = "";
-                            NLog.LogManager.GetCurrentClassLogger().Info($"Для номера {phoneNumber.Number} не удалось получить код с результатом {phoneNumber.StatusCode}");
-                        }
-                        return phoneNumber;
-                    }
-                }
-            }
-            catch (Exception ex)
+            WebResponse response = request.GetResponse();
+            using (Stream stream = response.GetResponseStream())
             {
-                NLog.LogManager.GetCurrentClassLogger().Info(ex, $"Произошла ошибка при попытке получения кода");
-                return null;
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    var result = reader.ReadToEnd();
+                    if (result.Contains("STATUS_OK"))
+                    {
+                        var res = result.Split(':');
+                        phoneNumber.StatusCode = res[0];
+                        phoneNumber.Code = res[1];
+                        NLog.LogManager.GetCurrentClassLogger().Info($"Для номера {phoneNumber.Number} успешно получен код {phoneNumber.Code} результатом {phoneNumber.StatusCode}");
+                    }
+                    else
+                    {
+                        phoneNumber.StatusCode = result;
+                        phoneNumber.Code = "";
+                        NLog.LogManager.GetCurrentClassLogger().Info($"Для номера {phoneNumber.Number} не удалось получить код с результатом {phoneNumber.StatusCode}");
+                    }
+                    return phoneNumber;
+                }
             }
         }
 
@@ -161,7 +140,7 @@ namespace Bitclout.Worker
                 NLog.LogManager.GetCurrentClassLogger().Info(ex, $"Произошла ошибка при подтверждении использования номера");
                 return null;
             }
-            
+
         }
 
         /// <summary>
