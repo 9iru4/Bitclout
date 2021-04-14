@@ -106,6 +106,7 @@
     <Compile Include="Exceptions\OutOfProxyException.cs" />
     <Compile Include="Exceptions\OutOfRegistrationInfoException.cs" />
     <Compile Include="Exceptions\PhoneCodeNotSendException.cs" />
+    <Compile Include="Exceptions\PhoneNumberAlreadyUsedException.cs" />
     <Compile Include="Model\Proxy.cs" />
     <Compile Include="Worker\ChromeWorker.cs" />
     <Compile Include="Model\PhoneNumber.cs" />

@@ -282,6 +282,11 @@ namespace Bitclout
                     NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
                     continue;
                 }
+                catch (PhoneNumberAlreadyUsedException ex)
+                {
+                    NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
+                    continue;
+                }
                 catch (Exception ex)
                 {
                     NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
@@ -289,7 +294,8 @@ namespace Bitclout
                 }
                 finally
                 {
-                    Application.Current.Dispatcher.Invoke(() => { RegistrationInfo.RemoveAt(0); });
+                    if (RegistrationInfo.Count != 0)
+                        Application.Current.Dispatcher.Invoke(() => { RegistrationInfo.RemoveAt(0); });
 
                     UserRegistrationInfo.SaveUsers(RegistrationInfo.ToList());
 

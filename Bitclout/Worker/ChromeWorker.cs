@@ -96,7 +96,6 @@ namespace Bitclout
                 RegChromeDriver.Navigate().GoToUrl($"https://bitclout.com/");
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime);
                 RegChromeDriver.Manage().Cookies.DeleteAllCookies();
-                RegChromeDriver.Quit();
             }
             catch (Exception ex)
             {
@@ -104,9 +103,7 @@ namespace Bitclout
             }
             finally
             {
-                MainWindowViewModel.settings.CurrentProxy.AccountsRegistred++;
-                MainWindowViewModel.settings.SaveSettings();
-
+                RegChromeDriver.Quit();
                 NLog.LogManager.GetCurrentClassLogger().Info("Драйвер регистрации закрыт, количество использований прокси увеличено на 1");
             }
         }
@@ -170,6 +167,17 @@ namespace Bitclout
                 RegChromeDriver.FindElement(By.XPath("//a[@class='btn btn-primary font-weight-bold fs-15px ml-10px']")).Click();//Кликаем отправить код
                 PhoneWorker.MessageSend(pn);
 
+                var errors = RegChromeDriver.FindElements(By.XPath("//div[@class='mt-10px ng-star-inserted']"));
+
+                if (errors.Count != 0)
+                {
+                    foreach (var item in errors)
+                    {
+                        if (item.Text.Contains("This phone number is being used by another account"))
+                            throw new PhoneNumberAlreadyUsedException("Телефон уже зарегистрирован");
+                    }
+                }
+
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime * 4);
 
                 for (int i = 0; i < 6; i++)//Ждем еще 30 секунд, проверяя каждые 5
@@ -198,6 +206,9 @@ namespace Bitclout
 
                 if (RegChromeDriver.Url != "https://bitclout.com/sign-up?stepNum=4")
                     throw new BadProxyException("Не удалось подтвердить код");
+
+                MainWindowViewModel.settings.CurrentProxy.AccountsRegistred++;
+                MainWindowViewModel.settings.SaveSettings();
 
                 RegChromeDriver.Navigate().GoToUrl($"https://bitclout.com/update-profile");//Страница профиля
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime);
@@ -309,7 +320,7 @@ namespace Bitclout
             }
             finally
             {
-                if (pn != null && pn.Number == pn.Code)
+                if (pn != null || pn.Number == pn.Code)
                     PhoneWorker.DeclinePhone(pn);
                 EndRegistration();
             }
