@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -41,7 +42,7 @@ namespace Bitclout
         public static ObservableCollection<UserInfo> RegistredUsers { get; set; } = new ObservableCollection<UserInfo>();
 
         bool _StartEnabled = true;
-
+        int pncode = 0;
         public bool StartEnabled
         {
             get
@@ -200,6 +201,7 @@ namespace Bitclout
 
                     RegistredUsers.Add(chromeWorker.RegisterNewBitсlout(RegistrationInfo[0]));
 
+                    pncode = 0;
 
                     NLog.LogManager.GetCurrentClassLogger().Info($"Конец автоматической регистрации");
                 }
@@ -243,6 +245,12 @@ namespace Bitclout
                 }
                 catch (PhoneCodeNotSendException ex)
                 {
+                    pncode++;
+                    if (pncode > 4)
+                    {
+                        pncode = 0;
+                        Thread.Sleep(60000 * 5);
+                    }
                     NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
                     continue;
                 }
@@ -294,6 +302,7 @@ namespace Bitclout
                 }
                 finally
                 {
+
                     if (RegistrationInfo.Count != 0)
                         Application.Current.Dispatcher.Invoke(() => { RegistrationInfo.RemoveAt(0); });
 
