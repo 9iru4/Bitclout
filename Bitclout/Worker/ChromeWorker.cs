@@ -366,15 +366,13 @@ namespace Bitclout
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime);
             }
 
+            NLog.LogManager.GetCurrentClassLogger().Info($"Подтвержаем");
+            BitcloutChromeDriver.FindElement(By.XPath("//button[@class='swal2-confirm btn btn-light swal2-styled']")).Click();
+            Thread.Sleep(MainWindowViewModel.settings.DelayTime * 2);
 
-            for (int i = 0; i < MainWindowViewModel.settings.DelayTime * 4 / 100; i++)
-            {
-                if (BitcloutChromeDriver.FindElements(By.XPath("//button[@class='swal2-confirm btn btn-light swal2-styled']")).Count == 1)
-                {
-                    break;
-                }
-                Thread.Sleep(100);
-            }
+            NLog.LogManager.GetCurrentClassLogger().Info($"Подтверждаем");
+            BitcloutChromeDriver.FindElement(By.XPath("//button[@class='swal2-confirm btn btn-light swal2-styled']")).Click();
+            Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
             return true;
         }
