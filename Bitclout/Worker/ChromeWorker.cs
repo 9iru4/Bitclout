@@ -496,7 +496,7 @@ namespace Bitclout
                 Thread.Sleep(2000);
 
                 BitcloutChromeDriver.FindElement(By.Name("amount")).SendKeys(MainWindowViewModel.settings.SellAmount.ToString().Replace(',', '.'));
-                Thread.Sleep(3000);
+                Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
                 BitcloutChromeDriver.FindElement(By.XPath("//a[@class='btn btn-primary font-weight-bold w-60']")).Click();
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime);
@@ -550,7 +550,7 @@ namespace Bitclout
                         AllCoins.Add((name, coins));
                     }
                     var first = AllCoins.OrderByDescending(x => x.Item2).FirstOrDefault();
-                    if (first.Item2 > 12)
+                    if (first.Item2 > MainWindowViewModel.settings.SellMoreThan)
                         return first.Item1;
                 }
                 return "";

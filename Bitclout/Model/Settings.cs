@@ -171,6 +171,22 @@ namespace Bitclout.Model
                 _SellAmount = value;
                 OnPropertyChanged("SellAmount");
             }
+
+        }
+
+        double _SellMoreThan = 10;
+
+        public double SellMoreThan
+        {
+            get
+            {
+                return _SellMoreThan;
+            }
+            set
+            {
+                _SellMoreThan = value;
+                OnPropertyChanged("SellMoreThan");
+            }
         }
 
         public Settings()
