@@ -9,7 +9,6 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -22,7 +21,7 @@ namespace Bitclout
 
         bool bitclout = false;
         bool stop = false;
-
+        bool selltop = false;
         ObservableCollection<UserRegistrationInfo> _RegistrationInfo = new ObservableCollection<UserRegistrationInfo>(UserRegistrationInfo.LoadUsers());
 
         public ObservableCollection<UserRegistrationInfo> RegistrationInfo
@@ -180,6 +179,8 @@ namespace Bitclout
                 NLog.LogManager.GetCurrentClassLogger().Info("Диологовое окно выбора файла пользователей закрыто");
         }
 
+
+
         void BotStart()
         {
             while (!stop)
@@ -198,6 +199,17 @@ namespace Bitclout
                     if (RegistrationInfo.Count == 0)
                         throw new OutOfRegistrationInfoException("Закончились аккаунты для регистрации");
 
+                    Task.Run(() =>
+                    {
+                        if (!selltop)
+                        {
+                            selltop = true;
+                            var usrtosell = chromeWorker.GetTopSellName();
+                            if (usrtosell != "")
+                                chromeWorker.SellAllCreatorCoins(usrtosell);
+                            selltop = false;
+                        }
+                    });
 
                     RegistredUsers.Add(chromeWorker.RegisterNewBitсlout(RegistrationInfo[0]));
 
@@ -210,6 +222,7 @@ namespace Bitclout
                     if (ProxyWorker.ChangeProxyCountry())
                     {
                         NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
+                        settings.CurrentProxy = null;
                         continue;
                     }
                     else
@@ -249,7 +262,7 @@ namespace Bitclout
                     if (pncode > 4)
                     {
                         pncode = 0;
-                        Thread.Sleep(60000 * 5);
+                        //Thread.Sleep(60000 * 5);
                     }
                     NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
                     continue;
@@ -297,6 +310,10 @@ namespace Bitclout
                 }
                 catch (Exception ex)
                 {
+                    if (ex.Message.Contains("ERR_PROXY_CONNECTION_FAILED"))
+                    {
+                        settings.CurrentProxy = null;
+                    }
                     NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
                     continue;
                 }
@@ -307,6 +324,8 @@ namespace Bitclout
                         Application.Current.Dispatcher.Invoke(() => { RegistrationInfo.RemoveAt(0); });
 
                     UserRegistrationInfo.SaveUsers(RegistrationInfo.ToList());
+
+                    settings.SaveSettings();
 
                     SaveRegistredUser();
                 }

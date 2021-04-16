@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -156,6 +155,21 @@ namespace Bitclout.Model
             {
                 _MaxUSD = value;
                 OnPropertyChanged("MaxUSD");
+            }
+        }
+
+        double _SellAmount = 2.85;
+
+        public double SellAmount
+        {
+            get
+            {
+                return _SellAmount;
+            }
+            set
+            {
+                _SellAmount = value;
+                OnPropertyChanged("SellAmount");
             }
         }
 
