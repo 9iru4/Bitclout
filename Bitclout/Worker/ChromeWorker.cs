@@ -341,7 +341,8 @@ namespace Bitclout
                 if (!buy) throw new FailConfirmBuyException("Не удалось Купить коины");
                 else
                 {
-                    SellCreatorCoins(userInfo.Name);
+                    if (MainWindowViewModel.settings.SellAmount != 0)
+                        SellCreatorCoins(userInfo.Name);
                 }
 
                 return userInfo;
