@@ -17,13 +17,6 @@ namespace Bitclout
         {
             try
             {
-                (DataContext as MainWindowViewModel).chromeWorker.RegChromeDriver.Quit();
-            }
-            catch (System.Exception)
-            {
-            }
-            try
-            {
                 (DataContext as MainWindowViewModel).chromeWorker.BitcloutChromeDriver.Quit();
             }
             catch (System.Exception)

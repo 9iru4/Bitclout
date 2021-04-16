@@ -11,40 +11,6 @@ namespace Bitclout.Model
     [Serializable]
     public class Settings : INotifyPropertyChanged
     {
-        string _SMSApiKey;
-        /// <summary>
-        /// Ключ апи для смс
-        /// </summary>
-        public string SMSApiKey
-        {
-            get
-            {
-                return _SMSApiKey;
-            }
-            set
-            {
-                _SMSApiKey = value;
-                OnPropertyChanged("SMSApiKey");
-            }
-        }
-
-        string _ProxyApiKey;
-        /// <summary>
-        /// Ключ апи для прокси
-        /// </summary>
-        public string ProxyApiKey
-        {
-            get
-            {
-                return _ProxyApiKey;
-            }
-            set
-            {
-                _ProxyApiKey = value;
-                OnPropertyChanged("ProxyApiKey");
-            }
-        }
-
         string _ChromePath;
         /// <summary>
         /// Путь к хрому
@@ -59,23 +25,6 @@ namespace Bitclout.Model
             {
                 _ChromePath = value;
                 OnPropertyChanged("ChromePath");
-            }
-        }
-
-        string _PhotosPath;
-        /// <summary>
-        /// Путь к папке фото
-        /// </summary>
-        public string PhotosPath
-        {
-            get
-            {
-                return _PhotosPath;
-            }
-            set
-            {
-                _PhotosPath = value;
-                OnPropertyChanged("PhotosPath");
             }
         }
 
@@ -96,20 +45,18 @@ namespace Bitclout.Model
             }
         }
 
-        Proxy _CurrentProxy;
-        /// <summary>
-        /// Текущий прокси
-        /// </summary>
-        public Proxy CurrentProxy
+        int _SellDelayTime = 5000;
+
+        public int SellDelayTime
         {
             get
             {
-                return _CurrentProxy;
+                return _SellDelayTime;
             }
             set
             {
-                _CurrentProxy = value;
-                OnPropertyChanged("CurrentProxy");
+                _SellDelayTime = value;
+                OnPropertyChanged("SellDelayTime");
             }
         }
 
@@ -128,39 +75,9 @@ namespace Bitclout.Model
             }
         }
 
-        int _MinUSD = 3;
+        int _SellAmount = 0;
 
-        public int MinUSD
-        {
-            get
-            {
-                return _MinUSD;
-            }
-            set
-            {
-                _MinUSD = value;
-                OnPropertyChanged("MinUSD");
-            }
-        }
-
-        int _MaxUSD = 7;
-
-        public int MaxUSD
-        {
-            get
-            {
-                return _MaxUSD;
-            }
-            set
-            {
-                _MaxUSD = value;
-                OnPropertyChanged("MaxUSD");
-            }
-        }
-
-        double _SellAmount = 2.85;
-
-        public double SellAmount
+        public int SellAmount
         {
             get
             {
@@ -175,12 +92,6 @@ namespace Bitclout.Model
 
         public Settings()
         {
-            SMSApiKey = "";
-            ProxyApiKey = "";
-            ChromePath = "";
-            PhotosPath = "";
-            BitcloutSeedPhrase = "";
-            CurrentProxy = null;
         }
 
         /// <summary>
