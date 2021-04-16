@@ -495,7 +495,7 @@ namespace Bitclout
                 BitcloutChromeDriver.FindElement(By.Name("amount")).Clear();
                 Thread.Sleep(2000);
 
-                BitcloutChromeDriver.FindElement(By.Name("amount")).SendKeys(MainWindowViewModel.settings.SellAmount.ToString());
+                BitcloutChromeDriver.FindElement(By.Name("amount")).SendKeys(MainWindowViewModel.settings.SellAmount.ToString().Replace(',', '.'));
                 Thread.Sleep(3000);
 
                 BitcloutChromeDriver.FindElement(By.XPath("//a[@class='btn btn-primary font-weight-bold w-60']")).Click();
