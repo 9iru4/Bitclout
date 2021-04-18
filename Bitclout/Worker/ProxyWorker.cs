@@ -9,7 +9,7 @@ namespace Bitclout.Worker
 {
     public class ProxyWorker
     {
-        public static List<string> ProxyCodes { get; set; } = new List<string>("nl au jp ru end".Split(' '));
+        public static List<string> ProxyCodes { get; set; } = new List<string>("au jp ru end".Split(' '));
 
         public static bool ChangeProxyCountry()
         {
