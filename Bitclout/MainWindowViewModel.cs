@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Bitclout
@@ -195,15 +196,13 @@ namespace Bitclout
                 {
                     NLog.LogManager.GetCurrentClassLogger().Info("Запуск драйвера для Bitclout ->");
 
-                    chromeWorker.InitializeBitcloutChromeDriver();
-
                     GetRefistredUsers();
 
 
                     if (RegistrationInfo.Where(x => !x.IsRegistred).Count() != 0)
                     {
                         usr = RegistrationInfo.Where(x => !x.IsRegistred).FirstOrDefault();
-
+                        chromeWorker.InitializeBitcloutChromeDriver();
                         chromeWorker.LoginToBitclout(usr.BitcloudPhrase);
                         var usrtosell = chromeWorker.GetTopSellName();
                         if (usrtosell != "")
@@ -212,14 +211,14 @@ namespace Bitclout
 
 
                             chromeWorker.SendBitclout(settings.BitcloutPublicKey);
-
-
                         }
+                        chromeWorker.EndRegistration();
                     }
                     NLog.LogManager.GetCurrentClassLogger().Info($"Конец автоматической регистрации");
                 }
                 catch (Exception ex)
                 {
+                    chromeWorker.EndRegistration();
                     NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
                     continue;
                 }
@@ -229,6 +228,7 @@ namespace Bitclout
                     RegistrationInfo.Where(x => x.Name == usr.Name).FirstOrDefault().IsRegistred = true;
                     UserRegistrationInfo.SaveUsers(RegistrationInfo.ToList());
                     settings.SaveSettings();
+                    Thread.Sleep(10000);
                 }
             }
         }
