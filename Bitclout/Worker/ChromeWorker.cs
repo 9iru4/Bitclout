@@ -55,6 +55,7 @@ namespace Bitclout
                 ChromeDriverService service = ChromeDriverService.CreateDefaultService();
                 service.HideCommandPromptWindow = true;
                 RegChromeDriver = new ChromeDriver(service, options);
+                
                 NLog.LogManager.GetCurrentClassLogger().Info("Драйвер регистрации успешно инициализирован");
                 return true;
             }
@@ -159,6 +160,7 @@ namespace Bitclout
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Переходим на страницу регистрации");
                 RegChromeDriver.Navigate().GoToUrl($"https://bitclout.com/sign-up");//Страница реги
+                
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
                 if (RegChromeDriver.FindElements(By.XPath("//h1[@class='inline-block md:block mr-2 md:mb-2 font-light text-60 md:text-3xl text-black-dark leading-tight']")).Count != 0)
