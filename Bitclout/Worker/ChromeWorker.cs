@@ -162,7 +162,7 @@ namespace Bitclout
                 RegChromeDriver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
                 RegChromeDriver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(10);
                 RegChromeDriver.Navigate().GoToUrl($"https://bitclout.com/sign-up");//Страница реги
-                
+
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
                 if (RegChromeDriver.FindElements(By.XPath("//h1[@class='inline-block md:block mr-2 md:mb-2 font-light text-60 md:text-3xl text-black-dark leading-tight']")).Count != 0)
@@ -593,6 +593,8 @@ namespace Bitclout
             }
             catch (Exception ex)
             {
+                if (ex.Message.Contains("The HTTP request to the remote WebDriver server for URL"))
+                    throw new BadProxyException(ex.Message);
                 throw;
             }
             finally
