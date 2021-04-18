@@ -11,43 +11,43 @@ namespace Bitclout.Model
     [Serializable]
     public class Settings : INotifyPropertyChanged
     {
-        string _SMSApiKey;
+        string _BitcloutPublicKey;
         /// <summary>
-        /// Ключ апи для смс
+        /// Логин Bitclout
         /// </summary>
-        public string SMSApiKey
+        public string BitcloutPublicKey
         {
             get
             {
-                return _SMSApiKey;
+                return _BitcloutPublicKey;
             }
             set
             {
-                _SMSApiKey = value;
-                OnPropertyChanged("SMSApiKey");
+                _BitcloutPublicKey = value;
+                OnPropertyChanged("BitcloutPublicKey");
             }
         }
 
-        string _ProxyApiKey;
+        string _PathToRegistredUsers;
         /// <summary>
-        /// Ключ апи для прокси
+        /// Логин Bitclout
         /// </summary>
-        public string ProxyApiKey
+        public string PathToRegistredUsers
         {
             get
             {
-                return _ProxyApiKey;
+                return _PathToRegistredUsers;
             }
             set
             {
-                _ProxyApiKey = value;
-                OnPropertyChanged("ProxyApiKey");
+                _PathToRegistredUsers = value;
+                OnPropertyChanged("PathToRegistredUsers");
             }
         }
 
         string _ChromePath;
         /// <summary>
-        /// Путь к хрому
+        /// Логин Bitclout
         /// </summary>
         public string ChromePath
         {
@@ -59,57 +59,6 @@ namespace Bitclout.Model
             {
                 _ChromePath = value;
                 OnPropertyChanged("ChromePath");
-            }
-        }
-
-        string _PhotosPath;
-        /// <summary>
-        /// Путь к папке фото
-        /// </summary>
-        public string PhotosPath
-        {
-            get
-            {
-                return _PhotosPath;
-            }
-            set
-            {
-                _PhotosPath = value;
-                OnPropertyChanged("PhotosPath");
-            }
-        }
-
-        string _BitcloutSeedPhrase;
-        /// <summary>
-        /// Логин Bitclout
-        /// </summary>
-        public string BitcloutSeedPhrase
-        {
-            get
-            {
-                return _BitcloutSeedPhrase;
-            }
-            set
-            {
-                _BitcloutSeedPhrase = value;
-                OnPropertyChanged("BitcloutSeedPhrase");
-            }
-        }
-
-        Proxy _CurrentProxy;
-        /// <summary>
-        /// Текущий прокси
-        /// </summary>
-        public Proxy CurrentProxy
-        {
-            get
-            {
-                return _CurrentProxy;
-            }
-            set
-            {
-                _CurrentProxy = value;
-                OnPropertyChanged("CurrentProxy");
             }
         }
 
@@ -128,75 +77,8 @@ namespace Bitclout.Model
             }
         }
 
-        int _MinUSD = 3;
-
-        public int MinUSD
-        {
-            get
-            {
-                return _MinUSD;
-            }
-            set
-            {
-                _MinUSD = value;
-                OnPropertyChanged("MinUSD");
-            }
-        }
-
-        int _MaxUSD = 7;
-
-        public int MaxUSD
-        {
-            get
-            {
-                return _MaxUSD;
-            }
-            set
-            {
-                _MaxUSD = value;
-                OnPropertyChanged("MaxUSD");
-            }
-        }
-
-        double _SellAmount = 2.85;
-
-        public double SellAmount
-        {
-            get
-            {
-                return _SellAmount;
-            }
-            set
-            {
-                _SellAmount = value;
-                OnPropertyChanged("SellAmount");
-            }
-
-        }
-
-        double _SellMoreThan = 10;
-
-        public double SellMoreThan
-        {
-            get
-            {
-                return _SellMoreThan;
-            }
-            set
-            {
-                _SellMoreThan = value;
-                OnPropertyChanged("SellMoreThan");
-            }
-        }
-
         public Settings()
         {
-            SMSApiKey = "";
-            ProxyApiKey = "";
-            ChromePath = "";
-            PhotosPath = "";
-            BitcloutSeedPhrase = "";
-            CurrentProxy = null;
         }
 
         /// <summary>

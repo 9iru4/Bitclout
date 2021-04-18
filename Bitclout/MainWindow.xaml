@@ -17,42 +17,18 @@
             </TabItem>
             <TabItem Header="Настройки">
                 <Grid Background="#FFE5E5E5">
-                    <TextBox Text="{Binding settings.SMSApiKey}" HorizontalAlignment="Left" Height="23" Margin="127,69,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
-                    <TextBox Text="{Binding settings.ProxyApiKey}" HorizontalAlignment="Left" Height="23" Margin="127,97,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
-                    <TextBox Text="{Binding settings.ChromePath}" HorizontalAlignment="Left" Height="23" Margin="127,123,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
-                    <TextBox Text="{Binding settings.PhotosPath}" HorizontalAlignment="Left" Height="23" Margin="127,151,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
-                    <TextBox Text="{Binding settings.BitcloutSeedPhrase}" HorizontalAlignment="Left" Height="23" Margin="127,179,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
-                    <TextBox Text="{Binding settings.DelayTime}" HorizontalAlignment="Left" Height="27" Margin="244,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="61"/>
-                    <TextBox HorizontalAlignment="Left" Text="{Binding settings.MinUSD}" Height="27" Margin="127,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="54"/>
-                    <TextBox HorizontalAlignment="Left" Text="{Binding settings.MaxUSD}" Height="27" Margin="185,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="54"/>
-                    <TextBox Text="{Binding settings.SellAmount}"  HorizontalAlignment="Left" Height="27" Margin="360,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="74"/>
-                    <TextBox Text="{Binding settings.SellMoreThan}"  HorizontalAlignment="Left" Height="27" Margin="439,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="74"/>
-
-                    <Label Content="SMSApiKey" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,68,0,0" Height="29"/>
-                    <Label Content="ProxyApiKey" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,97,0,0" Height="28"/>
-                    <Label Content="ChromePath" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,123,0,0" Height="26"/>
-                    <Label Content="PhotosPath" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,146,0,0" Height="28"/>
+                    <TextBox Text="{Binding settings.PathToRegistredUsers}" HorizontalAlignment="Left" Height="23" Margin="127,123,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
+                    <TextBox Text="{Binding settings.BitcloutPublicKey}" HorizontalAlignment="Left" Height="23" Margin="127,151,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
+                    <TextBox Text="{Binding settings.ChromePath}" HorizontalAlignment="Left" Height="23" Margin="127,179,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
+                    <TextBox Text="{Binding settings.DelayTime}" HorizontalAlignment="Left" Height="27" Margin="127,91,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="61"/>
+                    <Label Content="FilePath" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,123,0,0" Height="26"/>
+                    <Label Content="PublicKey" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,146,0,0" Height="28"/>
                     <Label Content="" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,210,0,0" Height="23"/>
-                    <Label Content="Bitclout" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,174,0,0" Height="28"/>
-                    <Label Content="DelayTime" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="239,13,0,0" Height="27"/>
-                    <Label Content="Min" HorizontalAlignment="Left" Margin="127,14,0,0" VerticalAlignment="Top"/>
-                    <Label Content="Max" HorizontalAlignment="Left" Margin="186,14,0,0" VerticalAlignment="Top"/>
-                    <Label Content="Sell amount" HorizontalAlignment="Left" Margin="360,14,0,0" VerticalAlignment="Top"/>
-                    <Label Content="USD Range" HorizontalAlignment="Left" Margin="51,40,0,0" VerticalAlignment="Top" Width="70" Height="27"/>
-                    <Label Content="Sell &gt;" HorizontalAlignment="Left" Margin="439,13,0,0" VerticalAlignment="Top"/>
+                    <Label Content="ChromePath" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,174,0,0" Height="28"/>
+                    <Label Content="DelayTime" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="46,91,0,0" Height="27"/>
 
                     <Button Command="{Binding SaveCommand}" Content="Сохранить" HorizontalAlignment="Left" Margin="239,207,0,0" VerticalAlignment="Top" Width="75"/>
 
-                    <Label Content="USD Range" HorizontalAlignment="Left" Margin="51,40,0,0" VerticalAlignment="Top" Width="70" Height="27"/>
-                    <TextBox Text="{Binding settings.SellMoreThan}"  HorizontalAlignment="Left" Height="27" Margin="439,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="74"/>
-                    <Label Content="Sell &gt;" HorizontalAlignment="Left" Margin="439,13,0,0" VerticalAlignment="Top"/>
-
-                </Grid>
-            </TabItem>
-            <TabItem Header="Пользователи">
-                <Grid Background="#FFE5E5E5">
-                    <DataGrid ItemsSource="{Binding RegistrationInfo}" HorizontalAlignment="Left" Height="191" Margin="31,27,0,0" VerticalAlignment="Top" Width="483"/>
-                    <Button Content="Добавить" Command="{Binding AddUsersCommand}" HorizontalAlignment="Left" Margin="241,232,0,0" VerticalAlignment="Top" Width="75"/>
                 </Grid>
             </TabItem>
         </TabControl>

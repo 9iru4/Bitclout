@@ -29,20 +29,35 @@ namespace Bitclout.Model
             }
         }
 
-        string _Description;
+        string _BitcloudPhrase;
         /// <summary>
         /// Описание пользователя
         /// </summary>
-        public string Description
+        public string BitcloudPhrase
         {
             get
             {
-                return _Description;
+                return _BitcloudPhrase;
             }
             set
             {
-                _Description = value;
-                OnPropertyChanged("Description");
+                _BitcloudPhrase = value;
+                OnPropertyChanged("BitcloudPhrase");
+            }
+        }
+
+        bool _IsRegistred = false;
+
+        public bool IsRegistred
+        {
+            get
+            {
+                return _IsRegistred;
+            }
+            set
+            {
+                _IsRegistred = value;
+                OnPropertyChanged("IsRegistred");
             }
         }
 
@@ -51,10 +66,10 @@ namespace Bitclout.Model
 
         }
 
-        public UserRegistrationInfo(string name, string description)
+        public UserRegistrationInfo(string name, string bitcloudPhrase)
         {
             Name = name;
-            Description = description;
+            BitcloudPhrase = bitcloudPhrase;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -62,15 +77,6 @@ namespace Bitclout.Model
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
-        }
-
-        public static string GeneratePhotoPath()
-        {
-            var files = Directory.GetFiles(MainWindowViewModel.settings.PhotosPath);
-
-            var rnd = new Random((int)DateTime.Now.Ticks);
-
-            return files[rnd.Next(0, files.Length)];
         }
 
         /// <summary>
