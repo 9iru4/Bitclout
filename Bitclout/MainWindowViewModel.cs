@@ -195,12 +195,7 @@ namespace Bitclout
                 {
                     NLog.LogManager.GetCurrentClassLogger().Info("Запуск драйвера для Bitclout ->");
 
-                    if (!bitclout)
-                    {
-                        chromeWorker.InitializeBitcloutChromeDriver();
-
-                        bitclout = true;
-                    }
+                    chromeWorker.InitializeBitcloutChromeDriver();
 
                     GetRefistredUsers();
 
@@ -218,7 +213,7 @@ namespace Bitclout
 
                             chromeWorker.SendBitclout(settings.BitcloutPublicKey);
 
-                            chromeWorker.EndRegistration();
+
                         }
                     }
                     NLog.LogManager.GetCurrentClassLogger().Info($"Конец автоматической регистрации");
@@ -230,6 +225,7 @@ namespace Bitclout
                 }
                 finally
                 {
+                    chromeWorker.EndRegistration();
                     RegistrationInfo.Where(x => x.Name == usr.Name).FirstOrDefault().IsRegistred = true;
                     UserRegistrationInfo.SaveUsers(RegistrationInfo.ToList());
                     settings.SaveSettings();
