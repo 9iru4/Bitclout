@@ -61,6 +61,21 @@ namespace Bitclout.Model
             }
         }
 
+        bool _IsSell = false;
+
+        public bool IsSell
+        {
+            get
+            {
+                return _IsSell;
+            }
+            set
+            {
+                _IsSell = value;
+                OnPropertyChanged("IsSell");
+            }
+        }
+
         public UserRegistrationInfo()
         {
 

@@ -189,6 +189,7 @@ namespace Bitclout
 
         void BotStart()
         {
+            Thread.Sleep(600000);
             while (!stop)
             {
                 var usr = new UserRegistrationInfo();
@@ -197,7 +198,6 @@ namespace Bitclout
                     NLog.LogManager.GetCurrentClassLogger().Info("Запуск драйвера для Bitclout ->");
 
                     GetRefistredUsers();
-
 
                     if (RegistrationInfo.Where(x => !x.IsRegistred).Count() != 0)
                     {
@@ -209,8 +209,7 @@ namespace Bitclout
                         {
                             chromeWorker.SellAllCreatorCoins(usrtosell);
 
-
-                            chromeWorker.SendBitclout(settings.BitcloutPublicKey);
+                            usr.IsSell = chromeWorker.SendBitclout(settings.BitcloutPublicKey);
                         }
                         chromeWorker.EndRegistration();
                     }
@@ -218,17 +217,17 @@ namespace Bitclout
                 }
                 catch (Exception ex)
                 {
+                    usr.IsSell = false;
                     chromeWorker.EndRegistration();
                     NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
                     continue;
                 }
                 finally
                 {
-                    chromeWorker.EndRegistration();
                     RegistrationInfo.Where(x => x.Name == usr.Name).FirstOrDefault().IsRegistred = true;
                     UserRegistrationInfo.SaveUsers(RegistrationInfo.ToList());
                     settings.SaveSettings();
-                    Thread.Sleep(10000);
+                    Thread.Sleep(120000);
                 }
             }
         }
