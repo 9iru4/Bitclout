@@ -62,6 +62,41 @@ namespace Bitclout.Worker
             }
         }
 
+        public static Proxy GetProxy(string code)
+        {
+            Proxy prx = new Proxy();
+            NLog.LogManager.GetCurrentClassLogger().Info($"Делаем запрос на получение прокси ->");
+            WebRequest request = WebRequest.Create("https://proxy6.net/api/" + MainWindowViewModel.settings.ProxyApiKey + "/buy?count=1&period=3&country=" + code);
+            WebResponse response = request.GetResponse();
+            using (Stream stream = response.GetResponseStream())
+            {
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    dynamic data = Json.Decode(reader.ReadToEnd());
+                    if (data.status == "yes")
+                    {
+                        dynamic proxy = data;
+                        foreach (var item in data.list)
+                        {
+                            proxy = item.Value;
+                            prx = new Proxy(proxy.id, proxy.ip, proxy.host, proxy.port, proxy.user, proxy.pass);
+                            prx.StatusCode = data.status;
+                        }
+                        NLog.LogManager.GetCurrentClassLogger().Info($"Прокси {prx.IP} успешно получен с кодом {prx.StatusCode}");
+                        return prx;
+                    }
+                    else
+                    {
+                        prx.StatusCode = data.error;
+                        NLog.LogManager.GetCurrentClassLogger().Info($"Ошибка получения прокси {data.error}");
+                        if (prx.StatusCode.Contains("Error active proxy allow"))
+                            throw new OutOfProxyException("Закончилсь доступные прокси для выбранной страны");
+                        return null;
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// Удаление прокси
         /// </summary>

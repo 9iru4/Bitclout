@@ -113,6 +113,23 @@ namespace Bitclout.Model
             }
         }
 
+        Proxy _MainProxy;
+        /// <summary>
+        /// Текущий прокси
+        /// </summary>
+        public Proxy MainProxy
+        {
+            get
+            {
+                return _MainProxy;
+            }
+            set
+            {
+                _MainProxy = value;
+                OnPropertyChanged("MainProxy");
+            }
+        }
+
         int _DelayTime = 5000;
 
         public int DelayTime
@@ -128,9 +145,9 @@ namespace Bitclout.Model
             }
         }
 
-        int _MinUSD = 3;
+        double _MinUSD = 3;
 
-        public int MinUSD
+        public double MinUSD
         {
             get
             {
@@ -143,9 +160,9 @@ namespace Bitclout.Model
             }
         }
 
-        int _MaxUSD = 7;
+        double _MaxUSD = 7;
 
-        public int MaxUSD
+        public double MaxUSD
         {
             get
             {
@@ -186,6 +203,36 @@ namespace Bitclout.Model
             {
                 _SellMoreThan = value;
                 OnPropertyChanged("SellMoreThan");
+            }
+        }
+
+        bool _IsBuyCoins = false;
+
+        public bool IsBuyCoins
+        {
+            get
+            {
+                return _IsBuyCoins;
+            }
+            set
+            {
+                _IsBuyCoins = value;
+                OnPropertyChanged("IsBuyCoins");
+            }
+        }
+
+        int _Comission = 0;
+
+        public int Comission
+        {
+            get
+            {
+                return _Comission;
+            }
+            set
+            {
+                _Comission = value;
+                OnPropertyChanged("Comission");
             }
         }
 
