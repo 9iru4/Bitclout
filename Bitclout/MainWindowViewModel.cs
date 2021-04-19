@@ -189,7 +189,6 @@ namespace Bitclout
 
         void BotStart()
         {
-            Thread.Sleep(600000);
             while (!stop)
             {
                 var usr = new UserRegistrationInfo();
@@ -227,7 +226,6 @@ namespace Bitclout
                     RegistrationInfo.Where(x => x.Name == usr.Name).FirstOrDefault().IsRegistred = true;
                     UserRegistrationInfo.SaveUsers(RegistrationInfo.ToList());
                     settings.SaveSettings();
-                    Thread.Sleep(120000);
                 }
             }
         }
