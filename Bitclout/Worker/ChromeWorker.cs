@@ -71,17 +71,24 @@ namespace Bitclout
 
         public bool LoginToBitclout(string phrase)
         {
-            NLog.LogManager.GetCurrentClassLogger().Info($"Вход в аккаунт Bitclout ->");
-            BitcloutChromeDriver.Navigate().GoToUrl($"https://bitclout.com/log-in");
+            NLog.LogManager.GetCurrentClassLogger().Info($"Переходим на страницу регистрации");
+            BitcloutChromeDriver.Navigate().GoToUrl($"https://bitclout.com/");//Страница реги
             Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
+            NLog.LogManager.GetCurrentClassLogger().Info($"Жмем кнопку регистрация");
+            BitcloutChromeDriver.FindElement(By.XPath("//a[@class='landing__log-in d-none d-md-block']")).Click();//Кликаем дальше
+            Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+
+            BitcloutChromeDriver.SwitchTo().Window(BitcloutChromeDriver.WindowHandles[1]);
+
             NLog.LogManager.GetCurrentClassLogger().Info($"Отправляем фразу");
-            BitcloutChromeDriver.FindElement(By.XPath("//textarea[@class='form-control fs-15px ng-untouched ng-pristine ng-valid']")).SendKeys(phrase);
+            BitcloutChromeDriver.FindElement(By.XPath("//textarea[@class='form-control fs-15px ng-untouched ng-pristine ng-valid']")).SendKeys(MainWindowViewModel.settings.BitcloutSeedPhrase);
             Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
 
             BitcloutChromeDriver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px']")).Click();
             Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+            BitcloutChromeDriver.SwitchTo().Window(BitcloutChromeDriver.WindowHandles[0]);
 
             if (BitcloutChromeDriver.Url == "https://bitclout.com/browse")
             {
