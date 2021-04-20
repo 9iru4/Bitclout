@@ -159,29 +159,23 @@ namespace Bitclout
                     throw new BadProxyException("Не удалось получить прокси");
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Переходим на страницу регистрации");
-                RegChromeDriver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
-                RegChromeDriver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(10);
-                RegChromeDriver.Navigate().GoToUrl($"https://bitclout.com/sign-up");//Страница реги
-
+                RegChromeDriver.Navigate().GoToUrl($"https://bitclout.com/");//Страница реги
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
                 if (RegChromeDriver.FindElements(By.XPath("//h1[@class='inline-block md:block mr-2 md:mb-2 font-light text-60 md:text-3xl text-black-dark leading-tight']")).Count != 0)
                     throw new OutOfProxyException("Ошибка с сервером cloudfire");
 
-                try
-                {
+                NLog.LogManager.GetCurrentClassLogger().Info($"Жмем кнопку регистрация");
+                RegChromeDriver.FindElement(By.XPath("//a[@class='btn btn-primary landing__sign-up']")).Click();//Кликаем дальше
+                Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
-                }
-                catch (Exception)
-                {
+                RegChromeDriver.SwitchTo().Window(RegChromeDriver.WindowHandles[1]);
 
-                    throw;
-                }
-                userInfo.BitcloutSeedPhrase = RegChromeDriver.FindElement(By.XPath("//div[@class='p-15px ng-star-inserted']")).Text;//Получаем фразу
+                userInfo.BitcloutSeedPhrase = RegChromeDriver.FindElement(By.XPath("//div[@class='p-15px']")).Text;//Получаем фразу
                 NLog.LogManager.GetCurrentClassLogger().Info($"Получаем фразу-логин {userInfo.BitcloutSeedPhrase}");
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Кликаем дальше");
-                RegChromeDriver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ng-star-inserted']")).Click();//Кликаем дальше
+                RegChromeDriver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px']")).Click();//Кликаем дальше
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Отправляем фразу-логин");
@@ -189,8 +183,10 @@ namespace Bitclout
                 Thread.Sleep(2000);
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Кликаем дальше");
-                RegChromeDriver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ml-10px ng-star-inserted']")).Click();//Кликаем дальше
+                RegChromeDriver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ml-10px']")).Click();//Кликаем дальше
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+
+                RegChromeDriver.SwitchTo().Window(RegChromeDriver.WindowHandles[0]);
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Кликаем на выбор кода страны");
                 RegChromeDriver.FindElement(By.XPath("//div[@class='iti__selected-flag dropdown-toggle']")).Click();//кликаем на выбор кода страны
@@ -411,27 +407,26 @@ namespace Bitclout
                 if (!InitializeRegChromeDriver())
                     throw new BadProxyException("Не удалось получить прокси");
 
+
+
                 NLog.LogManager.GetCurrentClassLogger().Info($"Переходим на страницу регистрации");
-                RegChromeDriver.Navigate().GoToUrl($"https://bitclout.com/sign-up");//Страница реги
+                RegChromeDriver.Navigate().GoToUrl($"https://bitclout.com/");//Страница реги
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
                 if (RegChromeDriver.FindElements(By.XPath("//h1[@class='inline-block md:block mr-2 md:mb-2 font-light text-60 md:text-3xl text-black-dark leading-tight']")).Count != 0)
                     throw new OutOfProxyException("Ошибка с сервером cloudfire");
 
-                try
-                {
+                NLog.LogManager.GetCurrentClassLogger().Info($"Жмем кнопку регистрация");
+                RegChromeDriver.FindElement(By.XPath("//a[@class='btn btn-primary landing__sign-up']")).Click();//Кликаем дальше
+                Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
-                }
-                catch (Exception)
-                {
+                RegChromeDriver.SwitchTo().Window(RegChromeDriver.WindowHandles[1]);
 
-                    throw;
-                }
-                userInfo.BitcloutSeedPhrase = RegChromeDriver.FindElement(By.XPath("//div[@class='p-15px ng-star-inserted']")).Text;//Получаем фразу
+                userInfo.BitcloutSeedPhrase = RegChromeDriver.FindElement(By.XPath("//div[@class='p-15px']")).Text;//Получаем фразу
                 NLog.LogManager.GetCurrentClassLogger().Info($"Получаем фразу-логин {userInfo.BitcloutSeedPhrase}");
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Кликаем дальше");
-                RegChromeDriver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ng-star-inserted']")).Click();//Кликаем дальше
+                RegChromeDriver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px']")).Click();//Кликаем дальше
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Отправляем фразу-логин");
@@ -439,8 +434,10 @@ namespace Bitclout
                 Thread.Sleep(2000);
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Кликаем дальше");
-                RegChromeDriver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ml-10px ng-star-inserted']")).Click();//Кликаем дальше
+                RegChromeDriver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ml-10px']")).Click();//Кликаем дальше
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+
+                RegChromeDriver.SwitchTo().Window(RegChromeDriver.WindowHandles[0]);
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Кликаем на выбор кода страны");
                 RegChromeDriver.FindElement(By.XPath("//div[@class='iti__selected-flag dropdown-toggle']")).Click();//кликаем на выбор кода страны
@@ -607,9 +604,15 @@ namespace Bitclout
 
         public bool LoginToBitclout()
         {
-            NLog.LogManager.GetCurrentClassLogger().Info($"Вход в аккаунт Bitclout ->");
-            BitcloutChromeDriver.Navigate().GoToUrl($"https://bitclout.com/log-in");
+            NLog.LogManager.GetCurrentClassLogger().Info($"Переходим на страницу регистрации");
+            BitcloutChromeDriver.Navigate().GoToUrl($"https://bitclout.com/");//Страница реги
             Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+
+            NLog.LogManager.GetCurrentClassLogger().Info($"Жмем кнопку регистрация");
+            BitcloutChromeDriver.FindElement(By.XPath("//a[@class='landing__log-in d-none d-md-block']")).Click();//Кликаем дальше
+            Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+
+            BitcloutChromeDriver.SwitchTo().Window(BitcloutChromeDriver.WindowHandles[1]);
 
             NLog.LogManager.GetCurrentClassLogger().Info($"Отправляем фразу");
             BitcloutChromeDriver.FindElement(By.XPath("//textarea[@class='form-control fs-15px ng-untouched ng-pristine ng-valid']")).SendKeys(MainWindowViewModel.settings.BitcloutSeedPhrase);
@@ -618,7 +621,7 @@ namespace Bitclout
 
             BitcloutChromeDriver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px']")).Click();
             Thread.Sleep(MainWindowViewModel.settings.DelayTime);
-
+            BitcloutChromeDriver.SwitchTo().Window(BitcloutChromeDriver.WindowHandles[0]);
             if (BitcloutChromeDriver.Url == "https://bitclout.com/browse")
             {
                 NLog.LogManager.GetCurrentClassLogger().Info($"Вход выполнен успешно");
