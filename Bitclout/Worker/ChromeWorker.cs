@@ -82,7 +82,7 @@ namespace Bitclout
             BitcloutChromeDriver.SwitchTo().Window(BitcloutChromeDriver.WindowHandles[1]);
 
             NLog.LogManager.GetCurrentClassLogger().Info($"Отправляем фразу");
-            BitcloutChromeDriver.FindElement(By.XPath("//textarea[@class='form-control fs-15px ng-untouched ng-pristine ng-valid']")).SendKeys(MainWindowViewModel.settings.BitcloutSeedPhrase);
+            BitcloutChromeDriver.FindElement(By.XPath("//textarea[@class='form-control fs-15px ng-untouched ng-pristine ng-valid']")).SendKeys(phrase);
             Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
 
