@@ -90,7 +90,7 @@ namespace Bitclout
             Thread.Sleep(MainWindowViewModel.settings.DelayTime);
             BitcloutChromeDriver.SwitchTo().Window(BitcloutChromeDriver.WindowHandles[0]);
 
-            if (BitcloutChromeDriver.Url == "https://bitclout.com/browse")
+            if (BitcloutChromeDriver.Url.Contains("https://bitclout.com/browse"))
             {
                 NLog.LogManager.GetCurrentClassLogger().Info($"Вход выполнен успешно");
                 return true;
