@@ -29,26 +29,27 @@ namespace Bitclout
         /// <summary>
         /// Инициализация хрома
         /// </summary>
-        public bool InitializeRegChromeDriver()
+        public bool InitializeRegChromeDriver(bool isuseproxy)
         {
             try
             {
                 NLog.LogManager.GetCurrentClassLogger().Info("Инициализация драйвера для регистрации ->");
                 ChromeOptions options = new ChromeOptions();
-                if (MainWindowViewModel.settings.CurrentProxy == null || MainWindowViewModel.settings.CurrentProxy.AccountsRegistred > 1)//если нету или активаций больше двух
+                if (isuseproxy)
                 {
-                    if (MainWindowViewModel.settings.CurrentProxy != null && MainWindowViewModel.settings.CurrentProxy.AccountsRegistred > 1)//Удаляем прокси с сайта
+                    if (MainWindowViewModel.settings.CurrentProxy == null || MainWindowViewModel.settings.CurrentProxy.AccountsRegistred > 1)//если нету или активаций больше двух
                     {
-                        if (ProxyWorker.DeleteProxy(MainWindowViewModel.settings.CurrentProxy))//если удалили занулляем
-                            MainWindowViewModel.settings.CurrentProxy = null;
+                        if (MainWindowViewModel.settings.CurrentProxy != null && MainWindowViewModel.settings.CurrentProxy.AccountsRegistred > 1)//Удаляем прокси с сайта
+                        {
+                            if (ProxyWorker.DeleteProxy(MainWindowViewModel.settings.CurrentProxy))//если удалили занулляем
+                                MainWindowViewModel.settings.CurrentProxy = null;
+                        }
+                        MainWindowViewModel.settings.CurrentProxy = ProxyWorker.GetProxy();//получаем новый прокси
+                        if (MainWindowViewModel.settings.CurrentProxy == null) return false;
+                        MainWindowViewModel.settings.SaveSettings();
                     }
-                    MainWindowViewModel.settings.CurrentProxy = ProxyWorker.GetProxy();//получаем новый прокси
-                    if (MainWindowViewModel.settings.CurrentProxy == null) return false;
-                    MainWindowViewModel.settings.SaveSettings();
+                    options.AddArguments("--proxy-server=http://" + MainWindowViewModel.settings.CurrentProxy.GetAddress());
                 }
-
-                options.AddArguments("--proxy-server=http://" + MainWindowViewModel.settings.CurrentProxy.GetAddress());
-                //options.AddExtension("proxy.zip");
                 options.AddArguments("--incognito");
                 options.AddArgument("--user-data-dir=" + Directory.GetCurrentDirectory() + @"\Chrome");
                 options.BinaryLocation = MainWindowViewModel.settings.ChromePath;
@@ -155,7 +156,7 @@ namespace Bitclout
                     Thread.Sleep(MainWindowViewModel.settings.DelayTime);
                 }
 
-                if (!InitializeRegChromeDriver())
+                if (!InitializeRegChromeDriver(false))
                     throw new BadProxyException("Не удалось получить прокси");
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Переходим на страницу регистрации");
@@ -168,6 +169,8 @@ namespace Bitclout
                 NLog.LogManager.GetCurrentClassLogger().Info($"Жмем кнопку регистрация");
                 RegChromeDriver.FindElement(By.XPath("//a[@class='btn btn-primary landing__sign-up']")).Click();//Кликаем дальше
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+
+
 
                 RegChromeDriver.SwitchTo().Window(RegChromeDriver.WindowHandles[1]);
 
@@ -376,6 +379,10 @@ namespace Bitclout
             }
             catch (Exception ex)
             {
+                if (ex.Message.Contains("ERR_TUNNEL_CONNECTION_FAILED"))
+                    throw new BadProxyException("ERR_PROXY_CONNECTION_FAILED");
+                if (ex.Message.Contains("The HTTP request to the remote WebDriver server for URL"))
+                    throw new BadProxyException(ex.Message);
                 throw;
             }
             finally
@@ -404,10 +411,10 @@ namespace Bitclout
                     Thread.Sleep(MainWindowViewModel.settings.DelayTime);
                 }
 
-                if (!InitializeRegChromeDriver())
+                if (!InitializeRegChromeDriver(false))
                     throw new BadProxyException("Не удалось получить прокси");
 
-
+                Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Переходим на страницу регистрации");
                 RegChromeDriver.Navigate().GoToUrl($"https://bitclout.com/");//Страница реги
@@ -590,6 +597,8 @@ namespace Bitclout
             }
             catch (Exception ex)
             {
+                if (ex.Message.Contains("ERR_TUNNEL_CONNECTION_FAILED"))
+                    throw new BadProxyException("ERR_PROXY_CONNECTION_FAILED");
                 if (ex.Message.Contains("The HTTP request to the remote WebDriver server for URL"))
                     throw new BadProxyException(ex.Message);
                 throw;
@@ -622,7 +631,7 @@ namespace Bitclout
             BitcloutChromeDriver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px']")).Click();
             Thread.Sleep(MainWindowViewModel.settings.DelayTime);
             BitcloutChromeDriver.SwitchTo().Window(BitcloutChromeDriver.WindowHandles[0]);
-            if (BitcloutChromeDriver.Url == "https://bitclout.com/browse")
+            if (BitcloutChromeDriver.Url.Contains("https://bitclout.com/browse"))
             {
                 NLog.LogManager.GetCurrentClassLogger().Info($"Вход выполнен успешно");
                 return true;
