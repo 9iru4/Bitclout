@@ -274,7 +274,7 @@ namespace Bitclout
                 catch (BadProxyException ex)
                 {
                     NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
-                    settings.CurrentProxy.AccountsRegistred = 2;
+                    //settings.CurrentProxy.AccountsRegistred = 2;
                     continue;
                 }
                 catch (NameAlreadyExistException ex)

@@ -520,7 +520,7 @@ namespace Bitclout
                 if (RegChromeDriver.Url != "https://bitclout.com/sign-up?stepNum=4")
                     throw new BadProxyException("Не удалось подтвердить код");
 
-                MainWindowViewModel.settings.CurrentProxy.AccountsRegistred++;
+                //MainWindowViewModel.settings.CurrentProxy.AccountsRegistred++;
                 MainWindowViewModel.settings.SaveSettings();
 
                 RegChromeDriver.Navigate().GoToUrl($"https://bitclout.com/update-profile");//Страница профиля
