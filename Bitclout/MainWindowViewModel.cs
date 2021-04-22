@@ -223,9 +223,11 @@ namespace Bitclout
                 }
                 finally
                 {
-                    RegistrationInfo.Where(x => x.Name == usr.Name).FirstOrDefault().IsRegistred = true;
+                    if (usr.Name != null)
+                        RegistrationInfo.Where(x => x.Name == usr.Name).FirstOrDefault().IsRegistred = true;
                     UserRegistrationInfo.SaveUsers(RegistrationInfo.ToList());
                     settings.SaveSettings();
+                    Thread.Sleep(10000);
                 }
             }
         }

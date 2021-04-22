@@ -85,7 +85,6 @@ namespace Bitclout
             BitcloutChromeDriver.FindElement(By.XPath("//textarea[@class='form-control fs-15px ng-untouched ng-pristine ng-valid']")).SendKeys(phrase);
             Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
-
             BitcloutChromeDriver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px']")).Click();
             Thread.Sleep(MainWindowViewModel.settings.DelayTime);
             BitcloutChromeDriver.SwitchTo().Window(BitcloutChromeDriver.WindowHandles[0]);
@@ -110,29 +109,24 @@ namespace Bitclout
             BitcloutChromeDriver.FindElement(By.XPath("//input[@class='form-control w-100 fs-15px lh-15px mt-5px ng-untouched ng-pristine ng-valid']")).SendKeys(publicKey);
             Thread.Sleep(2000);
 
-            BitcloutChromeDriver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ml-5px py-10px']")).Click();
-            Thread.Sleep(MainWindowViewModel.settings.DelayTime);
-
-            NLog.LogManager.GetCurrentClassLogger().Info($"Подтверждаем");
             try
-            {
-                BitcloutChromeDriver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ml-15px py-10px mt-5px ng-star-inserted']")).Click();
-                Thread.Sleep(MainWindowViewModel.settings.DelayTime);
-            }
-            catch (Exception)
             {
                 BitcloutChromeDriver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ml-15px py-10px mt-5px']")).Click();
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime);
             }
-
-            NLog.LogManager.GetCurrentClassLogger().Info($"Подтвержаем");
-            BitcloutChromeDriver.FindElement(By.XPath("//button[@class='swal2-confirm btn btn-light swal2-styled']")).Click();
-            Thread.Sleep(MainWindowViewModel.settings.DelayTime * 2);
+            catch (Exception)
+            {
+                BitcloutChromeDriver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ml-5px py-10px']")).Click();
+                Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+            }
 
             NLog.LogManager.GetCurrentClassLogger().Info($"Подтверждаем");
             BitcloutChromeDriver.FindElement(By.XPath("//button[@class='swal2-confirm btn btn-light swal2-styled']")).Click();
-            Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+            Thread.Sleep(MainWindowViewModel.settings.DelayTime * 2);
 
+            NLog.LogManager.GetCurrentClassLogger().Info($"Подтвержаем");
+            BitcloutChromeDriver.FindElement(By.XPath("//button[@class='swal2-confirm btn btn-light swal2-styled']")).Click();
+            Thread.Sleep(MainWindowViewModel.settings.DelayTime);
             return true;
         }
 
@@ -159,7 +153,8 @@ namespace Bitclout
                         AllCoins.Add((name, coins));
                     }
                     var first = AllCoins.OrderByDescending(x => x.Item2).FirstOrDefault();
-                    return first.Item1;
+                    if (first.Item2 > 0)
+                        return first.Item1;
                 }
                 return "";
             }
