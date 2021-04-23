@@ -622,10 +622,17 @@ namespace Bitclout
             BitcloutChromeDriver.FindElement(By.XPath("//textarea[@class='form-control fs-15px ng-untouched ng-pristine ng-valid']")).SendKeys(MainWindowViewModel.settings.BitcloutSeedPhrase);
             Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
+            BitcloutChromeDriver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px']")).Click();
+            Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+
+            NLog.LogManager.GetCurrentClassLogger().Info($"Выбираем аккаунт");
+            BitcloutChromeDriver.FindElement(By.XPath("//div[@class='d-flex justify-content-between w-100']")).Click();
+            Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
             BitcloutChromeDriver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px']")).Click();
             Thread.Sleep(MainWindowViewModel.settings.DelayTime);
             BitcloutChromeDriver.SwitchTo().Window(BitcloutChromeDriver.WindowHandles[0]);
+
             if (BitcloutChromeDriver.Url.Contains("https://bitclout.com/browse"))
             {
                 NLog.LogManager.GetCurrentClassLogger().Info($"Вход выполнен успешно");
