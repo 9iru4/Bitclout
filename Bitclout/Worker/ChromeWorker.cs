@@ -165,12 +165,11 @@ namespace Bitclout
 
                 if (RegChromeDriver.FindElements(By.XPath("//h1[@class='inline-block md:block mr-2 md:mb-2 font-light text-60 md:text-3xl text-black-dark leading-tight']")).Count != 0)
                     throw new OutOfProxyException("Ошибка с сервером cloudfire");
+                Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Жмем кнопку регистрация");
                 RegChromeDriver.FindElement(By.XPath("//a[@class='btn btn-primary landing__sign-up']")).Click();//Кликаем дальше
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime);
-
-
 
                 RegChromeDriver.SwitchTo().Window(RegChromeDriver.WindowHandles[1]);
 
@@ -218,7 +217,6 @@ namespace Bitclout
                     }
                 }
 
-
                 try
                 {
                     Thread.Sleep(MainWindowViewModel.settings.DelayTime);
@@ -236,7 +234,6 @@ namespace Bitclout
                 {
 
                 }
-
 
                 for (int i = 0; i < 6; i++)//Ждем еще 30 секунд, проверяя каждые 5
                 {
@@ -265,8 +262,8 @@ namespace Bitclout
                 if (RegChromeDriver.Url != "https://bitclout.com/sign-up?stepNum=4")
                     throw new BadProxyException("Не удалось подтвердить код");
 
-                MainWindowViewModel.settings.CurrentProxy.AccountsRegistred++;
-                MainWindowViewModel.settings.SaveSettings();
+                //MainWindowViewModel.settings.CurrentProxy.AccountsRegistred++;
+                //MainWindowViewModel.settings.SaveSettings();
 
                 RegChromeDriver.Navigate().GoToUrl($"https://bitclout.com/update-profile");//Страница профиля
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime);
@@ -297,7 +294,6 @@ namespace Bitclout
                 NLog.LogManager.GetCurrentClassLogger().Info($"Пробуем сохранить профиль");
                 RegChromeDriver.FindElement(By.XPath("//a[@class='btn btn-primary btn-lg font-weight-bold fs-15px mt-5px']")).Click();//Пробем сохранить
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime);
-
 
                 bool created = false;
                 try
@@ -404,7 +400,6 @@ namespace Bitclout
             PhoneNumber pn = null;
             try
             {
-
                 while (pn == null)//Получаем номер, пока не получим
                 {
                     pn = PhoneWorker.GetPhoneNumber(ServiceCodes.lt);
