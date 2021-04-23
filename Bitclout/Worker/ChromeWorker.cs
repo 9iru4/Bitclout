@@ -653,20 +653,26 @@ namespace Bitclout
             BitcloutChromeDriver.FindElement(By.XPath("//input[@class='form-control w-100 fs-15px lh-15px mt-5px ng-untouched ng-pristine ng-valid']")).SendKeys(publicKey);
             Thread.Sleep(2000);
 
-            NLog.LogManager.GetCurrentClassLogger().Info($"Вводим сумму");
-            BitcloutChromeDriver.FindElement(By.XPath("//input[@class='form-control w-100 fs-15px lh-15px ng-untouched ng-pristine ng-valid']")).SendKeys(".00005");
-            Thread.Sleep(2000);
-
-            NLog.LogManager.GetCurrentClassLogger().Info($"Подтверждаем");
-
             try
             {
-                BitcloutChromeDriver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ml-15px py-10px mt-5px ng-star-inserted']")).Click();
+                BitcloutChromeDriver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ml-5px py-10px']")).Click();
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime);
             }
             catch (Exception)
             {
+
+            }
+
+            try
+            {
+                NLog.LogManager.GetCurrentClassLogger().Info($"Подтверждаем");
                 BitcloutChromeDriver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ml-15px py-10px mt-5px']")).Click();
+                Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+            }
+            catch (Exception)
+            {
+                NLog.LogManager.GetCurrentClassLogger().Info($"Подтверждаем");
+                BitcloutChromeDriver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ml-15px py-10px mt-5px ng-star-inserted']")).Click();
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime);
             }
 
@@ -674,10 +680,9 @@ namespace Bitclout
             BitcloutChromeDriver.FindElement(By.XPath("//button[@class='swal2-confirm btn btn-light swal2-styled']")).Click();
             Thread.Sleep(MainWindowViewModel.settings.DelayTime * 2);
 
-            NLog.LogManager.GetCurrentClassLogger().Info($"Подтверждаем");
+            NLog.LogManager.GetCurrentClassLogger().Info($"Подтвержаем");
             BitcloutChromeDriver.FindElement(By.XPath("//button[@class='swal2-confirm btn btn-light swal2-styled']")).Click();
             Thread.Sleep(MainWindowViewModel.settings.DelayTime);
-
             return true;
         }
 
