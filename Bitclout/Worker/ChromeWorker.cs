@@ -83,22 +83,6 @@ namespace Bitclout
                 NLog.LogManager.GetCurrentClassLogger().Info("Инициализация драйвера для Bitclout ->");
                 ChromeOptions options = new ChromeOptions();
 
-                //MainWindowViewModel.settings.MainProxy = null;
-
-                //while (MainWindowViewModel.settings.MainProxy != null)
-                //{
-                //    try
-                //    {
-                //        MainWindowViewModel.settings.MainProxy = ProxyWorker.GetProxy("ru");
-                //    }
-                //    catch (Exception ex)
-                //    {
-                //        if (ex.Message == "Закончилсь доступные прокси для выбранной страны")
-                //            ProxyWorker.ChangeProxyCountry();
-                //    }
-                //}
-
-                //options.AddArguments("--proxy-server=http://" + MainWindowViewModel.settings.CurrentProxy.GetAddress());
                 options.AddArguments("--incognito");
                 options.AddArgument("--user-data-dir=" + Directory.GetCurrentDirectory() + @"\MainChrome");
                 options.BinaryLocation = MainWindowViewModel.settings.ChromePath;
@@ -655,8 +639,9 @@ namespace Bitclout
 
             try
             {
-                BitcloutChromeDriver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ml-5px py-10px']")).Click();
-                Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+                NLog.LogManager.GetCurrentClassLogger().Info($"Вводим сумму");
+                BitcloutChromeDriver.FindElement(By.XPath("//input[@class='form-control w-100 fs-15px lh-15px ng-untouched ng-pristine ng-valid']")).SendKeys(".00005");
+                Thread.Sleep(2000);
             }
             catch (Exception)
             {
