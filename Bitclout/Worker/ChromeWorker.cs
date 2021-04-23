@@ -39,6 +39,7 @@ namespace Bitclout
                 service.HideCommandPromptWindow = true;
                 BitcloutChromeDriver = new ChromeDriver(service, options);
                 NLog.LogManager.GetCurrentClassLogger().Info("Драйвер Bitclout Успешно инициализирован");
+                BitcloutChromeDriver.Manage().Window.Maximize();
                 return true;
             }
             catch (Exception ex)
@@ -118,16 +119,28 @@ namespace Bitclout
 
             try
             {
+                BitcloutChromeDriver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ml-5px py-10px']")).Click();
+                Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+            }
+            catch (Exception)
+            {
+
+            }
+
+            try
+            {
+                NLog.LogManager.GetCurrentClassLogger().Info($"Подтверждаем");
                 BitcloutChromeDriver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ml-15px py-10px mt-5px']")).Click();
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime);
             }
             catch (Exception)
             {
-                BitcloutChromeDriver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ml-5px py-10px']")).Click();
+                NLog.LogManager.GetCurrentClassLogger().Info($"Подтверждаем");
+                BitcloutChromeDriver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ml-15px py-10px mt-5px ng-star-inserted']")).Click();
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime);
             }
 
-            NLog.LogManager.GetCurrentClassLogger().Info($"Подтверждаем");
+            NLog.LogManager.GetCurrentClassLogger().Info($"Подтвержаем");
             BitcloutChromeDriver.FindElement(By.XPath("//button[@class='swal2-confirm btn btn-light swal2-styled']")).Click();
             Thread.Sleep(MainWindowViewModel.settings.DelayTime * 2);
 
