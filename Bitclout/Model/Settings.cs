@@ -130,6 +130,21 @@ namespace Bitclout.Model
             }
         }
 
+        int _SellSleep = 10000;
+
+        public int SellSleep
+        {
+            get
+            {
+                return _SellSleep;
+            }
+            set
+            {
+                _SellSleep = value;
+                OnPropertyChanged("SellSleep");
+            }
+        }
+
         int _DelayTime = 5000;
 
         public int DelayTime

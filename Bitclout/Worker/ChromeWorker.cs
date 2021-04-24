@@ -133,7 +133,6 @@ namespace Bitclout
             PhoneNumber pn = null;
             try
             {
-
                 while (pn == null)//Получаем номер, пока не получим
                 {
                     pn = PhoneWorker.GetPhoneNumber(ServiceCodes.lt);
@@ -143,13 +142,14 @@ namespace Bitclout
                 if (!InitializeRegChromeDriver(false))
                     throw new BadProxyException("Не удалось получить прокси");
 
+                Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+
                 NLog.LogManager.GetCurrentClassLogger().Info($"Переходим на страницу регистрации");
                 RegChromeDriver.Navigate().GoToUrl($"https://bitclout.com/");//Страница реги
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
                 if (RegChromeDriver.FindElements(By.XPath("//h1[@class='inline-block md:block mr-2 md:mb-2 font-light text-60 md:text-3xl text-black-dark leading-tight']")).Count != 0)
                     throw new OutOfProxyException("Ошибка с сервером cloudfire");
-                Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Жмем кнопку регистрация");
                 RegChromeDriver.FindElement(By.XPath("//a[@class='btn btn-primary landing__sign-up']")).Click();//Кликаем дальше
@@ -179,7 +179,7 @@ namespace Bitclout
                 Thread.Sleep(2000);
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Выбираем Россию");
-                RegChromeDriver.FindElement(By.Id("iti-0__item-id")).Click();//Кликаем на россию
+                RegChromeDriver.FindElement(By.Id("iti-0__item-ua")).Click();//Кликаем на россию
                 Thread.Sleep(2000);
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Вводим номер {pn.Number}");
@@ -336,6 +336,7 @@ namespace Bitclout
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Пробуем сохранить профиль");
                 RegChromeDriver.FindElement(By.XPath("//a[@class='btn btn-primary btn-lg font-weight-bold fs-15px mt-5px']")).Click();//Пробем сохранить
+                Thread.Sleep(MainWindowViewModel.settings.SellSleep);
 
                 bool buy = false;
                 for (int i = 0; i < MainWindowViewModel.settings.DelayTime * 3 / 100; i++)
@@ -430,7 +431,7 @@ namespace Bitclout
                 Thread.Sleep(2000);
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Выбираем Россию");
-                RegChromeDriver.FindElement(By.Id("iti-0__item-id")).Click();//Кликаем на россию
+                RegChromeDriver.FindElement(By.Id("iti-0__item-ua")).Click();//Кликаем на россию
                 Thread.Sleep(2000);
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Вводим номер {pn.Number}");
