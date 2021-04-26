@@ -179,7 +179,7 @@ namespace Bitclout
                 Thread.Sleep(2000);
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Выбираем Россию");
-                RegChromeDriver.FindElement(By.Id("iti-0__item-ua")).Click();//Кликаем на россию
+                RegChromeDriver.FindElement(By.Id("iti-0__item-gb")).Click();//Кликаем на россию
                 Thread.Sleep(2000);
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Вводим номер {pn.Number}");
@@ -433,7 +433,7 @@ namespace Bitclout
                 Thread.Sleep(2000);
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Выбираем Россию");
-                RegChromeDriver.FindElement(By.Id("iti-0__item-ua")).Click();//Кликаем на россию
+                RegChromeDriver.FindElement(By.Id("iti-0__item-gb")).Click();//Кликаем на россию
                 Thread.Sleep(2000);
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Вводим номер {pn.Number}");

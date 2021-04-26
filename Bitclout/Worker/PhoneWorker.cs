@@ -32,7 +32,7 @@ namespace Bitclout.Worker
         public static PhoneNumber GetPhoneNumber(ServiceCodes serviceCode)
         {
             NLog.LogManager.GetCurrentClassLogger().Info($"Получаем номер телефона для сервиса {serviceCode} ->");
-            WebRequest request = WebRequest.Create("https://smshub.org/stubs/handler_api.php?api_key=" + ApiKey + "&action=getNumber&service=" + serviceCode.ToString() + "&operator=any&country=1");
+            WebRequest request = WebRequest.Create("https://smshub.org/stubs/handler_api.php?api_key=" + ApiKey + "&action=getNumber&service=" + serviceCode.ToString() + "&operator=any&country=16");
             WebResponse response = request.GetResponse();
             using (Stream stream = response.GetResponseStream())
             {
