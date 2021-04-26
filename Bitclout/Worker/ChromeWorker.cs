@@ -129,7 +129,7 @@ namespace Bitclout
             UserInfo userInfo = new UserInfo();
             userInfo.Name = user.Name;
             userInfo.Description = user.Description;
-
+            string filepath = UserRegistrationInfo.GeneratePhotoPath();
             PhoneNumber pn = null;
             try
             {
@@ -261,7 +261,8 @@ namespace Bitclout
                 Thread.Sleep(2000);
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Отправляем фотку");
-                RegChromeDriver.FindElement(By.Id("file")).SendKeys(UserRegistrationInfo.GeneratePhotoPath());//Отправляем фотку 
+
+                RegChromeDriver.FindElement(By.Id("file")).SendKeys(filepath);//Отправляем фотку 
                 Thread.Sleep(2000);
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Изменяем комиссию");
@@ -370,6 +371,7 @@ namespace Bitclout
             {
                 if (pn != null || pn.Number == pn.Code)
                     PhoneWorker.DeclinePhone(pn);
+                File.Delete(filepath);
                 EndRegistration();
             }
         }
@@ -381,7 +383,7 @@ namespace Bitclout
             UserInfo userInfo = new UserInfo();
             userInfo.Name = user.Name;
             userInfo.Description = user.Description;
-
+            string filepath = UserRegistrationInfo.GeneratePhotoPath();
             PhoneNumber pn = null;
             try
             {
@@ -515,7 +517,7 @@ namespace Bitclout
                 Thread.Sleep(2000);
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Отправляем фотку");
-                RegChromeDriver.FindElement(By.Id("file")).SendKeys(UserRegistrationInfo.GeneratePhotoPath());//Отправляем фотку 
+                RegChromeDriver.FindElement(By.Id("file")).SendKeys(filepath);//Отправляем фотку 
                 Thread.Sleep(2000);
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Изменяем комиссию");
@@ -587,6 +589,7 @@ namespace Bitclout
             {
                 if (pn != null || pn.Number == pn.Code)
                     PhoneWorker.DeclinePhone(pn);
+                File.Delete(filepath);
                 EndRegistration();
             }
         }
