@@ -207,9 +207,8 @@ namespace Bitclout
                         if (usrtosell != "")
                         {
                             chromeWorker.SellAllCreatorCoins(usrtosell);
-
-                            usr.IsSell = chromeWorker.SendBitclout(settings.BitcloutPublicKey);
                         }
+                        usr.IsSell = chromeWorker.SendBitclout(settings.BitcloutPublicKey);
                         chromeWorker.EndRegistration();
                     }
                     NLog.LogManager.GetCurrentClassLogger().Info($"Конец автоматической регистрации");
