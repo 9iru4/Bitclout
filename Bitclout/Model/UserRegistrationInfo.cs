@@ -69,8 +69,11 @@ namespace Bitclout.Model
             var files = Directory.GetFiles(MainWindowViewModel.settings.PhotosPath);
 
             var rnd = new Random((int)DateTime.Now.Ticks);
+            var path = files[rnd.Next(0, files.Length)];
 
-            return files[rnd.Next(0, files.Length)];
+            File.Delete(path);
+
+            return path;
         }
 
         /// <summary>
