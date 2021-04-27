@@ -159,7 +159,7 @@ namespace Bitclout
                 BitcloutChromeDriver.Navigate().GoToUrl($"https://bitclout.com/wallet");
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
-                var allcoins = BitcloutChromeDriver.FindElements(By.XPath("//div[@class='row no-gutters fc-default px-15px']"));
+                var allcoins = BitcloutChromeDriver.FindElements(By.XPath("//div[@class='row no-gutters fc-default pt-15px pl-15px']"));
 
                 List<(string, double)> AllCoins = new List<(string, double)>();
 
