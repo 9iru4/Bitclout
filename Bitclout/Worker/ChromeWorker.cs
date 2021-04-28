@@ -90,7 +90,7 @@ namespace Bitclout
             Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
             NLog.LogManager.GetCurrentClassLogger().Info($"Выбираем аккаунт");
-            BitcloutChromeDriver.FindElement(By.XPath("//div[@class='d-flex justify-content-between w-100']")).Click();
+            BitcloutChromeDriver.FindElement(By.XPath("//li[@class='list-group-item list-group-item-action cursor-pointer active']")).Click();
             Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
             BitcloutChromeDriver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px']")).Click();
