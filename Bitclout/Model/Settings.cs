@@ -236,6 +236,51 @@ namespace Bitclout.Model
             }
         }
 
+        bool _IsDeletePhoto = false;
+
+        public bool IsDeletePhoto
+        {
+            get
+            {
+                return _IsDeletePhoto;
+            }
+            set
+            {
+                _IsDeletePhoto = value;
+                OnPropertyChanged("IsDeletePhoto");
+            }
+        }
+
+        int _SMSCountry = 0;
+
+        public int SMSCountry
+        {
+            get
+            {
+                return _SMSCountry;
+            }
+            set
+            {
+                _SMSCountry = value;
+                OnPropertyChanged("SMSCountry");
+            }
+        }
+
+        string _CountryCode = "iti-0__item-gb";
+     
+        public string CountryCode
+        {
+            get
+            {
+                return _CountryCode;
+            }
+            set
+            {
+                _CountryCode = value;
+                OnPropertyChanged("CountryCode");
+            }
+        }
+
         int _Comission = 0;
 
         public int Comission

@@ -70,9 +70,6 @@ namespace Bitclout.Model
 
             var rnd = new Random((int)DateTime.Now.Ticks);
             var path = files[rnd.Next(0, files.Length)];
-
-           
-
             return path;
         }
 
