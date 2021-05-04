@@ -211,11 +211,15 @@ namespace Bitclout
                         }
                     });
 
-                    if (settings.IsBuyCoins)
-                        RegistredUsers.Add(chromeWorker.RegisterNewBitсlout(RegistrationInfo[0]));
+                    if (settings.IsMerlin)
+                        RegistredUsers.Add(chromeWorker.RegisterWithoutProfileUpdate(RegistrationInfo[0]));
                     else
-                        RegistredUsers.Add(chromeWorker.RegisterWithoutBuy(RegistrationInfo[0]));
-
+                    {
+                        if (settings.IsBuyCoins)
+                            RegistredUsers.Add(chromeWorker.RegisterNewBitсlout(RegistrationInfo[0]));
+                        else
+                            RegistredUsers.Add(chromeWorker.RegisterWithoutBuy(RegistrationInfo[0]));
+                    }
 
                     pncode = 0;
 

@@ -251,6 +251,21 @@ namespace Bitclout.Model
             }
         }
 
+        bool _IsMerlin = false;
+
+        public bool IsMerlin
+        {
+            get
+            {
+                return _IsMerlin;
+            }
+            set
+            {
+                _IsMerlin = value;
+                OnPropertyChanged("IsMerlin");
+            }
+        }
+
         int _SMSCountry = 0;
 
         public int SMSCountry
@@ -293,6 +308,21 @@ namespace Bitclout.Model
             {
                 _Comission = value;
                 OnPropertyChanged("Comission");
+            }
+        }
+
+        int _MerlinTime = 1000;
+
+        public int MerlinTime
+        {
+            get
+            {
+                return _MerlinTime;
+            }
+            set
+            {
+                _MerlinTime = value;
+                OnPropertyChanged("MerlinTime");
             }
         }
 
