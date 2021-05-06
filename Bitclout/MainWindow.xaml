@@ -31,6 +31,12 @@
 
                 </Grid>
             </TabItem>
+            <TabItem Header="Аккаунты">
+                
+            </TabItem>
+            <TabItem Header="Посты">
+
+            </TabItem>
         </TabControl>
 
     </Grid>

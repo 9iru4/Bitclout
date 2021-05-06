@@ -12,23 +12,6 @@ namespace Bitclout.Model
     [Serializable]
     public class UserRegistrationInfo : INotifyPropertyChanged
     {
-        string _Name;
-        /// <summary>
-        /// Имя пользователя
-        /// </summary>
-        public string Name
-        {
-            get
-            {
-                return _Name;
-            }
-            set
-            {
-                _Name = value;
-                OnPropertyChanged("Name");
-            }
-        }
-
         string _BitcloudPhrase;
         /// <summary>
         /// Описание пользователя
@@ -46,33 +29,34 @@ namespace Bitclout.Model
             }
         }
 
-        bool _IsRegistred = false;
+        DateTime _LastPostDate = new DateTime(0, 0, 0);
 
-        public bool IsRegistred
+        public DateTime LastPostDate
         {
             get
             {
-                return _IsRegistred;
+                return _LastPostDate;
             }
             set
             {
-                _IsRegistred = value;
-                OnPropertyChanged("IsRegistred");
+                _LastPostDate = value;
+                OnPropertyChanged("LastPostDate");
             }
         }
 
-        bool _IsSell = false;
 
-        public bool IsSell
+        DateTime _LastSendDimondDate = new DateTime(0, 0, 0);
+
+        public DateTime LastSendDimondDate
         {
             get
             {
-                return _IsSell;
+                return _LastSendDimondDate;
             }
             set
             {
-                _IsSell = value;
-                OnPropertyChanged("IsSell");
+                _LastSendDimondDate = value;
+                OnPropertyChanged("LastSendDimondDate");
             }
         }
 
@@ -81,9 +65,8 @@ namespace Bitclout.Model
 
         }
 
-        public UserRegistrationInfo(string name, string bitcloudPhrase)
+        public UserRegistrationInfo(string bitcloudPhrase)
         {
-            Name = name;
             BitcloudPhrase = bitcloudPhrase;
         }
 
