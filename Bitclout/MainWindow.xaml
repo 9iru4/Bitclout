@@ -33,14 +33,14 @@
             </TabItem>
             <TabItem Header="Аккаунты">
                 <Grid Background="#FFE5E5E5">
-                    <DataGrid ItemsSource="{Binding RegistrationInfo}" HorizontalAlignment="Left" Height="191" Margin="31,27,0,0" VerticalAlignment="Top" Width="483"/>
+                    <DataGrid ItemsSource="{Binding _RegistrationInfo}" HorizontalAlignment="Left" Height="191" Margin="31,27,0,0" VerticalAlignment="Top" Width="483"/>
                     <Button Content="Добавить" Command="{Binding AddUsersCommand}" HorizontalAlignment="Left" Margin="241,232,0,0" VerticalAlignment="Top" Width="75"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Посты">
                 <Grid Background="#FFE5E5E5">
-                    <DataGrid ItemsSource="{Binding RegistrationInfo}" HorizontalAlignment="Left" Height="191" Margin="31,27,0,0" VerticalAlignment="Top" Width="483"/>
-                    <Button Content="Добавить" Command="{Binding AddUsersCommand}" HorizontalAlignment="Left" Margin="241,232,0,0" VerticalAlignment="Top" Width="75"/>
+                    <DataGrid ItemsSource="{Binding Posts}" HorizontalAlignment="Left" Height="191" Margin="31,27,0,0" VerticalAlignment="Top" Width="483"/>
+                    <Button Content="Добавить" Command="{Binding AddPostsCommand}" HorizontalAlignment="Left" Margin="241,232,0,0" VerticalAlignment="Top" Width="75"/>
                 </Grid>
             </TabItem>
         </TabControl>

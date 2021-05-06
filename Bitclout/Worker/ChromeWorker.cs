@@ -26,7 +26,7 @@ namespace Bitclout
         /// <summary>
         /// Инициализация главного драйвера
         /// </summary>
-        public bool InitializeChromeDriver(ChromeDriver driver, string folderPath)
+        public bool InitializeChromeDriver(string folderPath, IWebDriver driver)
         {
             try
             {
@@ -49,7 +49,7 @@ namespace Bitclout
             }
         }
 
-        public void CloseDdriver(ChromeDriver driver)
+        public void CloseDdriver(IWebDriver driver)
         {
             try
             {
@@ -69,7 +69,7 @@ namespace Bitclout
             }
         }
 
-        public bool SendDiamond(string publicKey, ChromeDriver driver)
+        public bool SendDiamond(string publicKey, IWebDriver driver)
         {
             try
             {
@@ -109,7 +109,7 @@ namespace Bitclout
             }
         }
 
-        public bool MakePost(string post, ChromeDriver driver)
+        public bool MakePost(string post, IWebDriver driver)
         {
             try
             {
@@ -129,7 +129,7 @@ namespace Bitclout
             }
         }
 
-        public bool LoginToBitclout(string phrase, ChromeDriver driver)
+        public bool LoginToBitclout(string phrase, IWebDriver driver)
         {
             NLog.LogManager.GetCurrentClassLogger().Info($"Переходим на страницу регистрации");
             driver.Navigate().GoToUrl($"https://bitclout.com/");//Страница реги
@@ -164,7 +164,7 @@ namespace Bitclout
             else throw new Exception("Не авторизоваться в Bitclout");
         }
 
-        public bool SendBitclout(string publicKey, ChromeDriver driver)
+        public bool SendBitclout(string publicKey, IWebDriver driver)
         {
             NLog.LogManager.GetCurrentClassLogger().Info($"Отправляем Bitclout ->");
 
@@ -209,7 +209,7 @@ namespace Bitclout
             return true;
         }
 
-        public string GetTopSellName(ChromeDriver driver)
+        public string GetTopSellName(IWebDriver driver)
         {
             try
             {
@@ -244,7 +244,7 @@ namespace Bitclout
             }
         }
 
-        public bool SellAllCreatorCoins(string userName, ChromeDriver driver)
+        public bool SellAllCreatorCoins(string userName, IWebDriver driver)
         {
             try
             {
