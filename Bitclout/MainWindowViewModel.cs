@@ -20,7 +20,10 @@ namespace Bitclout
         bool bitclout = false;
         bool stop = false;
         bool selltop = false;
-        ObservableCollection<UserRegistrationInfo> _RegistrationInfo = new ObservableCollection<UserRegistrationInfo>(UserRegistrationInfo.LoadUsers());
+
+        ObservableCollection<UserRegistrationInfo> _RegistrationInfo { get; set; } = new ObservableCollection<UserRegistrationInfo>(UserRegistrationInfo.LoadUsers());
+
+        ObservableCollection<String> Posts { get; set; } = new ObservableCollection<UserRegistrationInfo>(UserRegistrationInfo.LoadUsers());
 
         public ObservableCollection<UserRegistrationInfo> RegistrationInfo
         {
@@ -170,10 +173,10 @@ namespace Bitclout
                 {
                     while (sr.Peek() >= 0)
                     {
-                        var str = sr.ReadLine().Split(';');
-                        if (RegistrationInfo.Where(x => x.Name == str[0]).Count() == 0)
+                        var str = sr.ReadLine();
+                        if (RegistrationInfo.Where(x => x.BitcloudPhrase == str).Count() == 0)
                         {
-                            RegistrationInfo.Add(new UserRegistrationInfo(str[0], str[2]));
+                            RegistrationInfo.Add(new UserRegistrationInfo(str));
                             NLog.LogManager.GetCurrentClassLogger().Info($"Данные для {str[0]} успешно считаны");
                         }
                     }
@@ -228,6 +231,32 @@ namespace Bitclout
                     settings.SaveSettings();
                     Thread.Sleep(10000);
                 }
+            }
+        }
+
+        void GetPosts()
+        {
+            NLog.LogManager.GetCurrentClassLogger().Info($"Получение пользователей из файла ->");
+            try
+            {
+                using (StreamReader sr = new StreamReader(settings.PathToRegistredUsers, Encoding.Default))
+                {
+                    while (sr.Peek() >= 0)
+                    {
+                        var str = sr.ReadLine();
+                        if (RegistrationInfo.Where(x => x.BitcloudPhrase == str).Count() == 0)
+                        {
+                            RegistrationInfo.Add(new UserRegistrationInfo(str));
+                            NLog.LogManager.GetCurrentClassLogger().Info($"Данные для {str[0]} успешно считаны");
+                        }
+                    }
+                    UserRegistrationInfo.SaveUsers(RegistrationInfo.ToList());
+                    NLog.LogManager.GetCurrentClassLogger().Info($"Все пользователи из файла получены");
+                }
+            }
+            catch (Exception ex)
+            {
+                NLog.LogManager.GetCurrentClassLogger().Info(ex, "Произошла ошибка при попытке получения данных для регистрации из файла");
             }
         }
     }
