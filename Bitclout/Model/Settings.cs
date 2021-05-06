@@ -266,6 +266,21 @@ namespace Bitclout.Model
             }
         }
 
+        bool _IsUsingProxy = false;
+
+        public bool IsUsingProxy
+        {
+            get
+            {
+                return _IsUsingProxy;
+            }
+            set
+            {
+                _IsUsingProxy = value;
+                OnPropertyChanged("IsUsingProxy");
+            }
+        }
+
         int _SMSCountry = 0;
 
         public int SMSCountry

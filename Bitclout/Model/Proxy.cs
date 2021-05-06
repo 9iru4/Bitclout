@@ -40,7 +40,7 @@ namespace Bitclout.Model
             }
         }
 
-        
+
         string _Host;
         /// <summary>
         /// Адрес
@@ -166,6 +166,14 @@ namespace Bitclout.Model
             Port = port;
             UserName = user;
             Pass = pass;
+            AccountsRegistred = accountRegistred;
+        }
+
+        public Proxy(string iD, string host, string port, uint accountRegistred = 0)
+        {
+            ID = iD;
+            Host = host;
+            Port = port;
             AccountsRegistred = accountRegistred;
         }
 

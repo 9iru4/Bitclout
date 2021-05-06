@@ -56,6 +56,7 @@
                     <TextBox Text="{Binding settings.MerlinTime}" HorizontalAlignment="Left" Height="27" Margin="136,246,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="61"/>
                     <CheckBox IsChecked="{Binding settings.IsMerlin}" Content="Merlin" HorizontalAlignment="Left" Margin="209,246,0,0" VerticalAlignment="Top"/>
                     <Label Content="MerlinTime" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="61,246,0,0" Height="27"/>
+                    <CheckBox IsChecked="{Binding settings.IsUsingProxy}" Content="UsingProxy" HorizontalAlignment="Left" Margin="277,246,0,0" VerticalAlignment="Top"/>
 
                 </Grid>
             </TabItem>
@@ -63,6 +64,12 @@
                 <Grid Background="#FFE5E5E5">
                     <DataGrid ItemsSource="{Binding RegistrationInfo}" HorizontalAlignment="Left" Height="191" Margin="31,27,0,0" VerticalAlignment="Top" Width="483"/>
                     <Button Content="Добавить" Command="{Binding AddUsersCommand}" HorizontalAlignment="Left" Margin="241,232,0,0" VerticalAlignment="Top" Width="75"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Прокси">
+                <Grid Background="#FFE5E5E5">
+                    <DataGrid ItemsSource="{Binding _Proxy}" HorizontalAlignment="Left" Height="191" Margin="31,27,0,0" VerticalAlignment="Top" Width="483"/>
+                    <Button Content="Добавить" Command="{Binding AddProxyCommand}" HorizontalAlignment="Left" Margin="241,232,0,0" VerticalAlignment="Top" Width="75"/>
                 </Grid>
             </TabItem>
         </TabControl>

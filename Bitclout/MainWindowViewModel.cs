@@ -23,7 +23,7 @@ namespace Bitclout
         bool stop = false;
         bool selltop = false;
         ObservableCollection<UserRegistrationInfo> _RegistrationInfo = new ObservableCollection<UserRegistrationInfo>(UserRegistrationInfo.LoadUsers());
-
+        public static ObservableCollection<Proxy> _Proxy { get; set; } = new ObservableCollection<Proxy>(ProxyWorker.LoadProxy());
         public ObservableCollection<UserRegistrationInfo> RegistrationInfo
         {
             get
@@ -120,6 +120,19 @@ namespace Bitclout
             }
         }
 
+        private RelayCommand _AddProxyCommand;
+        public RelayCommand AddProxyCommand
+        {
+            get
+            {
+                return _AddProxyCommand ??
+                    (_AddProxyCommand = new RelayCommand(obj =>
+                    {
+                        GetProxyFromFile();
+                    }));
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public void OnPropertyChanged([CallerMemberName] string prop = "")
@@ -134,15 +147,23 @@ namespace Bitclout
 
         void SaveRegistredUser()
         {
-            foreach (var item in RegistredUsers.ToList())
+            try
             {
-                using (StreamWriter sw = new StreamWriter(@"bin\RegistredUsers.dat", true))
+                foreach (var item in RegistredUsers.ToList())
                 {
-                    sw.WriteLine(item.ToLogFile());
-                    NLog.LogManager.GetCurrentClassLogger().Info($"Зарегистрированный пользователь {item.Name} успешно сохранен.");
+                    using (StreamWriter sw = new StreamWriter(@"bin\RegistredUsers.dat", true))
+                    {
+                        sw.WriteLine(item.ToLogFile());
+                        NLog.LogManager.GetCurrentClassLogger().Info($"Зарегистрированный пользователь {item.Name} успешно сохранен.");
+                    }
                 }
+                RegistredUsers.Clear();
             }
-            RegistredUsers.Clear();
+            catch
+            {
+
+            }
+           
         }
 
         void GetUsersFromFile()
@@ -179,7 +200,37 @@ namespace Bitclout
                 NLog.LogManager.GetCurrentClassLogger().Info("Диологовое окно выбора файла пользователей закрыто");
         }
 
-
+        void GetProxyFromFile()
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Multiselect = false;
+            openFileDialog.Filter = "Text files (*.txt)|*.txt";
+            if (openFileDialog.ShowDialog() == true)
+            {
+                try
+                {
+                    using (StreamReader sr = new StreamReader(openFileDialog.FileName, Encoding.Default))
+                    {
+                        while (sr.Peek() >= 0)
+                        {
+                            var str = sr.ReadLine().Split('|');
+                            if (_Proxy.Where(x => x.ID == str[0]).FirstOrDefault() == null)
+                            {
+                                _Proxy.Add(new Proxy(str[0], str[1], str[2]));
+                            }
+                        }
+                        ProxyWorker.SaveProxy(_Proxy.ToList());
+                        NLog.LogManager.GetCurrentClassLogger().Info($"Все пользователи из файла получены");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    NLog.LogManager.GetCurrentClassLogger().Info(ex, "Произошла ошибка при попытке получения данных для регистрации из файла");
+                }
+            }
+            else
+                NLog.LogManager.GetCurrentClassLogger().Info("Диологовое окно выбора файла пользователей закрыто");
+        }
 
         void BotStart()
         {
@@ -278,7 +329,7 @@ namespace Bitclout
                 catch (BadProxyException ex)
                 {
                     NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
-                    //settings.CurrentProxy.AccountsRegistred = 2;
+                    settings.CurrentProxy.AccountsRegistred = 2;
                     continue;
                 }
                 catch (NameAlreadyExistException ex)
@@ -332,6 +383,12 @@ namespace Bitclout
                         Application.Current.Dispatcher.Invoke(() => { RegistrationInfo.RemoveAt(0); });
 
                     UserRegistrationInfo.SaveUsers(RegistrationInfo.ToList());
+
+                    settings.CurrentProxy.AccountsRegistred++;
+
+                    _Proxy.Where(x => x.ID == settings.CurrentProxy.ID).FirstOrDefault().AccountsRegistred = settings.CurrentProxy.AccountsRegistred;
+
+                    ProxyWorker.SaveProxy(_Proxy.ToList());
 
                     settings.SaveSettings();
 

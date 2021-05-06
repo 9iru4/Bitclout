@@ -2,6 +2,7 @@
 using Bitclout.Model;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Web.Helpers;
 
@@ -9,7 +10,7 @@ namespace Bitclout.Worker
 {
     public class ProxyWorker
     {
-        public static List<string> ProxyCodes { get; set; } = new List<string>( "ru end".Split(' '));
+        public static List<string> ProxyCodes { get; set; } = new List<string>("ru end".Split(' '));
 
         public static bool ChangeProxyCountry()
         {
@@ -21,6 +22,27 @@ namespace Bitclout.Worker
                 return true;
             }
             return false;
+        }
+
+        public static Proxy GetProxyFromCollection(List<Proxy> proxy)
+        {
+            var col = proxy.Where(x => x.AccountsRegistred == 0);
+            if (col.Count() != 0)
+                return col.FirstOrDefault();
+            else
+            {
+                var col1 = proxy.Where(x => x.AccountsRegistred == 1);
+                if (col1.Count() != 0)
+                    return col1.FirstOrDefault();
+                else
+                {
+                    foreach (var item in MainWindowViewModel._Proxy)
+                    {
+                        item.AccountsRegistred = 0;
+                    }
+                    return MainWindowViewModel._Proxy.Where(x => x.AccountsRegistred == 0).FirstOrDefault();
+                }
+            }
         }
 
         /// <summary>
@@ -124,5 +146,40 @@ namespace Bitclout.Worker
                 }
             }
         }
+        public static List<Proxy> LoadProxy()
+        {
+            try
+            {
+                using (StreamReader sr = new StreamReader("bin\\Proxy.dat"))
+                {
+                    return SerializeHelper.Desirialize<List<Proxy>>(sr.ReadToEnd());
+                }
+            }
+            catch
+            {
+                return new List<Proxy>();
+            }
+        }
+
+        /// <summary>
+        /// Сохранение настроек в файл
+        /// </summary>
+        /// <returns></returns>
+        public static bool SaveProxy(List<Proxy> proxy)
+        {
+            try
+            {
+                using (StreamWriter sw = new StreamWriter("bin\\Proxy.dat"))
+                {
+                    sw.Write(SerializeHelper.Serialize(proxy));
+                    return true;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
     }
 }
