@@ -282,7 +282,6 @@ namespace Bitclout
                     {
                         NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
                         settings.CurrentProxy = null;
-                        continue;
                     }
                     else
                     {
@@ -324,48 +323,39 @@ namespace Bitclout
                         //Thread.Sleep(60000 * 5);
                     }
                     NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
-                    continue;
                 }
                 catch (BadProxyException ex)
                 {
                     NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
                     settings.CurrentProxy.AccountsRegistred = 2;
-                    continue;
                 }
                 catch (NameAlreadyExistException ex)
                 {
                     NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
-                    continue;
                 }
                 catch (FailSendBitcloutException ex)
                 {
                     NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
-                    continue;
                 }
                 catch (FailPrepareToBuyCreatorCoinsException ex)
                 {
                     NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
-                    continue;
                 }
                 catch (FailConfirmBuyException ex)
                 {
                     NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
-                    continue;
                 }
                 catch (FailInitializeRegChromeDriverException ex)
                 {
                     NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
-                    continue;
                 }
                 catch (FailedSaveProfileException ex)
                 {
                     NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
-                    continue;
                 }
                 catch (PhoneNumberAlreadyUsedException ex)
                 {
                     NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
-                    continue;
                 }
                 catch (Exception ex)
                 {
@@ -374,7 +364,6 @@ namespace Bitclout
                         settings.CurrentProxy = null;
                     }
                     NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
-                    continue;
                 }
                 finally
                 {

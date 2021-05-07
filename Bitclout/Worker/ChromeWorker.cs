@@ -764,7 +764,6 @@ namespace Bitclout
                     throw new BadProxyException("ERR_PROXY_CONNECTION_FAILED");
                 if (ex.Message.Contains("The HTTP request to the remote WebDriver server for URL"))
                     throw new BadProxyException(ex.Message);
-                throw;
             }
             finally
             {
