@@ -17,14 +17,14 @@ namespace Bitclout
         {
             try
             {
-                (DataContext as MainWindowViewModel).chromeWorker.RegChromeDriver.Quit();
+                (DataContext as MainWindowViewModel).chromeWorker.DiamondChromeDriver.Quit();
             }
             catch (System.Exception)
             {
             }
             try
             {
-                (DataContext as MainWindowViewModel).chromeWorker.BitcloutChromeDriver.Quit();
+                (DataContext as MainWindowViewModel).chromeWorker.PostChromeDriver.Quit();
             }
             catch (System.Exception)
             {
