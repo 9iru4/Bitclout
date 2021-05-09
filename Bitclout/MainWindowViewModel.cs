@@ -163,7 +163,7 @@ namespace Bitclout
             {
 
             }
-           
+
         }
 
         void GetUsersFromFile()
@@ -373,12 +373,14 @@ namespace Bitclout
 
                     UserRegistrationInfo.SaveUsers(RegistrationInfo.ToList());
 
-                    settings.CurrentProxy.AccountsRegistred++;
+                    if (settings.CurrentProxy != null)
+                    {
+                        settings.CurrentProxy.AccountsRegistred++;
 
-                    _Proxy.Where(x => x.ID == settings.CurrentProxy.ID).FirstOrDefault().AccountsRegistred = settings.CurrentProxy.AccountsRegistred;
+                        _Proxy.Where(x => x.ID == settings.CurrentProxy.ID).FirstOrDefault().AccountsRegistred = settings.CurrentProxy.AccountsRegistred;
 
-                    ProxyWorker.SaveProxy(_Proxy.ToList());
-
+                        ProxyWorker.SaveProxy(_Proxy.ToList());
+                    }
                     settings.SaveSettings();
 
                     SaveRegistredUser();
