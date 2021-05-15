@@ -1,12 +1,15 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace Bitclout.Model
 {
+    public enum ProxyStatus { NotUsed = 0, Good = 1, BadSoax = 2, Died = 3 }
     /// <summary>
     /// Класс прокси
     /// </summary>
     [Serializable]
-    public class Proxy
+    public class Proxy : INotifyPropertyChanged
     {
         string _ID;
         /// <summary>
@@ -21,6 +24,7 @@ namespace Bitclout.Model
             set
             {
                 _ID = value;
+                OnPropertyChanged("ID");
             }
         }
 
@@ -37,6 +41,7 @@ namespace Bitclout.Model
             set
             {
                 _IP = value;
+                OnPropertyChanged("IP");
             }
         }
 
@@ -54,6 +59,7 @@ namespace Bitclout.Model
             set
             {
                 _Host = value;
+                OnPropertyChanged("Host");
             }
         }
 
@@ -70,40 +76,10 @@ namespace Bitclout.Model
             set
             {
                 _Port = value;
+                OnPropertyChanged("Port");
             }
         }
 
-        string _UserName;
-        /// <summary>
-        /// Логин прокси
-        /// </summary>
-        public string UserName
-        {
-            get
-            {
-                return _UserName;
-            }
-            set
-            {
-                _UserName = value;
-            }
-        }
-
-        string _Pass;
-        /// <summary>
-        /// Пароль прокси
-        /// </summary>
-        public string Pass
-        {
-            get
-            {
-                return _Pass;
-            }
-            set
-            {
-                _Pass = value;
-            }
-        }
         string _StatusCode;
         /// <summary>
         /// Пароль прокси
@@ -117,24 +93,33 @@ namespace Bitclout.Model
             set
             {
                 _StatusCode = value;
+                OnPropertyChanged("StatusCode");
             }
         }
 
 
-        uint _AccountsRegistred;
+        ProxyStatus _CurrentStatus;
         /// <summary>
         /// Количество регистраций
         /// </summary>
-        public uint AccountsRegistred
+        public ProxyStatus CurrentStatus
         {
             get
             {
-                return _AccountsRegistred;
+                return _CurrentStatus;
             }
             set
             {
-                _AccountsRegistred = value;
+                _CurrentStatus = value;
+                OnPropertyChanged("CurrentStatus");
             }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void OnPropertyChanged([CallerMemberName] string prop = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
         public Proxy()
@@ -143,9 +128,7 @@ namespace Bitclout.Model
             _IP = "";
             Host = "";
             Port = "";
-            UserName = "";
-            Pass = "";
-            AccountsRegistred = 0;
+            CurrentStatus = ProxyStatus.NotUsed;
         }
 
         /// <summary>
@@ -155,26 +138,22 @@ namespace Bitclout.Model
         /// <param name="iP">ИП</param>
         /// <param name="host">Адрес</param>
         /// <param name="port">Порт</param>
-        /// <param name="user">Логин</param>
-        /// <param name="pass">Пароль</param>
         /// <param name="accountRegistred"></param>
-        public Proxy(string iD, string iP, string host, string port, string user, string pass, uint accountRegistred = 0)
+        public Proxy(string iD, string iP, string host, string port, ProxyStatus prxStatus = ProxyStatus.NotUsed)
         {
             ID = iD;
             _IP = iP;
             Host = host;
             Port = port;
-            UserName = user;
-            Pass = pass;
-            AccountsRegistred = accountRegistred;
+            CurrentStatus = prxStatus;
         }
 
-        public Proxy(string iD, string host, string port, uint accountRegistred = 0)
+        public Proxy(string iD, string host, string port, ProxyStatus prxStatus = ProxyStatus.NotUsed)
         {
             ID = iD;
             Host = host;
             Port = port;
-            AccountsRegistred = accountRegistred;
+            CurrentStatus = prxStatus;
         }
 
         /// <summary>

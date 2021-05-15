@@ -94,9 +94,11 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Exceptions\BadProxyException.cs" />
+    <Compile Include="Exceptions\BadSyncResponseException.cs" />
     <Compile Include="Exceptions\FailConfirmBuyException.cs" />
     <Compile Include="Exceptions\FailedInitializeBitcloutChromeDriver.cs" />
     <Compile Include="Exceptions\FailedSaveProfileException.cs" />
+    <Compile Include="Exceptions\FailedSellCreatorCoinsException.cs" />
     <Compile Include="Exceptions\FailInitializeRegChromeDriverException.cs" />
     <Compile Include="Exceptions\FailPrepareToBuyCreatorCoinsException.cs" />
     <Compile Include="Exceptions\FailSendBitcloutException.cs" />

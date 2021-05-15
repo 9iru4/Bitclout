@@ -5,10 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Bitclout"
         mc:Ignorable="d"
-        ResizeMode="NoResize"
-        Title="MainWindow" Height="370.533" Width="628" Closing="Window_Closing">
+        ResizeMode="CanMinimize"
+        Title="MainWindow" Height="440.733" Width="607.2" Closing="Window_Closing">
     <Grid>
-        <TabControl HorizontalAlignment="Left" Height="341" VerticalAlignment="Top" Width="622" Margin="0,0,-0.4,-0.2">
+        <TabControl HorizontalAlignment="Left" Height="411" VerticalAlignment="Top" Width="601" Margin="0,0,-0.2,0">
             <TabItem Header="Работа программы">
                 <Grid Background="#FFE5E5E5">
                     <Button Content="Бот старт" IsEnabled="{Binding StartEnabled}" Command="{Binding StartBotCommand}" HorizontalAlignment="Left" Margin="240,86,0,0" VerticalAlignment="Top" Width="75"/>
@@ -26,7 +26,7 @@
                     <TextBox HorizontalAlignment="Left" Text="{Binding settings.MinUSD}" Height="27" Margin="127,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="54"/>
                     <TextBox HorizontalAlignment="Left" Text="{Binding settings.MaxUSD}" Height="27" Margin="185,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="54"/>
                     <TextBox Text="{Binding settings.SellAmount}"  HorizontalAlignment="Left" Height="27" Margin="432,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="44"/>
-                    <TextBox Text="{Binding settings.SellMoreThan}"  HorizontalAlignment="Left" Height="27" Margin="481,42,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="48"/>
+                    <TextBox Text="{Binding settings.SellMoreThan}"  HorizontalAlignment="Left" Height="27" Margin="481,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="48"/>
 
                     <Label Content="SMSApiKey" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,68,0,0" Height="29"/>
                     <Label Content="ProxyApiKey" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,97,0,0" Height="28"/>
@@ -40,23 +40,31 @@
                     <Label Content="Amount" HorizontalAlignment="Left" Margin="432,17,0,0" VerticalAlignment="Top"/>
                     <Label Content="USD Range" HorizontalAlignment="Left" Margin="51,40,0,0" VerticalAlignment="Top" Width="70" Height="27"/>
 
-                    <Button Command="{Binding SaveCommand}" Content="Сохранить" HorizontalAlignment="Left" Margin="254,284,0,0" VerticalAlignment="Top" Width="75"/>
+                    <Button Command="{Binding SaveCommand}" Content="Сохранить" HorizontalAlignment="Left" Margin="280,345,0,0" VerticalAlignment="Top" Width="75"/>
 
                     <Label Content="USD Range" HorizontalAlignment="Left" Margin="51,40,0,0" VerticalAlignment="Top" Width="70" Height="27"/>
                     <Label Content="Sell &gt;" HorizontalAlignment="Left" Margin="481,16,0,0" VerticalAlignment="Top"/>
-                    <CheckBox IsChecked="{Binding settings.IsBuyCoins}" Content="Залетать" HorizontalAlignment="Left" Margin="310,20,0,0" VerticalAlignment="Top"/>
+                    <CheckBox IsChecked="{Binding settings.IsBuyCoins}" Content="Zaletat'" HorizontalAlignment="Left" Margin="304,291,0,0" VerticalAlignment="Top"/>
                     <TextBox HorizontalAlignment="Left" Height="26" Margin="310,41,0,0" TextWrapping="Wrap" Text="{Binding settings.Comission}" VerticalAlignment="Top" Width="70"/>
                     <TextBox Text="{Binding settings.SellSleep}"  HorizontalAlignment="Left" Height="27" Margin="383,41,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="44"/>
                     <Label Content="Buy delay" HorizontalAlignment="Left" Margin="376,16,0,0" VerticalAlignment="Top"/>
-                    <CheckBox IsChecked="{Binding settings.IsDeletePhoto}" Content="DelPhoto" HorizontalAlignment="Left" Margin="385,216,0,0" VerticalAlignment="Top"/>
-                    <Label Content="SMSCountry" HorizontalAlignment="Left" Margin="51,210,0,0" VerticalAlignment="Top"/>
-                    <TextBox Text="{Binding settings.SMSCountry}" HorizontalAlignment="Left" Height="23" Margin="131,210,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="63"/>
-                    <Label Content="CountryCode" HorizontalAlignment="Left" Margin="197,210,0,0" VerticalAlignment="Top"/>
-                    <TextBox Text="{Binding settings.CountryCode}" HorizontalAlignment="Left" Height="23" Margin="277,210,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="103"/>
-                    <TextBox Text="{Binding settings.MerlinTime}" HorizontalAlignment="Left" Height="27" Margin="136,246,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="61"/>
-                    <CheckBox IsChecked="{Binding settings.IsMerlin}" Content="Merlin" HorizontalAlignment="Left" Margin="209,246,0,0" VerticalAlignment="Top"/>
-                    <Label Content="MerlinTime" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="61,246,0,0" Height="27"/>
-                    <CheckBox IsChecked="{Binding settings.IsUsingProxy}" Content="UsingProxy" HorizontalAlignment="Left" Margin="277,246,0,0" VerticalAlignment="Top"/>
+                    <CheckBox IsChecked="{Binding settings.IsDeletePhoto}" Content="DelPhoto" HorizontalAlignment="Left" Margin="461,291,0,0" VerticalAlignment="Top"/>
+                    <Label Content="SMSCountry" HorizontalAlignment="Left" Margin="53,263,0,0" VerticalAlignment="Top"/>
+                    <TextBox Text="{Binding settings.SMSCountry}" HorizontalAlignment="Left" Height="23" Margin="127,263,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="63"/>
+                    <Label Content="CountryCode" HorizontalAlignment="Left" Margin="193,259,0,0" VerticalAlignment="Top"/>
+                    <TextBox Text="{Binding settings.CountryCode}" HorizontalAlignment="Left" Height="23" Margin="269,263,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="122"/>
+                    <TextBox Text="{Binding settings.MerlinTime}" HorizontalAlignment="Left" Height="23" Margin="466,263,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="63"/>
+                    <CheckBox IsChecked="{Binding settings.IsMerlin}" Content="Merlin" HorizontalAlignment="Left" Margin="239,291,0,0" VerticalAlignment="Top"/>
+                    <Label Content="MerlinTime" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="391,262,0,0" Height="27"/>
+                    <CheckBox IsChecked="{Binding settings.IsUsingProxy}" Content="UsingProxy" HorizontalAlignment="Left" Margin="374,291,0,0" VerticalAlignment="Top"/>
+                    <CheckBox IsChecked="{Binding settings.SendBitlout}" Content="SendBitlout" HorizontalAlignment="Left" Margin="328,311,0,0" VerticalAlignment="Top"/>
+                    <CheckBox IsChecked="{Binding settings.IsSyncBots}" Content="IsSyncBots" HorizontalAlignment="Left" Margin="425,311,0,0" VerticalAlignment="Top"/>
+                    <TextBox Text="{Binding settings.SyncAddress}" HorizontalAlignment="Left" Height="23" Margin="127,207,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
+                    <TextBox Text="{Binding settings.BotID}" HorizontalAlignment="Left" Height="23" Margin="127,235,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
+                    <Label Content="SyncAddress" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,205,0,0" Height="28" RenderTransformOrigin="0.415,0.538"/>
+                    <Label Content="BotName" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,233,0,0" Height="28" RenderTransformOrigin="0.415,0.538"/>
+                    <CheckBox IsChecked="{Binding settings.SOAX}" Content="SOAX" HorizontalAlignment="Left" Margin="239,311,0,0" VerticalAlignment="Top"/>
+                    <Label Content="Percent" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="310,15,0,0" Height="27"/>
 
                 </Grid>
             </TabItem>
@@ -68,7 +76,7 @@
             </TabItem>
             <TabItem Header="Прокси">
                 <Grid Background="#FFE5E5E5">
-                    <DataGrid ItemsSource="{Binding _Proxy}" HorizontalAlignment="Left" Height="191" Margin="31,27,0,0" VerticalAlignment="Top" Width="483"/>
+                    <DataGrid ItemsSource="{Binding proxyWorker.Proxy}"  HorizontalAlignment="Left" Height="191" Margin="31,27,0,0" VerticalAlignment="Top" Width="483"/>
                     <Button Content="Добавить" Command="{Binding AddProxyCommand}" HorizontalAlignment="Left" Margin="241,232,0,0" VerticalAlignment="Top" Width="75"/>
                 </Grid>
             </TabItem>

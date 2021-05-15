@@ -61,11 +61,11 @@ namespace Bitclout.Model
             }
         }
 
-        int _USDBuy;
+        double _USDBuy;
         /// <summary>
         /// Долларов портачено
         /// </summary>
-        public int USDBuy
+        public double USDBuy
         {
             get
             {
@@ -78,11 +78,11 @@ namespace Bitclout.Model
             }
         }
 
-        int _USDSell;
+        double _USDSell;
         /// <summary>
         /// Долларов получено
         /// </summary>
-        public int USDSell
+        public double USDSell
         {
             get
             {

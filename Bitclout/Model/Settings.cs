@@ -95,6 +95,39 @@ namespace Bitclout.Model
                 OnPropertyChanged("BitcloutSeedPhrase");
             }
         }
+        string _BotID = "MaksLoh";
+        /// <summary>
+        /// Логин Bitclout
+        /// </summary>
+        public string BotID
+        {
+            get
+            {
+                return _BotID;
+            }
+            set
+            {
+                _BotID = value;
+                OnPropertyChanged("BotID");
+            }
+        }
+
+        string _SyncAddress = "http://46.243.186.18:10090/api/Default/GetAll?ID=";
+        /// <summary>
+        /// Логин Bitclout
+        /// </summary>
+        public string SyncAddress
+        {
+            get
+            {
+                return _SyncAddress;
+            }
+            set
+            {
+                _SyncAddress = value;
+                OnPropertyChanged("SyncAddress");
+            }
+        }
 
         Proxy _CurrentProxy;
         /// <summary>
@@ -236,6 +269,51 @@ namespace Bitclout.Model
             }
         }
 
+        bool _SOAX = false;
+
+        public bool SOAX
+        {
+            get
+            {
+                return _SOAX;
+            }
+            set
+            {
+                _SOAX = value;
+                OnPropertyChanged("SOAX");
+            }
+        }
+
+        bool _SendBitlout = false;
+
+        public bool SendBitlout
+        {
+            get
+            {
+                return _SendBitlout;
+            }
+            set
+            {
+                _SendBitlout = value;
+                OnPropertyChanged("SendBitlout");
+            }
+        }
+
+        bool _IsSyncBots = false;
+
+        public bool IsSyncBots
+        {
+            get
+            {
+                return _IsSyncBots;
+            }
+            set
+            {
+                _IsSyncBots = value;
+                OnPropertyChanged("IsSyncBots");
+            }
+        }
+
         bool _IsDeletePhoto = false;
 
         public bool IsDeletePhoto
@@ -297,7 +375,7 @@ namespace Bitclout.Model
         }
 
         string _CountryCode = "iti-0__item-gb";
-     
+
         public string CountryCode
         {
             get
