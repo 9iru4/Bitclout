@@ -67,6 +67,10 @@
                     <Label Content="Percent" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="310,15,0,0" Height="27"/>
                     <ComboBox HorizontalAlignment="Left" Margin="114,294,0,0" VerticalAlignment="Top" Width="120"/>
                     <Label Content="SellType" HorizontalAlignment="Left" Margin="56,291,0,0" VerticalAlignment="Top"/>
+                    <ComboBox HorizontalAlignment="Left" Margin="114,325,0,0" VerticalAlignment="Top" Width="120"/>
+                    <Label Content="PrxType" HorizontalAlignment="Left" Margin="57,322,0,0" VerticalAlignment="Top"/>
+                    <ComboBox HorizontalAlignment="Left" Margin="114,356,0,0" VerticalAlignment="Top" Width="120"/>
+                    <Label Content="BotType" HorizontalAlignment="Left" Margin="57,353,0,0" VerticalAlignment="Top"/>
 
                 </Grid>
             </TabItem>

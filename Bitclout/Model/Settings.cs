@@ -1,14 +1,13 @@
-﻿using System;
+﻿using Bitclout.Worker;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 
 namespace Bitclout.Model
 {
-    public enum SellType { DontSell = 0, OnlySellReg, OnlySellMain, SellAfterReg, SellCoinsAfterReg }
-
-    public enum BotType { OnlyReg = 0, BuyCoins, Merlin }
-
     /// <summary>
     /// Настройки программы
     /// </summary>
