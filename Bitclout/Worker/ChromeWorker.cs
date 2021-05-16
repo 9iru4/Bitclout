@@ -23,6 +23,8 @@ namespace Bitclout
         /// </summary>
         public IWebDriver BitcloutChromeDriver { get; set; }
 
+        public IWebDriver SellChromeDriver { get; set; }
+
         public ChromeWorker()
         {
         }
@@ -43,7 +45,7 @@ namespace Bitclout
             }
 
             options.AddArguments("--incognito");
-            options.AddArgument("--ignore-certificate-errors-spki-list");
+            options.AddArgument("--ignore-certificate-errors-spki-list");//Хз чо это, игнор ошибок сертификата
             options.AddArgument("--user-data-dir=" + Directory.GetCurrentDirectory() + dirpath);
             options.BinaryLocation = MainWindowViewModel.settings.ChromePath;
             ChromeDriverService service = ChromeDriverService.CreateDefaultService();
@@ -78,14 +80,14 @@ namespace Bitclout
 
             NLog.LogManager.GetCurrentClassLogger().Info($"Переходим на страницу регистрации");
             RegChromeDriver.Navigate().GoToUrl($"https://bitclout.com/");//Страница реги
-            Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+            Thread.Sleep(7000);
 
             if (RegChromeDriver.FindElements(By.XPath("//h1[@class='inline-block md:block mr-2 md:mb-2 font-light text-60 md:text-3xl text-black-dark leading-tight']")).Count != 0)
                 throw new OutOfProxyException("Ошибка с сервером cloudfire");
 
             NLog.LogManager.GetCurrentClassLogger().Info($"Жмем кнопку регистрация");
             RegChromeDriver.FindElement(By.XPath("//a[@class='btn btn-primary landing__sign-up']")).Click();//Кликаем дальше
-            Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+            Thread.Sleep(7000);
 
             RegChromeDriver.SwitchTo().Window(RegChromeDriver.WindowHandles[1]);
 
@@ -98,31 +100,30 @@ namespace Bitclout
 
             NLog.LogManager.GetCurrentClassLogger().Info($"Отправляем фразу-логин");
             RegChromeDriver.FindElement(By.XPath("//textarea[@class='form-control fs-15px ng-untouched ng-pristine ng-valid']")).SendKeys(userInfo.BitcloutSeedPhrase);//Вставляем фразу
-            Thread.Sleep(MainWindowViewModel.settings.DelayTime * 2 / 3);
+            Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
             NLog.LogManager.GetCurrentClassLogger().Info($"Кликаем дальше");
             RegChromeDriver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ml-10px']")).Click();//Кликаем дальше
-            Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+            Thread.Sleep(7000);
 
             RegChromeDriver.SwitchTo().Window(RegChromeDriver.WindowHandles[0]);
 
             NLog.LogManager.GetCurrentClassLogger().Info($"Кликаем на выбор кода страны");
             RegChromeDriver.FindElement(By.XPath("//div[@class='iti__selected-flag dropdown-toggle']")).Click();//кликаем на выбор кода страны
-            Thread.Sleep(MainWindowViewModel.settings.DelayTime * 2 / 3);
+            Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
             NLog.LogManager.GetCurrentClassLogger().Info($"Выбираем Россию");
             RegChromeDriver.FindElement(By.Id(MainWindowViewModel.settings.CountryCode)).Click();//Кликаем на россию
-            Thread.Sleep(MainWindowViewModel.settings.DelayTime * 2 / 3);
+            Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
             NLog.LogManager.GetCurrentClassLogger().Info($"Вводим номер {pn.Number}");
             RegChromeDriver.FindElement(By.Id("phone")).SendKeys(pn.Number);//Вводим полученный номер
-            Thread.Sleep(MainWindowViewModel.settings.DelayTime * 2 / 3);
+            Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
             NLog.LogManager.GetCurrentClassLogger().Info($"Кликаем отправить код");
             RegChromeDriver.FindElement(By.XPath("//a[@class='btn btn-primary font-weight-bold fs-15px ml-10px']")).Click();//Кликаем отправить код
-            PhoneWorker.MessageSend(pn);
 
-            Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+            Thread.Sleep(7000);
 
             var errors = RegChromeDriver.FindElements(By.XPath("//div[@class='mt-10px ng-star-inserted']"));
 
@@ -138,29 +139,34 @@ namespace Bitclout
             if (RegChromeDriver.FindElements(By.XPath("//div[@class='mt-15px mb-15px fs-24px font-weight-bold']")).Count == 0)
                 throw new BadProxyException("Не прожимается телефон");
 
-            Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+            PhoneWorker.MessageSend(pn);
+
+            Thread.Sleep(5000);
             RegChromeDriver.FindElements(By.LinkText("Resend"))[0].Click();
 
-            Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+            Thread.Sleep(5000);
             RegChromeDriver.FindElements(By.LinkText("Resend"))[0].Click();
 
-            Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+            Thread.Sleep(5000);
             RegChromeDriver.FindElements(By.LinkText("Resend"))[0].Click();
 
-            Thread.Sleep(MainWindowViewModel.settings.DelayTime);
-
-            for (int i = 0; i < 8; i++)//Ждем еще проверяя каждые 5
+            for (int i = 0; i < 10; i++)//Ждем еще проверяя каждые 3 секунды
             {
                 pn = PhoneWorker.GetCode(pn);
                 if (pn.Code == "")
-                    Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+                    Thread.Sleep(2000);
                 else break;
             }
 
             if (pn.Code == "")
-            {
                 throw new PhoneCodeNotSendException("Истекло время ожидания кода или код не пришел");
-            }
+
+            PhoneWorker.NumberConformation(pn);//Подтверждаем номер
+
+            NLog.LogManager.GetCurrentClassLogger().Info($"Вводим полученный код {pn.Code}");
+            RegChromeDriver.FindElement(By.Name("verificationCode")).SendKeys(pn.Code);//Вводим полученный код
+
+            Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
             if (MainWindowViewModel.settings.IsSyncBots)
             {
@@ -175,17 +181,18 @@ namespace Bitclout
                 }
             }
 
-            NLog.LogManager.GetCurrentClassLogger().Info($"Вводим полученный код {pn.Code}");
-            RegChromeDriver.FindElement(By.Name("verificationCode")).SendKeys(pn.Code);//Вводим полученный код
-            PhoneWorker.NumberConformation(pn);//Подтверждаем номер
-            Thread.Sleep(MainWindowViewModel.settings.DelayTime * 2 / 3);
-
             NLog.LogManager.GetCurrentClassLogger().Info($"Кликаем дальше");
             RegChromeDriver.FindElement(By.XPath("//a[@class='btn btn-primary font-weight-bold fs-15px ml-10px']")).Click();//Кликаем дальше
-            Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+            Thread.Sleep(7000);
 
             if (RegChromeDriver.Url != "https://bitclout.com/sign-up?stepNum=4")
                 throw new BadProxyException("Не удалось подтвердить код");
+
+            RegChromeDriver.Navigate().GoToUrl($"https://bitclout.com/browse?feedTab=Global");//Страница реги
+            Thread.Sleep(7000);
+
+            if (RegChromeDriver.FindElement(By.XPath("//div[@class='d-flex align-items-center justify-content-end flex-wrap']")).Text.Contains("$0.00 USD"))
+                throw new NoBitcloutBalanceException("Мерлин не заслал бабок");
 
             if (MainWindowViewModel.settings.IsMerlin)
             {
@@ -199,34 +206,34 @@ namespace Bitclout
             }
 
             RegChromeDriver.Navigate().GoToUrl($"https://bitclout.com/update-profile");//Страница профиля
-            Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+            Thread.Sleep(7000);
 
             NLog.LogManager.GetCurrentClassLogger().Info($"Вводим имя {user.Name}");
             RegChromeDriver.FindElement(By.XPath("//input[@class='form-control fs-15px lh-18px p-10px ng-untouched ng-pristine ng-valid']")).SendKeys(user.Name);//Вводим имя пользователя из файла
-            Thread.Sleep(MainWindowViewModel.settings.DelayTime * 2 / 3);
+            Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
             NLog.LogManager.GetCurrentClassLogger().Info($"Вводим описание {user.Description}");
             RegChromeDriver.FindElement(By.XPath("//textarea[@class='fs-15px p-10px w-100 ng-untouched ng-pristine ng-valid']")).SendKeys(user.Description);//Вводим описание из файла
-            Thread.Sleep(MainWindowViewModel.settings.DelayTime * 2 / 3);
+            Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
             NLog.LogManager.GetCurrentClassLogger().Info($"Отправляем фотку");
 
             RegChromeDriver.FindElement(By.Id("file")).SendKeys(filepath);//Отправляем фотку 
-            Thread.Sleep(MainWindowViewModel.settings.DelayTime * 2 / 3);
+            Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
             NLog.LogManager.GetCurrentClassLogger().Info($"Изменяем комиссию");
             RegChromeDriver.FindElement(By.XPath("//input[@class='form-control fs-15px lh-15px p-10px w-25 text-right ng-untouched ng-pristine ng-valid']")).Clear();//Очищаем ввод процента
-            Thread.Sleep(MainWindowViewModel.settings.DelayTime * 2 / 3);
+            Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
             if (MainWindowViewModel.settings.IsBuyCoins)
                 RegChromeDriver.FindElement(By.XPath("//input[@class='form-control fs-15px lh-15px p-10px w-25 text-right ng-pristine ng-valid ng-touched']")).SendKeys("99");
             else
                 RegChromeDriver.FindElement(By.XPath("//input[@class='form-control fs-15px lh-15px p-10px w-25 text-right ng-pristine ng-valid ng-touched']")).SendKeys(MainWindowViewModel.settings.Comission.ToString());
-            Thread.Sleep(MainWindowViewModel.settings.DelayTime * 2 / 3);
+            Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
             NLog.LogManager.GetCurrentClassLogger().Info($"Копируем публичный код");
             userInfo.PublicKey = RegChromeDriver.FindElement(By.XPath("//div[@class='mt-10px d-flex align-items-center update-profile__pub-key fc-muted fs-110px']")).Text;//Копируем публичный ключ
-            Thread.Sleep(MainWindowViewModel.settings.DelayTime * 2 / 3);
+            Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
             NLog.LogManager.GetCurrentClassLogger().Info($"Пробуем сохранить профиль");
             RegChromeDriver.FindElement(By.XPath("//a[@class='btn btn-primary btn-lg font-weight-bold fs-15px mt-5px']")).Click();//Пробем сохранить
@@ -237,13 +244,10 @@ namespace Bitclout
 
                 RegChromeDriver.Navigate().Refresh();
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime);
-
-                //if (RegChromeDriver.FindElement(By.XPath("//div[@class=d-flex text-muted']")).Text.Contains("0.00 USD"))
-                // throw new FailedSaveProfileException("Нулевой баланс");
             }
             else
             {
-                Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+                Thread.Sleep(7000);
 
                 bool created = false;
                 NLog.LogManager.GetCurrentClassLogger().Info($"Пробуем найти окно с ошибкой");
@@ -265,7 +269,7 @@ namespace Bitclout
                         NLog.LogManager.GetCurrentClassLogger().Info($"Сохраняем профиль");
                         RegChromeDriver.FindElement(By.XPath("//a[@class='btn btn-primary btn-lg font-weight-bold fs-15px mt-5px']")).Click();//Пробем сохранить еще раз
 
-                        for (int i = 0; i < MainWindowViewModel.settings.DelayTime * 4 / 100; i++)
+                        for (int i = 0; i < MainWindowViewModel.settings.DelayTime * 8 / 100; i++)
                         {
                             if (RegChromeDriver.FindElements(By.XPath("//i[@class='far fa-check-circle fa-lg fc-blue ml-10px']")).Count == 1 || RegChromeDriver.FindElements(By.XPath("//i[@class='far fa-check-circle fa-lg fc-blue ml-10px ng-star-inserted']")).Count == 1)
                             {
@@ -289,15 +293,15 @@ namespace Bitclout
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Обновляем страницу профиля");
                 RegChromeDriver.Navigate().GoToUrl($"https://bitclout.com/update-profile");//Страница реги
-                Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+                Thread.Sleep(7000);
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Изменяем комиссию");
                 RegChromeDriver.FindElement(By.XPath("//input[@class='form-control fs-15px lh-15px p-10px w-25 text-right ng-untouched ng-pristine ng-valid']")).Clear();//Очищаем ввод процента
-                Thread.Sleep(MainWindowViewModel.settings.DelayTime * 2 / 3);
+                Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Ставим комиссию {MainWindowViewModel.settings.Comission}");
                 RegChromeDriver.FindElement(By.XPath("//input[@class='form-control fs-15px lh-15px p-10px w-25 text-right ng-pristine ng-valid ng-touched']")).SendKeys(MainWindowViewModel.settings.Comission.ToString());//Ставим 0
-                Thread.Sleep(MainWindowViewModel.settings.DelayTime * 2 / 3);
+                Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Пробуем сохранить профиль");
                 RegChromeDriver.FindElement(By.XPath("//a[@class='btn btn-primary btn-lg font-weight-bold fs-15px mt-5px']")).Click();//Пробем сохранить
@@ -329,12 +333,12 @@ namespace Bitclout
             NLog.LogManager.GetCurrentClassLogger().Info($"Отправляем Bitclout ->");
 
             RegChromeDriver.Navigate().GoToUrl($"https://bitclout.com/send-bitclout");
-            Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+            Thread.Sleep(7000);
 
             NLog.LogManager.GetCurrentClassLogger().Info($"Вводим публичный ключ");
 
             RegChromeDriver.FindElement(By.XPath("//input[@class='form-control w-100 fs-15px lh-15px mt-5px ng-untouched ng-pristine ng-valid']")).SendKeys(publicKey);
-            Thread.Sleep(MainWindowViewModel.settings.DelayTime * 2 / 3);
+            Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
             RegChromeDriver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ml-5px py-10px']")).Click();
             Thread.Sleep(MainWindowViewModel.settings.DelayTime);
@@ -354,22 +358,22 @@ namespace Bitclout
 
             NLog.LogManager.GetCurrentClassLogger().Info($"Подтвержаем");
             RegChromeDriver.FindElement(By.XPath("//button[@class='swal2-confirm btn btn-light swal2-styled']")).Click();
-            Thread.Sleep(MainWindowViewModel.settings.DelayTime * 2);
+            Thread.Sleep(7000);
 
             NLog.LogManager.GetCurrentClassLogger().Info($"Подтвержаем");
             RegChromeDriver.FindElement(By.XPath("//button[@class='swal2-confirm btn btn-light swal2-styled']")).Click();
             Thread.Sleep(MainWindowViewModel.settings.DelayTime);
         }
 
-        public bool LoginToBitclout(IWebDriver driver,string phrase)
+        public bool LoginToBitclout(IWebDriver driver, string phrase)
         {
             NLog.LogManager.GetCurrentClassLogger().Info($"Переходим на страницу регистрации");
             driver.Navigate().GoToUrl($"https://bitclout.com/");//Страница реги
-            Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+            Thread.Sleep(7000);
 
             NLog.LogManager.GetCurrentClassLogger().Info($"Жмем кнопку регистрация");
             driver.FindElement(By.XPath("//a[@class='landing__log-in d-none d-md-block']")).Click();//Кликаем дальше
-            Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+            Thread.Sleep(7000);
 
             driver.SwitchTo().Window(driver.WindowHandles[1]);
 
@@ -385,7 +389,8 @@ namespace Bitclout
             Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
             driver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px']")).Click();
-            Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+            Thread.Sleep(7000);
+
             driver.SwitchTo().Window(driver.WindowHandles[0]);
 
             if (driver.Url.Contains("https://bitclout.com/browse"))
@@ -403,17 +408,17 @@ namespace Bitclout
                 NLog.LogManager.GetCurrentClassLogger().Info($"Отправляем Bitclout ->");
 
                 BitcloutChromeDriver.Navigate().GoToUrl($"https://bitclout.com/send-bitclout");
-                Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+                Thread.Sleep(7000);
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Вводим публичный ключ");
 
                 BitcloutChromeDriver.FindElement(By.XPath("//input[@class='form-control w-100 fs-15px lh-15px mt-5px ng-untouched ng-pristine ng-valid']")).SendKeys(publicKey);
-                Thread.Sleep(MainWindowViewModel.settings.DelayTime * 2 / 3);
+                Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Вводим сумму");
                 BitcloutChromeDriver.FindElement(By.XPath("//input[@class='form-control w-100 fs-15px lh-15px ng-untouched ng-pristine ng-valid']")).SendKeys(".00005");
 
-                Thread.Sleep(MainWindowViewModel.settings.DelayTime * 2 / 3);
+                Thread.Sleep(MainWindowViewModel.settings.DelayTime);
                 try
                 {
                     NLog.LogManager.GetCurrentClassLogger().Info($"Подтверждаем");
@@ -429,7 +434,7 @@ namespace Bitclout
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Подтвержаем");
                 BitcloutChromeDriver.FindElement(By.XPath("//button[@class='swal2-confirm btn btn-light swal2-styled']")).Click();
-                Thread.Sleep(MainWindowViewModel.settings.DelayTime * 2);
+                Thread.Sleep(7000);
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Подтвержаем");
                 BitcloutChromeDriver.FindElement(By.XPath("//button[@class='swal2-confirm btn btn-light swal2-styled']")).Click();
@@ -448,7 +453,7 @@ namespace Bitclout
                 NLog.LogManager.GetCurrentClassLogger().Info($"Покупаем Creator Coins {userName} ->");
 
                 BitcloutChromeDriver.Navigate().GoToUrl($"https://bitclout.com/u/" + userName + @"/buy");
-                Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+                Thread.Sleep(7000);
 
                 double send = 0;
 
@@ -513,10 +518,10 @@ namespace Bitclout
             NLog.LogManager.GetCurrentClassLogger().Info($"Продаем Creator Coins {userName} ->");
 
             BitcloutChromeDriver.Navigate().GoToUrl($"https://bitclout.com/u/" + userName + @"/sell");
-            Thread.Sleep(MainWindowViewModel.settings.DelayTime * 2);
+            Thread.Sleep(7000);
 
             BitcloutChromeDriver.FindElement(By.Name("amount")).Clear();
-            Thread.Sleep(MainWindowViewModel.settings.DelayTime * 2 / 3);
+            Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
             BitcloutChromeDriver.FindElement(By.Name("amount")).SendKeys(MainWindowViewModel.settings.SellAmount.ToString().Replace(',', '.'));
             Thread.Sleep(MainWindowViewModel.settings.DelayTime);
@@ -529,7 +534,7 @@ namespace Bitclout
             Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
             bool sell = false;
-            for (int i = 0; i < MainWindowViewModel.settings.DelayTime * 4 / 100; i++)
+            for (int i = 0; i < MainWindowViewModel.settings.DelayTime * 3 / 100; i++)
             {
                 var btn = BitcloutChromeDriver.FindElements(By.XPath("//button[@class='w-100 btn btn-primary fs-18px']"));
                 if (btn.Count == 1)
@@ -550,7 +555,7 @@ namespace Bitclout
                 NLog.LogManager.GetCurrentClassLogger().Info($"Находим первую запись для продажи ->");
 
                 driver.Navigate().GoToUrl($"https://bitclout.com/wallet");
-                Thread.Sleep(MainWindowViewModel.settings.DelayTime);
+                Thread.Sleep(7000);
 
                 var allcoins = driver.FindElements(By.XPath("//div[@class='row no-gutters fc-default px-15px']"));
 
@@ -585,7 +590,7 @@ namespace Bitclout
                 NLog.LogManager.GetCurrentClassLogger().Info($"Продаем Creator Coins {userName} ->");
 
                 driver.Navigate().GoToUrl($"https://bitclout.com/u/" + userName + @"/sell");
-                Thread.Sleep(MainWindowViewModel.settings.DelayTime * 2);
+                Thread.Sleep(7000);
 
                 driver.FindElement(By.XPath("//a[@class='text-grey7']")).Click();
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime);
@@ -597,7 +602,7 @@ namespace Bitclout
                 Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
                 bool sell = false;
-                for (int i = 0; i < MainWindowViewModel.settings.DelayTime * 4 / 100; i++)
+                for (int i = 0; i < MainWindowViewModel.settings.DelayTime * 3 / 100; i++)
                 {
                     var btn = driver.FindElements(By.XPath("//button[@class='w-100 btn btn-primary fs-18px']"));
                     if (btn.Count == 1)

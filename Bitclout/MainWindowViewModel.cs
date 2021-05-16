@@ -288,6 +288,10 @@ namespace Bitclout
 
                     NLog.LogManager.GetCurrentClassLogger().Info($"Конец автоматической регистрации");
                 }
+                catch (NoBitcloutBalanceException ex)
+                {
+                    NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
+                }
                 catch (BadSyncResponseException ex)
                 {
                     NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
