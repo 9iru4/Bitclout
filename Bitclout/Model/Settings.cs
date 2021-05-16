@@ -5,6 +5,10 @@ using System.Runtime.CompilerServices;
 
 namespace Bitclout.Model
 {
+    public enum SellType { DontSell = 0, OnlySellReg, OnlySellMain, SellAfterReg, SellCoinsAfterReg }
+
+    public enum BotType { OnlyReg = 0, BuyCoins, Merlin }
+
     /// <summary>
     /// Настройки программы
     /// </summary>

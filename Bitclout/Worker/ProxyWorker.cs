@@ -13,7 +13,7 @@ using System.Windows;
 namespace Bitclout.Worker
 {
 
-
+    public enum ProxyType { NotUsed = 0, Cycle, SOAX, OnlyFirst }
     public class ProxyWorker : INotifyPropertyChanged
     {
         public static List<string> ProxyCodes { get; set; } = new List<string>("ru end".Split(' '));

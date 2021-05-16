@@ -65,6 +65,8 @@
                     <Label Content="BotName" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,233,0,0" Height="28" RenderTransformOrigin="0.415,0.538"/>
                     <CheckBox IsChecked="{Binding settings.SOAX}" Content="SOAX" HorizontalAlignment="Left" Margin="239,311,0,0" VerticalAlignment="Top"/>
                     <Label Content="Percent" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="310,15,0,0" Height="27"/>
+                    <ComboBox HorizontalAlignment="Left" Margin="114,294,0,0" VerticalAlignment="Top" Width="120"/>
+                    <Label Content="SellType" HorizontalAlignment="Left" Margin="56,291,0,0" VerticalAlignment="Top"/>
 
                 </Grid>
             </TabItem>
