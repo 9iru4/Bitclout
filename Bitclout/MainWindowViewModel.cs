@@ -245,7 +245,7 @@ namespace Bitclout
 
                         chromeWorker.BitcloutChromeDriver.Manage().Window.Maximize();
 
-                        chromeWorker.LoginToBitclout(chromeWorker.BitcloutChromeDriver);
+                        chromeWorker.LoginToBitclout(chromeWorker.BitcloutChromeDriver, settings.BitcloutSeedPhrase);
                         bitclout = true;
                     }
 
@@ -331,9 +331,9 @@ namespace Bitclout
                     NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
                     if (!settings.IsUsingProxy) continue;
                     if (settings.SOAX)
-                        Application.Current.Dispatcher.Invoke(() => { proxyWorker.ChangeProxyStatus(settings.CurrentProxy.ID, ProxyStatus.BadSoax); });
+                        proxyWorker.ChangeProxyStatus(settings.CurrentProxy.ID, ProxyStatus.BadSoax);
                     else
-                        Application.Current.Dispatcher.Invoke(() => { proxyWorker.ChangeProxyStatus(settings.CurrentProxy.ID, ProxyStatus.Died); });
+                        proxyWorker.ChangeProxyStatus(settings.CurrentProxy.ID, ProxyStatus.Died);
                     settings.CurrentProxy = null;
                 }
                 catch (NameAlreadyExistException ex)
@@ -386,7 +386,7 @@ namespace Bitclout
 
                     if (settings.CurrentProxy != null && settings.IsUsingProxy)
                     {
-                        Application.Current.Dispatcher.Invoke(() => { proxyWorker.ChangeProxyStatus(settings.CurrentProxy.ID, ProxyStatus.Good); });
+                        proxyWorker.ChangeProxyStatus(settings.CurrentProxy.ID, ProxyStatus.Good);
                     }
 
                     if (chromeWorker.RegChromeDriver != null)
@@ -397,14 +397,12 @@ namespace Bitclout
                         catch (Exception)
                         {
                             if (settings.SOAX)
-                                Application.Current.Dispatcher.Invoke(() => { proxyWorker.ChangeProxyStatus(settings.CurrentProxy.ID, ProxyStatus.BadSoax); });
+                                proxyWorker.ChangeProxyStatus(settings.CurrentProxy.ID, ProxyStatus.BadSoax);
                             else
-                                Application.Current.Dispatcher.Invoke(() => { proxyWorker.ChangeProxyStatus(settings.CurrentProxy.ID, ProxyStatus.Died); });
+                                proxyWorker.ChangeProxyStatus(settings.CurrentProxy.ID, ProxyStatus.Died);
 
                             chromeWorker.RegChromeDriver.Quit();
                         }
-
-                    proxyWorker.SaveProxy();
 
                     settings.SaveSettings();
 

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Runtime.CompilerServices;
 using System.Web.Helpers;
+using System.Windows;
 
 namespace Bitclout.Worker
 {
@@ -46,9 +47,9 @@ namespace Bitclout.Worker
             {
                 foreach (var item in Proxy.Where(x => x.CurrentStatus != ProxyStatus.Died))
                 {
-                    item.CurrentStatus = ProxyStatus.Good;
+                    item.CurrentStatus = ProxyStatus.NotUsed;
                 }
-                return Proxy.Where(x => x.CurrentStatus == ProxyStatus.Good).FirstOrDefault();
+                return Proxy.Where(x => x.CurrentStatus == ProxyStatus.NotUsed).FirstOrDefault();
             }
         }
 
@@ -63,8 +64,11 @@ namespace Bitclout.Worker
 
         public void ChangeProxyStatus(string ID, ProxyStatus status)
         {
-            Proxy.Where(x => x.ID == ID).FirstOrDefault().CurrentStatus = status;
-            SaveProxy();
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                Proxy.Where(x => x.ID == ID).First().CurrentStatus = status;
+                SaveProxy();
+            });
         }
 
         /// <summary>

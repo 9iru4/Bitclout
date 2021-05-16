@@ -43,6 +43,7 @@ namespace Bitclout
             }
 
             options.AddArguments("--incognito");
+            options.AddArgument("--ignore-certificate-errors-spki-list");
             options.AddArgument("--user-data-dir=" + Directory.GetCurrentDirectory() + dirpath);
             options.BinaryLocation = MainWindowViewModel.settings.ChromePath;
             ChromeDriverService service = ChromeDriverService.CreateDefaultService();
@@ -185,6 +186,17 @@ namespace Bitclout
 
             if (RegChromeDriver.Url != "https://bitclout.com/sign-up?stepNum=4")
                 throw new BadProxyException("Не удалось подтвердить код");
+
+            if (MainWindowViewModel.settings.IsMerlin)
+            {
+                ChromeWorker chrome = new ChromeWorker();
+                chrome.EndRegistration(RegChromeDriver);
+
+                RegChromeDriver = chrome.InitializeChromeDriver(@"\Chrome");
+                RegChromeDriver.Manage().Window.Maximize();
+
+                chrome.LoginToBitclout(RegChromeDriver, userInfo.BitcloutSeedPhrase);
+            }
 
             RegChromeDriver.Navigate().GoToUrl($"https://bitclout.com/update-profile");//Страница профиля
             Thread.Sleep(MainWindowViewModel.settings.DelayTime);
@@ -349,7 +361,7 @@ namespace Bitclout
             Thread.Sleep(MainWindowViewModel.settings.DelayTime);
         }
 
-        public bool LoginToBitclout(IWebDriver driver)
+        public bool LoginToBitclout(IWebDriver driver,string phrase)
         {
             NLog.LogManager.GetCurrentClassLogger().Info($"Переходим на страницу регистрации");
             driver.Navigate().GoToUrl($"https://bitclout.com/");//Страница реги
@@ -359,10 +371,10 @@ namespace Bitclout
             driver.FindElement(By.XPath("//a[@class='landing__log-in d-none d-md-block']")).Click();//Кликаем дальше
             Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
-            driver.SwitchTo().Window(BitcloutChromeDriver.WindowHandles[1]);
+            driver.SwitchTo().Window(driver.WindowHandles[1]);
 
             NLog.LogManager.GetCurrentClassLogger().Info($"Отправляем фразу");
-            driver.FindElement(By.XPath("//textarea[@class='form-control fs-15px ng-untouched ng-pristine ng-valid']")).SendKeys(MainWindowViewModel.settings.BitcloutSeedPhrase);
+            driver.FindElement(By.XPath("//textarea[@class='form-control fs-15px ng-untouched ng-pristine ng-valid']")).SendKeys(phrase);
             Thread.Sleep(MainWindowViewModel.settings.DelayTime);
 
             driver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px']")).Click();
@@ -374,7 +386,7 @@ namespace Bitclout
 
             driver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px']")).Click();
             Thread.Sleep(MainWindowViewModel.settings.DelayTime);
-            driver.SwitchTo().Window(BitcloutChromeDriver.WindowHandles[0]);
+            driver.SwitchTo().Window(driver.WindowHandles[0]);
 
             if (driver.Url.Contains("https://bitclout.com/browse"))
             {
