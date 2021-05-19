@@ -21,10 +21,115 @@ namespace Bitclout
         public ProxyWorker proxyWorker { get; set; } = new ProxyWorker();
         public static Settings settings { get; set; } = Settings.LoadSettings();
 
-        bool bitclout = false;
+        bool bitcloutMain = false;
         bool stop = false;
 
         ObservableCollection<UserRegistrationInfo> _RegistrationInfo = new ObservableCollection<UserRegistrationInfo>(UserRegistrationInfo.LoadUsers());
+        public ObservableCollection<string> SMSCountrys { get; set; } = new ObservableCollection<string>();
+        public ObservableCollection<string> BotWorkModes { get; set; } = new ObservableCollection<string>();
+        public ObservableCollection<string> ProxyTypes { get; set; } = new ObservableCollection<string>();
+
+        string _SelectedSMS = settings.SMSCountry.Name;
+        public string SelectedSMS
+        {
+            get
+            {
+                return _SelectedSMS;
+            }
+            set
+            {
+                _SelectedSMS = value;
+                switch (_SelectedSMS)
+                {
+                    case "Ru":
+                        settings.SMSCountry = new SMSCountry(0, "iti-0__item-ru", "Ru");
+                        break;
+                    case "Ua":
+                        settings.SMSCountry = new SMSCountry(1, "iti-0__item-ua", "Ua");
+                        break;
+                    case "Gb":
+                        settings.SMSCountry = new SMSCountry(16, "iti-0__item-gb", "Gb");
+                        break;
+                    default:
+                        break;
+                }
+                OnPropertyChanged("SelectedSMS");
+            }
+        }
+
+        string _SelectedPrx = settings.ProxyType.Name;
+        public string SelectedPrx
+        {
+            get
+            {
+                return _SelectedPrx;
+            }
+            set
+            {
+                _SelectedPrx = value;
+                switch (_SelectedPrx)
+                {
+                    case "NotUsed":
+                        settings.ProxyType = new ProxyType(PrxType.NotUsed, "NotUsed");
+                        break;
+                    case "Cycle":
+                        settings.ProxyType = new ProxyType(PrxType.Cycle, "Cycle");
+                        break;
+                    case "OnlyFirst":
+                        settings.ProxyType = new ProxyType(PrxType.OnlyFirst, "OnlyFirst");
+                        break;
+                    case "SOAX":
+                        settings.ProxyType = new ProxyType(PrxType.SOAX, "SOAX");
+                        break;
+                    default:
+                        break;
+                }
+                OnPropertyChanged("SelectedPrx");
+            }
+        }
+
+        string _SelectedMode = settings.BotWorkMode.Name;
+        public string SelectedMode
+        {
+            get
+            {
+                return _SelectedMode;
+            }
+            set
+            {
+                _SelectedMode = value;
+                switch (_SelectedMode)
+                {
+                    case "OnlyReg":
+                        settings.BotWorkMode = new BotWorkMode(WorkType.OnlyReg, "OnlyReg");
+                        break;
+                    case "SellMain":
+                        settings.BotWorkMode = new BotWorkMode(WorkType.SellMain, "SellMain");
+                        break;
+                    case "SellReg":
+                        settings.BotWorkMode = new BotWorkMode(WorkType.SellReg, "SellReg");
+                        break;
+                    case "RegAndSell":
+                        settings.BotWorkMode = new BotWorkMode(WorkType.RegAndSell, "RegAndSell");
+                        break;
+                    case "OnlyBuyCoins":
+                        settings.BotWorkMode = new BotWorkMode(WorkType.OnlyBuyCoins, "OnlyBuyCoins");
+                        break;
+                    case "BuyCoinsAndSellMain":
+                        settings.BotWorkMode = new BotWorkMode(WorkType.BuyCoinsAndSellMain, "BuyCoinsAndSellMain");
+                        break;
+                    case "OnlyMerlin":
+                        settings.BotWorkMode = new BotWorkMode(WorkType.OnlyMerlin, "OnlyMerlin");
+                        break;
+                    case "MerlinAndSellReg":
+                        settings.BotWorkMode = new BotWorkMode(WorkType.MerlinAndSellReg, "MerlinAndSellReg");
+                        break;
+                    default:
+                        break;
+                }
+                OnPropertyChanged("SelectedMode");
+            }
+        }
 
         public ObservableCollection<UserRegistrationInfo> RegistrationInfo
         {
@@ -40,7 +145,7 @@ namespace Bitclout
             }
         }
 
-        public static ObservableCollection<UserInfo> RegistredUsers { get; set; } = new ObservableCollection<UserInfo>();
+        public static ObservableCollection<UserInfo> RegistredUsers { get; set; } = new ObservableCollection<UserInfo>(UserInfo.LoadRegistredUsers());
 
         bool _StartEnabled = true;
 
@@ -145,27 +250,24 @@ namespace Bitclout
         public MainWindowViewModel()
         {
             PhoneWorker.ApiKey = settings.SMSApiKey;
-        }
 
-        void SaveRegistredUser()
-        {
-            try
-            {
-                foreach (var item in RegistredUsers.ToList())
-                {
-                    using (StreamWriter sw = new StreamWriter(@"bin\RegistredUsers.dat", true))
-                    {
-                        sw.WriteLine(item.ToLogFile());
-                        NLog.LogManager.GetCurrentClassLogger().Info($"Зарегистрированный пользователь {item.Name} успешно сохранен.");
-                    }
-                }
-                RegistredUsers.Clear();
-            }
-            catch
-            {
+            SMSCountrys.Add("Ru");
+            SMSCountrys.Add("Ua");
+            SMSCountrys.Add("Gb");
 
-            }
+            ProxyTypes.Add("NotUsed");
+            ProxyTypes.Add("Cycle");
+            ProxyTypes.Add("OnlyFirst");
+            ProxyTypes.Add("SOAX");
 
+            BotWorkModes.Add("OnlyReg");
+            BotWorkModes.Add("SellMain");
+            BotWorkModes.Add("SellReg");
+            BotWorkModes.Add("RegAndSell");
+            BotWorkModes.Add("OnlyBuyCoins");
+            BotWorkModes.Add("BuyCoinsAndSellMain");
+            BotWorkModes.Add("OnlyMerlin");
+            BotWorkModes.Add("MerlinAndSellReg");
         }
 
         void GetUsersFromFile()
@@ -230,29 +332,49 @@ namespace Bitclout
                 NLog.LogManager.GetCurrentClassLogger().Info("Диологовое окно выбора файла пользователей закрыто");
         }
 
-        void BotStart()
+        void StartBot()
         {
             while (!stop)
             {
+                bool iserr = false;
                 PhoneNumber pn = null;
                 try
                 {
+                    switch (settings.ProxyType.Type)
+                    {
+                        case PrxType.NotUsed:
+                            settings.CurrentProxy = null;
+                            break;
+                        case PrxType.OnlyFirst:
+                            settings.CurrentProxy = proxyWorker.Proxy.First();
+                            break;
+                        case PrxType.SOAX:
+                        case PrxType.Cycle:
+                            settings.CurrentProxy = proxyWorker.GetProxyFromCollection();
+                            if (settings.CurrentProxy == null)
+                                throw new OutOfProxyException("Закончились рабочие прокси");
+                            break;
+                        default:
+                            break;
+                    }
+
+                    if (RegistrationInfo.Count == 0)
+                        throw new OutOfRegistrationInfoException("Закончились аккаунты для регистрации");
+
                     NLog.LogManager.GetCurrentClassLogger().Info("Запуск драйвера для Bitclout ->");
 
-                    if ((settings.SendBitlout || settings.IsBuyCoins) && !bitclout)
+                    if ((settings.SendBitlout || settings.BotWorkMode.Type == WorkType.OnlyBuyCoins || settings.BotWorkMode.Type == WorkType.BuyCoinsAndSellMain || settings.BotWorkMode.Type == WorkType.SellMain) && !bitcloutMain)
                     {
                         chromeWorker.BitcloutChromeDriver = chromeWorker.InitializeChromeDriver(@"\MainChrome");
 
                         chromeWorker.BitcloutChromeDriver.Manage().Window.Maximize();
 
                         chromeWorker.LoginToBitclout(chromeWorker.BitcloutChromeDriver, settings.BitcloutSeedPhrase);
-                        bitclout = true;
+
+                        bitcloutMain = true;
                     }
 
-                    if (RegistrationInfo.Count == 0)
-                        throw new OutOfRegistrationInfoException("Закончились аккаунты для регистрации");
-
-                    if (bitclout)
+                    if (bitcloutMain && (settings.BotWorkMode.Type == WorkType.SellMain || settings.BotWorkMode.Type == WorkType.BuyCoinsAndSellMain))
                         Task.Run(() =>
                         {
                             if (settings.SellMoreThan != 0)
@@ -261,32 +383,32 @@ namespace Bitclout
                                 if (usrtosell != "")
                                     if (!chromeWorker.SellAllCreatorCoins(usrtosell, chromeWorker.BitcloutChromeDriver))
                                         NLog.LogManager.GetCurrentClassLogger().Info("Не удалось продать все коины");
+                                NLog.LogManager.GetCurrentClassLogger().Info("Коины проданы");
                             }
                         });
 
-                    if (settings.IsUsingProxy)
+                    if (settings.BotWorkMode.Type != WorkType.SellReg || settings.BotWorkMode.Type != WorkType.SellMain)
                     {
-                        settings.CurrentProxy = proxyWorker.GetProxyFromCollection();
-                        if (settings.CurrentProxy == null)
-                            throw new OutOfProxyException("Закончились рабочие прокси");
+                        while (pn == null)//Получаем номер, пока не получим
+                        {
+                            pn = PhoneWorker.GetPhoneNumber(ServiceCodes.lt);
+                            Thread.Sleep(settings.MainDelay);
+                        }
+
+                        chromeWorker.RegChromeDriver = chromeWorker.InitializeChromeDriver(@"\Chrome", settings.CurrentProxy);
+
+                        chromeWorker.RegChromeDriver.Manage().Window.Maximize();
+
+                        RegistredUsers.Add(chromeWorker.RegNewBitclout(RegistrationInfo[0], pn));
+
+                        settings.CurrentProxy.CurrentStatus = ProxyStatus.Good;
+
+                        UserInfo.SaveRegistredUsers(RegistredUsers.ToList());
+
+                        PhoneWorker.NumberConformation(pn);
+
+                        NLog.LogManager.GetCurrentClassLogger().Info($"Конец автоматической регистрации");
                     }
-                    else settings.CurrentProxy = null;
-
-                    while (pn == null)//Получаем номер, пока не получим
-                    {
-                        pn = PhoneWorker.GetPhoneNumber(ServiceCodes.lt);
-                        Thread.Sleep(settings.DelayTime);
-                    }
-
-                    chromeWorker.RegChromeDriver = chromeWorker.InitializeChromeDriver(@"\Chrome", settings.CurrentProxy);
-
-                    chromeWorker.RegChromeDriver.Manage().Window.Maximize();
-
-                    RegistredUsers.Add(chromeWorker.RegNewBitclout(RegistrationInfo[0], pn));
-
-                    PhoneWorker.NumberConformation(pn);
-
-                    NLog.LogManager.GetCurrentClassLogger().Info($"Конец автоматической регистрации");
                 }
                 catch (NoBitcloutBalanceException ex)
                 {
@@ -300,30 +422,35 @@ namespace Bitclout
                 {
                     NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
                     MessageBox.Show("Закончились прокси");
+                    stop = true;
                     break;
                 }
                 catch (FailedInitializeBitcloutChromeDriver ex)
                 {
                     NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
                     MessageBox.Show(ex.Message);
+                    stop = true;
                     break;
                 }
                 catch (OutOfRegistrationInfoException ex)
                 {
                     NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
                     MessageBox.Show(ex.Message);
+                    stop = true;
                     break;
                 }
                 catch (FailToStartBitcloutChromeDriverException ex)
                 {
                     NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
                     MessageBox.Show(ex.Message);
+                    stop = true;
                     break;
                 }
                 catch (NoPhoneBalanceException ex)
                 {
                     NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
                     MessageBox.Show(ex.Message);
+                    stop = true;
                     break;
                 }
                 catch (PhoneCodeNotSendException ex)
@@ -333,12 +460,15 @@ namespace Bitclout
                 catch (BadProxyException ex)
                 {
                     NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
-                    if (!settings.IsUsingProxy) continue;
-                    if (settings.SOAX)
-                        proxyWorker.ChangeProxyStatus(settings.CurrentProxy.ID, ProxyStatus.BadSoax);
+                    if (settings.CurrentProxy == null || settings.ProxyType.Type == PrxType.OnlyFirst) continue;
+                    if (settings.ProxyType.Type == PrxType.SOAX)
+                    {
+                        settings.CurrentProxy.CurrentStatus = ProxyStatus.BadSoax;
+                    }
                     else
-                        proxyWorker.ChangeProxyStatus(settings.CurrentProxy.ID, ProxyStatus.Died);
-                    settings.CurrentProxy = null;
+                    {
+                        settings.CurrentProxy.CurrentStatus = ProxyStatus.Died;
+                    }
                 }
                 catch (NameAlreadyExistException ex)
                 {
@@ -368,6 +498,11 @@ namespace Bitclout
                 {
                     NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
                 }
+                catch (OpenQA.Selenium.WebDriverException ex)
+                {
+                    NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
+                    iserr = true;
+                }
                 catch (Exception ex)
                 {
                     NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
@@ -388,31 +523,89 @@ namespace Bitclout
 
                     UserRegistrationInfo.SaveUsers(RegistrationInfo.ToList());
 
-                    if (settings.CurrentProxy != null && settings.IsUsingProxy)
-                    {
-                        proxyWorker.ChangeProxyStatus(settings.CurrentProxy.ID, ProxyStatus.Good);
-                    }
-
-                    if (chromeWorker.RegChromeDriver != null)
+                    if (chromeWorker.RegChromeDriver != null && !iserr)
                         try
                         {
                             chromeWorker.EndRegistration(chromeWorker.RegChromeDriver);
                         }
                         catch (Exception)
                         {
-                            if (settings.SOAX)
-                                proxyWorker.ChangeProxyStatus(settings.CurrentProxy.ID, ProxyStatus.BadSoax);
+                            if (settings.ProxyType.Type == PrxType.SOAX)
+                                settings.CurrentProxy.CurrentStatus = ProxyStatus.BadSoax;
                             else
-                                proxyWorker.ChangeProxyStatus(settings.CurrentProxy.ID, ProxyStatus.Died);
-
+                                settings.CurrentProxy.CurrentStatus = ProxyStatus.Died;
                             chromeWorker.RegChromeDriver.Quit();
                         }
 
+                    if (settings.CurrentProxy != null)
+                        proxyWorker.ChangeProxyStatus(settings.CurrentProxy.ID, settings.CurrentProxy.CurrentStatus);
+
                     settings.SaveSettings();
 
-                    SaveRegistredUser();
+                    UserInfo.SaveRegistredUsers(RegistredUsers.ToList());
                 }
             }
+        }
+
+        void StartSell()
+        {
+            while (!stop && (settings.BotWorkMode.Type == WorkType.SellReg || settings.BotWorkMode.Type == WorkType.RegAndSell || settings.BotWorkMode.Type == WorkType.MerlinAndSellReg))
+            {
+                bool err = false;
+                UserInfo usr = null;
+                try
+                {
+                    var col = RegistredUsers.Where(x => !x.IsSell);
+                    if (col.Count() != 0)
+                    {
+                        usr = col.First();
+
+                        chromeWorker.SellChromeDriver = chromeWorker.InitializeChromeDriver(@"\SellChrome", isIncognito: true);
+                        chromeWorker.SellChromeDriver.Manage().Window.Maximize();
+                        chromeWorker.LoginToBitclout(chromeWorker.SellChromeDriver, usr.BitcloutSeedPhrase);
+
+                        chromeWorker.SendAllBitclout(settings.PublicKey, chromeWorker.SellChromeDriver);
+                    }
+                }
+                catch (FailToStartBitcloutChromeDriverException ex)
+                {
+                    NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
+                    err = true;
+                    break;
+                }
+                catch (FailSendBitcloutException ex)
+                {
+                    NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
+                }
+                finally
+                {
+                    if (usr != null)
+                    {
+                        if (!err)
+                            RegistredUsers.Where(x => x.BitcloutSeedPhrase == usr.BitcloutSeedPhrase).FirstOrDefault().IsSell = true;
+                        UserInfo.SaveRegistredUsers(RegistredUsers.ToList());
+                        try
+                        {
+                            chromeWorker.EndRegistration(chromeWorker.SellChromeDriver);
+                        }
+                        catch (Exception)
+                        {
+                            chromeWorker.SellChromeDriver.Quit();
+                        }
+                    }
+                    Thread.Sleep(7000);
+                }
+            }
+        }
+
+        void BotStart()
+        {
+            Task.Run(() => StartSell());
+            Task.Run(() => StartBot());
         }
     }
 }

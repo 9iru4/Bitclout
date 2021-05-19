@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Runtime.CompilerServices;
 
 namespace Bitclout.Model
@@ -146,6 +148,21 @@ namespace Bitclout.Model
             }
         }
 
+        bool _IsSell = false;
+
+        public bool IsSell
+        {
+            get
+            {
+                return _IsSell;
+            }
+            set
+            {
+                _IsSell = value;
+                OnPropertyChanged("IsSell");
+            }
+        }
+
         public UserInfo()
         {
 
@@ -158,13 +175,38 @@ namespace Bitclout.Model
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
-        /// <summary>
-        /// Преобразует в строку, для удобной записи в файл 
-        /// </summary>
-        /// <returns>Строка с разделителями ;</returns>
-        public string ToLogFile()
+        public static bool SaveRegistredUsers(List<UserInfo> users)
         {
-            return $"{Name};{Description};{BitcloutSeedPhrase};{USDBuy};{USDSell};{PublicKey}";
+            try
+            {
+                using (StreamWriter sw = new StreamWriter("bin\\RegistredUsers.dat"))
+                {
+                    sw.Write(SerializeHelper.Serialize(users));
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                NLog.LogManager.GetCurrentClassLogger().Info(ex, $"Не удалось сохранить зарегистрированных пользователей.");
+                return false;
+            }
         }
+
+        public static List<UserInfo> LoadRegistredUsers()
+        {
+            try
+            {
+                using (StreamReader sr = new StreamReader("bin\\RegistredUsers.dat"))
+                {
+                    return SerializeHelper.Desirialize<List<UserInfo>>(sr.ReadToEnd());
+                }
+            }
+            catch (Exception ex)
+            {
+                NLog.LogManager.GetCurrentClassLogger().Info(ex, $"Не удалось загрузить зарегистрированных пользователей.");
+                return new List<UserInfo>();
+            }
+        }
+
     }
 }

@@ -43,11 +43,23 @@ namespace Bitclout.Worker
                 return prx0;
             else
             {
-                foreach (var item in Proxy.Where(x => x.CurrentStatus != ProxyStatus.Died))
+                if (MainWindowViewModel.settings.ProxyType.Type == PrxType.SOAX)
                 {
-                    item.CurrentStatus = ProxyStatus.NotUsed;
+                    foreach (var item in Proxy.Where(x => x.CurrentStatus != ProxyStatus.NotUsed))
+                    {
+                        item.CurrentStatus = ProxyStatus.NotUsed;
+                    }
+                    return Proxy.Where(x => x.CurrentStatus == ProxyStatus.NotUsed).FirstOrDefault();
                 }
-                return Proxy.Where(x => x.CurrentStatus == ProxyStatus.NotUsed).FirstOrDefault();
+                else
+                {
+                    foreach (var item in Proxy.Where(x => x.CurrentStatus != ProxyStatus.Died))
+                    {
+                        item.CurrentStatus = ProxyStatus.NotUsed;
+                    }
+                    return Proxy.Where(x => x.CurrentStatus == ProxyStatus.NotUsed).FirstOrDefault();
+                }
+
             }
         }
 

@@ -110,7 +110,10 @@
     <Compile Include="Exceptions\OutOfRegistrationInfoException.cs" />
     <Compile Include="Exceptions\PhoneCodeNotSendException.cs" />
     <Compile Include="Exceptions\PhoneNumberAlreadyUsedException.cs" />
+    <Compile Include="Model\BotWorkMode.cs" />
     <Compile Include="Model\Proxy.cs" />
+    <Compile Include="Model\ProxyType.cs" />
+    <Compile Include="Model\SMSCountry.cs" />
     <Compile Include="Worker\ChromeWorker.cs" />
     <Compile Include="Model\PhoneNumber.cs" />
     <Compile Include="Model\Settings.cs" />

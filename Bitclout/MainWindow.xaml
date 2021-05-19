@@ -6,9 +6,9 @@
         xmlns:local="clr-namespace:Bitclout"
         mc:Ignorable="d"
         ResizeMode="CanMinimize"
-        Title="MainWindow" Height="440.733" Width="607.2" Closing="Window_Closing">
+        Title="MainWindow" Height="433.533" Width="640.8" Closing="Window_Closing">
     <Grid>
-        <TabControl HorizontalAlignment="Left" Height="411" VerticalAlignment="Top" Width="601" Margin="0,0,-0.2,0">
+        <TabControl HorizontalAlignment="Left" Height="404" VerticalAlignment="Top" Width="634">
             <TabItem Header="Работа программы">
                 <Grid Background="#FFE5E5E5">
                     <Button Content="Бот старт" IsEnabled="{Binding StartEnabled}" Command="{Binding StartBotCommand}" HorizontalAlignment="Left" Margin="240,86,0,0" VerticalAlignment="Top" Width="75"/>
@@ -17,73 +17,65 @@
             </TabItem>
             <TabItem Header="Настройки">
                 <Grid Background="#FFE5E5E5">
-                    <TextBox Text="{Binding settings.SMSApiKey}" HorizontalAlignment="Left" Height="23" Margin="127,69,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
-                    <TextBox Text="{Binding settings.ProxyApiKey}" HorizontalAlignment="Left" Height="23" Margin="127,97,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
-                    <TextBox Text="{Binding settings.ChromePath}" HorizontalAlignment="Left" Height="23" Margin="127,123,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
-                    <TextBox Text="{Binding settings.PhotosPath}" HorizontalAlignment="Left" Height="23" Margin="127,151,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
-                    <TextBox Text="{Binding settings.BitcloutSeedPhrase}" HorizontalAlignment="Left" Height="23" Margin="127,179,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
-                    <TextBox Text="{Binding settings.DelayTime}" HorizontalAlignment="Left" Height="27" Margin="244,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="61"/>
-                    <TextBox HorizontalAlignment="Left" Text="{Binding settings.MinUSD}" Height="27" Margin="127,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="54"/>
-                    <TextBox HorizontalAlignment="Left" Text="{Binding settings.MaxUSD}" Height="27" Margin="185,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="54"/>
-                    <TextBox Text="{Binding settings.SellAmount}"  HorizontalAlignment="Left" Height="27" Margin="432,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="44"/>
-                    <TextBox Text="{Binding settings.SellMoreThan}"  HorizontalAlignment="Left" Height="27" Margin="481,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="48"/>
+                    <TextBox Text="{Binding settings.SMSApiKey}" HorizontalAlignment="Left" Height="23" Margin="127,69,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="469"/>
+                    <TextBox Text="{Binding settings.ChromePath}" HorizontalAlignment="Left" Height="23" Margin="127,98,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="469"/>
+                    <TextBox Text="{Binding settings.PhotosPath}" HorizontalAlignment="Left" Height="23" Margin="127,126,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="469"/>
+                    <TextBox Text="{Binding settings.BitcloutSeedPhrase}" HorizontalAlignment="Left" Height="23" Margin="127,154,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="469"/>
+                    <TextBox Text="{Binding settings.MainDelay}" HorizontalAlignment="Left" Height="27" Margin="399,277,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="61"/>
+                    <TextBox HorizontalAlignment="Left" Text="{Binding settings.MinUSD}" Height="27" Margin="130,275,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="54"/>
+                    <TextBox HorizontalAlignment="Left" Text="{Binding settings.MaxUSD}" Height="27" Margin="187,275,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="54"/>
+                    <TextBox Text="{Binding settings.SellAmount}"  HorizontalAlignment="Left" Height="27" Margin="248,275,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="70"/>
+                    <TextBox Text="{Binding settings.SellMoreThan}"  HorizontalAlignment="Left" Height="27" Margin="323,275,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="60"/>
 
                     <Label Content="SMSApiKey" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,68,0,0" Height="29"/>
-                    <Label Content="ProxyApiKey" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,97,0,0" Height="28"/>
-                    <Label Content="ChromePath" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,123,0,0" Height="26"/>
-                    <Label Content="PhotosPath" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,146,0,0" Height="28"/>
+                    <Label Content="ChromePath" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,98,0,0" Height="26"/>
+                    <Label Content="PhotosPath" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,121,0,0" Height="28"/>
                     <Label Content="" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,210,0,0" Height="23"/>
-                    <Label Content="Bitclout" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,174,0,0" Height="28"/>
-                    <Label Content="DelayTime" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="239,13,0,0" Height="27"/>
-                    <Label Content="Min" HorizontalAlignment="Left" Margin="127,14,0,0" VerticalAlignment="Top"/>
-                    <Label Content="Max" HorizontalAlignment="Left" Margin="186,14,0,0" VerticalAlignment="Top"/>
-                    <Label Content="Amount" HorizontalAlignment="Left" Margin="432,17,0,0" VerticalAlignment="Top"/>
-                    <Label Content="USD Range" HorizontalAlignment="Left" Margin="51,40,0,0" VerticalAlignment="Top" Width="70" Height="27"/>
+                    <Label Content="SeedPhrase" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,149,0,0" Height="28"/>
+                    <Label Content="MainDelay" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="399,245,0,0" Height="27"/>
+                    <Label Content="Min" HorizontalAlignment="Left" Margin="129,248,0,0" VerticalAlignment="Top"/>
+                    <Label Content="Max" HorizontalAlignment="Left" Margin="188,248,0,0" VerticalAlignment="Top"/>
+                    <Label Content="SellAmount" HorizontalAlignment="Left" Margin="246,249,0,0" VerticalAlignment="Top"/>
+                    <Label Content="USD Range" HorizontalAlignment="Left" Margin="51,275,0,0" VerticalAlignment="Top" Width="70" Height="27"/>
 
-                    <Button Command="{Binding SaveCommand}" Content="Сохранить" HorizontalAlignment="Left" Margin="280,345,0,0" VerticalAlignment="Top" Width="75"/>
-
-                    <Label Content="USD Range" HorizontalAlignment="Left" Margin="51,40,0,0" VerticalAlignment="Top" Width="70" Height="27"/>
-                    <Label Content="Sell &gt;" HorizontalAlignment="Left" Margin="481,16,0,0" VerticalAlignment="Top"/>
-                    <CheckBox IsChecked="{Binding settings.IsBuyCoins}" Content="Zaletat'" HorizontalAlignment="Left" Margin="304,291,0,0" VerticalAlignment="Top"/>
-                    <TextBox HorizontalAlignment="Left" Height="26" Margin="310,41,0,0" TextWrapping="Wrap" Text="{Binding settings.Comission}" VerticalAlignment="Top" Width="70"/>
-                    <TextBox Text="{Binding settings.SellSleep}"  HorizontalAlignment="Left" Height="27" Margin="383,41,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="44"/>
-                    <Label Content="Buy delay" HorizontalAlignment="Left" Margin="376,16,0,0" VerticalAlignment="Top"/>
-                    <CheckBox IsChecked="{Binding settings.IsDeletePhoto}" Content="DelPhoto" HorizontalAlignment="Left" Margin="461,291,0,0" VerticalAlignment="Top"/>
-                    <Label Content="SMSCountry" HorizontalAlignment="Left" Margin="53,263,0,0" VerticalAlignment="Top"/>
-                    <TextBox Text="{Binding settings.SMSCountry}" HorizontalAlignment="Left" Height="23" Margin="127,263,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="63"/>
-                    <Label Content="CountryCode" HorizontalAlignment="Left" Margin="193,259,0,0" VerticalAlignment="Top"/>
-                    <TextBox Text="{Binding settings.CountryCode}" HorizontalAlignment="Left" Height="23" Margin="269,263,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="122"/>
-                    <TextBox Text="{Binding settings.MerlinTime}" HorizontalAlignment="Left" Height="23" Margin="466,263,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="63"/>
-                    <CheckBox IsChecked="{Binding settings.IsMerlin}" Content="Merlin" HorizontalAlignment="Left" Margin="239,291,0,0" VerticalAlignment="Top"/>
-                    <Label Content="MerlinTime" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="391,262,0,0" Height="27"/>
-                    <CheckBox IsChecked="{Binding settings.IsUsingProxy}" Content="UsingProxy" HorizontalAlignment="Left" Margin="374,291,0,0" VerticalAlignment="Top"/>
-                    <CheckBox IsChecked="{Binding settings.SendBitlout}" Content="SendBitlout" HorizontalAlignment="Left" Margin="328,311,0,0" VerticalAlignment="Top"/>
-                    <CheckBox IsChecked="{Binding settings.IsSyncBots}" Content="IsSyncBots" HorizontalAlignment="Left" Margin="425,311,0,0" VerticalAlignment="Top"/>
-                    <TextBox Text="{Binding settings.SyncAddress}" HorizontalAlignment="Left" Height="23" Margin="127,207,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
-                    <TextBox Text="{Binding settings.BotID}" HorizontalAlignment="Left" Height="23" Margin="127,235,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="402"/>
-                    <Label Content="SyncAddress" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,205,0,0" Height="28" RenderTransformOrigin="0.415,0.538"/>
-                    <Label Content="BotName" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,233,0,0" Height="28" RenderTransformOrigin="0.415,0.538"/>
-                    <CheckBox IsChecked="{Binding settings.SOAX}" Content="SOAX" HorizontalAlignment="Left" Margin="239,311,0,0" VerticalAlignment="Top"/>
-                    <Label Content="Percent" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="310,15,0,0" Height="27"/>
-                    <ComboBox HorizontalAlignment="Left" Margin="114,294,0,0" VerticalAlignment="Top" Width="120"/>
-                    <Label Content="SellType" HorizontalAlignment="Left" Margin="56,291,0,0" VerticalAlignment="Top"/>
-                    <ComboBox HorizontalAlignment="Left" Margin="114,325,0,0" VerticalAlignment="Top" Width="120"/>
-                    <Label Content="PrxType" HorizontalAlignment="Left" Margin="57,322,0,0" VerticalAlignment="Top"/>
-                    <ComboBox HorizontalAlignment="Left" Margin="114,356,0,0" VerticalAlignment="Top" Width="120"/>
-                    <Label Content="BotType" HorizontalAlignment="Left" Margin="57,353,0,0" VerticalAlignment="Top"/>
+                    <Button Command="{Binding SaveCommand}" Content="Сохранить" HorizontalAlignment="Left" Margin="279,344,0,0" VerticalAlignment="Top" Width="75"/>
+                    <Label Content="Sell &gt;" HorizontalAlignment="Left" Margin="323,248,0,0" VerticalAlignment="Top"/>
+                    <TextBox HorizontalAlignment="Left" Height="28" Margin="378,210,0,0" TextWrapping="Wrap" Text="{Binding settings.Comission}" VerticalAlignment="Top" Width="70"/>
+                    <TextBox Text="{Binding settings.BuyDelay}"  HorizontalAlignment="Left" Height="27" Margin="535,276,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="61"/>
+                    <Label Content="Buy delay" HorizontalAlignment="Left" Margin="535,245,0,0" VerticalAlignment="Top"/>
+                    <CheckBox IsChecked="{Binding settings.IsDeletePhoto}" Content="DelPhoto" HorizontalAlignment="Left" Margin="240,216,0,0" VerticalAlignment="Top"/>
+                    <TextBox Text="{Binding settings.MerlinDelay}" HorizontalAlignment="Left" Height="27" Margin="467,276,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="63"/>
+                    <Label Content="MerlinDelay" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="461,245,0,0" Height="27"/>
+                    <CheckBox IsChecked="{Binding settings.SendBitlout}" Content="SendBitclout" HorizontalAlignment="Left" Margin="140,216,0,0" VerticalAlignment="Top"/>
+                    <CheckBox IsChecked="{Binding settings.IsSyncBots}" Content="IsSyncBots" HorizontalAlignment="Left" Margin="58,216,0,0" VerticalAlignment="Top"/>
+                    <TextBox Text="{Binding settings.BotID}" HorizontalAlignment="Left" Height="26" Margin="517,210,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="79"/>
+                    <Label Content="BotName" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="453,210,0,0" Height="28" RenderTransformOrigin="0.415,0.538"/>
+                    <Label Content="Reward" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="323,210,0,0" Height="27"/>
+                    <ComboBox HorizontalAlignment="Left" Margin="188,36,0,0" VerticalAlignment="Top" Width="120" ItemsSource="{Binding SMSCountrys}" SelectedItem="{Binding SelectedSMS, UpdateSourceTrigger=PropertyChanged}" IsSynchronizedWithCurrentItem="True"/>
+                    <Label Content="SMSCode" HorizontalAlignment="Left" Margin="188,5,0,0" VerticalAlignment="Top"/>
+                    <ComboBox HorizontalAlignment="Left" Margin="319,36,0,0" VerticalAlignment="Top" Width="120" ItemsSource="{Binding ProxyTypes}" SelectedItem="{Binding SelectedPrx, UpdateSourceTrigger=PropertyChanged}" IsSynchronizedWithCurrentItem="True"/>
+                    <Label Content="PrxType" HorizontalAlignment="Left" Margin="319,5,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.633,0.867"/>
+                    <ComboBox HorizontalAlignment="Left" Margin="58,36,0,0" VerticalAlignment="Top" Width="120" ItemsSource="{Binding BotWorkModes}" SelectedItem="{Binding SelectedMode, UpdateSourceTrigger=PropertyChanged}" IsSynchronizedWithCurrentItem="True"/>
+                    <Label Content="WorkMode" HorizontalAlignment="Left" Margin="58,5,0,0" VerticalAlignment="Top"/>
+                    <TextBox Text="{Binding settings.PublicKey}" HorizontalAlignment="Left" Height="23" Margin="127,182,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="469"/>
+                    <Label Content="PublicKey" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,180,0,0" Height="28"/>
 
                 </Grid>
             </TabItem>
             <TabItem Header="Пользователи">
                 <Grid Background="#FFE5E5E5">
-                    <DataGrid ItemsSource="{Binding RegistrationInfo}" HorizontalAlignment="Left" Height="191" Margin="31,27,0,0" VerticalAlignment="Top" Width="483"/>
-                    <Button Content="Добавить" Command="{Binding AddUsersCommand}" HorizontalAlignment="Left" Margin="241,232,0,0" VerticalAlignment="Top" Width="75"/>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="295*"/>
+                        <ColumnDefinition Width="333*"/>
+                    </Grid.ColumnDefinitions>
+                    <DataGrid ItemsSource="{Binding RegistrationInfo}" HorizontalAlignment="Left" Height="286" Margin="31,27,0,0" VerticalAlignment="Top" Width="573" Grid.ColumnSpan="2"/>
+                    <Button Content="Добавить" Command="{Binding AddUsersCommand}" HorizontalAlignment="Left" Margin="282,338,0,0" VerticalAlignment="Top" Width="75" Grid.ColumnSpan="2"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Прокси">
                 <Grid Background="#FFE5E5E5">
-                    <DataGrid ItemsSource="{Binding proxyWorker.Proxy}"  HorizontalAlignment="Left" Height="191" Margin="31,27,0,0" VerticalAlignment="Top" Width="483"/>
-                    <Button Content="Добавить" Command="{Binding AddProxyCommand}" HorizontalAlignment="Left" Margin="241,232,0,0" VerticalAlignment="Top" Width="75"/>
+                    <DataGrid ItemsSource="{Binding proxyWorker.Proxy}"  HorizontalAlignment="Left" Height="293" Margin="31,27,0,0" VerticalAlignment="Top" Width="577"/>
+                    <Button Content="Добавить" Command="{Binding AddProxyCommand}" HorizontalAlignment="Left" Margin="281,337,0,0" VerticalAlignment="Top" Width="75"/>
                 </Grid>
             </TabItem>
         </TabControl>

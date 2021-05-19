@@ -1,9 +1,6 @@
-﻿using Bitclout.Worker;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
 
 namespace Bitclout.Model
@@ -14,6 +11,8 @@ namespace Bitclout.Model
     [Serializable]
     public class Settings : INotifyPropertyChanged
     {
+
+
         string _SMSApiKey;
         /// <summary>
         /// Ключ апи для смс
@@ -98,6 +97,24 @@ namespace Bitclout.Model
                 OnPropertyChanged("BitcloutSeedPhrase");
             }
         }
+
+        string _PublicKey;
+        /// <summary>
+        /// Логин Bitclout
+        /// </summary>
+        public string PublicKey
+        {
+            get
+            {
+                return _PublicKey;
+            }
+            set
+            {
+                _PublicKey = value;
+                OnPropertyChanged("PublicKey");
+            }
+        }
+
         string _BotID = "MaksLoh";
         /// <summary>
         /// Логин Bitclout
@@ -115,20 +132,37 @@ namespace Bitclout.Model
             }
         }
 
-        string _SyncAddress = "http://46.243.186.18:10090/api/Default/GetAll?ID=";
+        string _VerifySyncAddress = "http://46.243.186.18:10090/api/Default/GetAll?ID=";
         /// <summary>
         /// Логин Bitclout
         /// </summary>
-        public string SyncAddress
+        public string VerifySyncAddress
         {
             get
             {
-                return _SyncAddress;
+                return _VerifySyncAddress;
             }
             set
             {
-                _SyncAddress = value;
-                OnPropertyChanged("SyncAddress");
+                _VerifySyncAddress = value;
+                OnPropertyChanged("VerifySyncAddress");
+            }
+        }
+
+        string _UpdateSyncAddress = "http://46.243.186.18:10099/api/Default/GetAll?ID=";
+        /// <summary>
+        /// Логин Bitclout
+        /// </summary>
+        public string UpdateSyncAddress
+        {
+            get
+            {
+                return _UpdateSyncAddress;
+            }
+            set
+            {
+                _UpdateSyncAddress = value;
+                OnPropertyChanged("UpdateSyncAddress");
             }
         }
 
@@ -149,50 +183,63 @@ namespace Bitclout.Model
             }
         }
 
-        Proxy _MainProxy;
-        /// <summary>
-        /// Текущий прокси
-        /// </summary>
-        public Proxy MainProxy
+        int _BuyDelay = 10000;
+
+        public int BuyDelay
         {
             get
             {
-                return _MainProxy;
+                return _BuyDelay;
             }
             set
             {
-                _MainProxy = value;
-                OnPropertyChanged("MainProxy");
+                _BuyDelay = value;
+                OnPropertyChanged("BuyDelay");
             }
         }
 
-        int _SellSleep = 10000;
+        int _MainDelay = 5000;
 
-        public int SellSleep
+        public int MainDelay
         {
             get
             {
-                return _SellSleep;
+                return _MainDelay;
             }
             set
             {
-                _SellSleep = value;
-                OnPropertyChanged("SellSleep");
+                _MainDelay = value;
+                OnPropertyChanged("MainDelay");
             }
         }
 
-        int _DelayTime = 5000;
+        int _MerlinDelay = 1000;
 
-        public int DelayTime
+        public int MerlinDelay
         {
             get
             {
-                return _DelayTime;
+                return _MerlinDelay;
             }
             set
             {
-                _DelayTime = value;
-                OnPropertyChanged("DelayTime");
+                _MerlinDelay = value;
+                OnPropertyChanged("MerlinDelay");
+            }
+        }
+
+        int _Comission = 0;
+
+        public int Comission
+        {
+            get
+            {
+                return _Comission;
+            }
+            set
+            {
+                _Comission = value;
+                OnPropertyChanged("Comission");
             }
         }
 
@@ -257,36 +304,6 @@ namespace Bitclout.Model
             }
         }
 
-        bool _IsBuyCoins = false;
-
-        public bool IsBuyCoins
-        {
-            get
-            {
-                return _IsBuyCoins;
-            }
-            set
-            {
-                _IsBuyCoins = value;
-                OnPropertyChanged("IsBuyCoins");
-            }
-        }
-
-        bool _SOAX = false;
-
-        public bool SOAX
-        {
-            get
-            {
-                return _SOAX;
-            }
-            set
-            {
-                _SOAX = value;
-                OnPropertyChanged("SOAX");
-            }
-        }
-
         bool _SendBitlout = false;
 
         public bool SendBitlout
@@ -332,39 +349,9 @@ namespace Bitclout.Model
             }
         }
 
-        bool _IsMerlin = false;
+        SMSCountry _SMSCountry = new SMSCountry(0, "iti-0__item-ru", "Ru");
 
-        public bool IsMerlin
-        {
-            get
-            {
-                return _IsMerlin;
-            }
-            set
-            {
-                _IsMerlin = value;
-                OnPropertyChanged("IsMerlin");
-            }
-        }
-
-        bool _IsUsingProxy = false;
-
-        public bool IsUsingProxy
-        {
-            get
-            {
-                return _IsUsingProxy;
-            }
-            set
-            {
-                _IsUsingProxy = value;
-                OnPropertyChanged("IsUsingProxy");
-            }
-        }
-
-        int _SMSCountry = 0;
-
-        public int SMSCountry
+        public SMSCountry SMSCountry
         {
             get
             {
@@ -377,50 +364,36 @@ namespace Bitclout.Model
             }
         }
 
-        string _CountryCode = "iti-0__item-gb";
+        ProxyType _ProxyType = new ProxyType(PrxType.NotUsed, "NotUsed");
 
-        public string CountryCode
+        public ProxyType ProxyType
         {
             get
             {
-                return _CountryCode;
+                return _ProxyType;
             }
             set
             {
-                _CountryCode = value;
-                OnPropertyChanged("CountryCode");
+                _ProxyType = value;
+                OnPropertyChanged("ProxyType");
             }
         }
 
-        int _Comission = 0;
+        BotWorkMode _BotWorkMode = new BotWorkMode(WorkType.OnlyReg, "OnlyReg");
 
-        public int Comission
+        public BotWorkMode BotWorkMode
         {
             get
             {
-                return _Comission;
+                return _BotWorkMode;
             }
             set
             {
-                _Comission = value;
-                OnPropertyChanged("Comission");
+                _BotWorkMode = value;
+                OnPropertyChanged("BotWorkMode");
             }
         }
 
-        int _MerlinTime = 1000;
-
-        public int MerlinTime
-        {
-            get
-            {
-                return _MerlinTime;
-            }
-            set
-            {
-                _MerlinTime = value;
-                OnPropertyChanged("MerlinTime");
-            }
-        }
 
         public Settings()
         {
