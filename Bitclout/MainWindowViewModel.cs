@@ -5,8 +5,10 @@ using Microsoft.Win32;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Management;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
@@ -336,7 +338,7 @@ namespace Bitclout
         {
             while (!stop)
             {
-                bool iserr = false;
+                bool iserr = true;
                 PhoneNumber pn = null;
                 try
                 {
@@ -498,6 +500,10 @@ namespace Bitclout
                 {
                     NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
                 }
+                catch (OpenQA.Selenium.NoSuchElementException ex)
+                {
+                    NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
+                }
                 catch (OpenQA.Selenium.WebDriverException ex)
                 {
                     NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
@@ -522,20 +528,58 @@ namespace Bitclout
                         Application.Current.Dispatcher.Invoke(() => { RegistrationInfo.RemoveAt(0); });
 
                     UserRegistrationInfo.SaveUsers(RegistrationInfo.ToList());
+                    try
+                    {
+                        if (chromeWorker.RegChromeDriver != null)
+                            try
+                            {
+                                chromeWorker.EndRegistration(chromeWorker.RegChromeDriver);
+                            }
+                            catch (Exception)
+                            {
+                                if (settings.ProxyType.Type == PrxType.SOAX)
+                                    settings.CurrentProxy.CurrentStatus = ProxyStatus.BadSoax;
+                                else
+                                    settings.CurrentProxy.CurrentStatus = ProxyStatus.Died;
+                                chromeWorker.RegChromeDriver.Quit();
+                            }
+                    }
+                    catch (Exception ex)
+                    {
+                        NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
+                        iserr = true;
+                    }
+                    try
+                    {
+                        if (iserr)
+                        {
+                            foreach (var item in Process.GetProcessesByName("chromedriver"))
+                            {
+                                KillProcessAndChildrens(item.Id);
+                            }
 
-                    if (chromeWorker.RegChromeDriver != null && !iserr)
-                        try
-                        {
-                            chromeWorker.EndRegistration(chromeWorker.RegChromeDriver);
                         }
-                        catch (Exception)
+                    }
+                    catch (Exception ex)
+                    {
+                        NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
+                    }
+                    try
+                    {
+                        if (iserr)
                         {
-                            if (settings.ProxyType.Type == PrxType.SOAX)
-                                settings.CurrentProxy.CurrentStatus = ProxyStatus.BadSoax;
-                            else
-                                settings.CurrentProxy.CurrentStatus = ProxyStatus.Died;
-                            chromeWorker.RegChromeDriver.Quit();
+                            foreach (var item in Process.GetProcessesByName("chrome"))
+                            {
+                                KillProcessAndChildrens(item.Id);
+                            }
                         }
+                    }
+                    catch (Exception ex)
+                    {
+                        NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
+                    }
+                   
+
 
                     if (settings.CurrentProxy != null)
                         proxyWorker.ChangeProxyStatus(settings.CurrentProxy.ID, settings.CurrentProxy.CurrentStatus);
@@ -543,6 +587,31 @@ namespace Bitclout
                     settings.SaveSettings();
 
                     UserInfo.SaveRegistredUsers(RegistredUsers.ToList());
+                }
+            }
+        }
+
+        private static void KillProcessAndChildrens(int pid)
+        {
+            ManagementObjectSearcher processSearcher = new ManagementObjectSearcher
+              ("Select * From Win32_Process Where ParentProcessID=" + pid);
+            ManagementObjectCollection processCollection = processSearcher.Get();
+
+            try
+            {
+                Process proc = Process.GetProcessById(pid);
+                if (!proc.HasExited) proc.Kill();
+            }
+            catch (ArgumentException)
+            {
+                // Process already exited.
+            }
+
+            if (processCollection != null)
+            {
+                foreach (ManagementObject mo in processCollection)
+                {
+                    KillProcessAndChildrens(Convert.ToInt32(mo["ProcessID"])); //kill child processes(also kills childrens of childrens etc.)
                 }
             }
         }
