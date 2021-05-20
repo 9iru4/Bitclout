@@ -434,41 +434,50 @@ namespace Bitclout
             return userInfo;
         }
 
-        public void SendAllBitclout(string publicKey, IWebDriver driver)
+        public bool SendAllBitclout(string publicKey, IWebDriver driver)
         {
-            NLog.LogManager.GetCurrentClassLogger().Info($"Отправляем Bitclout ->");
-
-            driver.Navigate().GoToUrl($"https://bitclout.com/send-bitclout");
-            Thread.Sleep(7000);
-
-            NLog.LogManager.GetCurrentClassLogger().Info($"Вводим публичный ключ");
-
-            driver.FindElement(By.XPath("//input[@class='form-control w-100 fs-15px lh-15px mt-5px ng-untouched ng-pristine ng-valid']")).SendKeys(publicKey);
-            Thread.Sleep(MainWindowViewModel.settings.MainDelay * 2);
-
-            driver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ml-5px py-10px']")).Click();
-            Thread.Sleep(MainWindowViewModel.settings.MainDelay * 2);
-
             try
             {
-                NLog.LogManager.GetCurrentClassLogger().Info($"Подтверждаем");
-                driver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ml-15px py-10px mt-5px']")).Click();
+                NLog.LogManager.GetCurrentClassLogger().Info($"Отправляем Bitclout ->");
+
+                driver.Navigate().GoToUrl($"https://bitclout.com/send-bitclout");
+                Thread.Sleep(7000);
+
+                NLog.LogManager.GetCurrentClassLogger().Info($"Вводим публичный ключ");
+
+                driver.FindElement(By.XPath("//input[@class='form-control w-100 fs-15px lh-15px mt-5px ng-untouched ng-pristine ng-valid']")).SendKeys(publicKey);
                 Thread.Sleep(MainWindowViewModel.settings.MainDelay * 2);
+
+                driver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ml-5px py-10px']")).Click();
+                Thread.Sleep(MainWindowViewModel.settings.MainDelay * 2);
+
+                try
+                {
+                    NLog.LogManager.GetCurrentClassLogger().Info($"Подтверждаем");
+                    driver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ml-15px py-10px mt-5px']")).Click();
+                    Thread.Sleep(MainWindowViewModel.settings.MainDelay * 2);
+                }
+                catch (Exception)
+                {
+                    NLog.LogManager.GetCurrentClassLogger().Info($"Подтверждаем");
+                    driver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ml-15px py-10px mt-5px ng-star-inserted']")).Click();
+                    Thread.Sleep(MainWindowViewModel.settings.MainDelay * 2);
+                }
+
+                NLog.LogManager.GetCurrentClassLogger().Info($"Подтвержаем");
+                driver.FindElement(By.XPath("//button[@class='swal2-confirm btn btn-light swal2-styled']")).Click();
+                Thread.Sleep(14000);
+
+                NLog.LogManager.GetCurrentClassLogger().Info($"Подтвержаем");
+                driver.FindElement(By.XPath("//button[@class='swal2-confirm btn btn-light swal2-styled']")).Click();
+                Thread.Sleep(MainWindowViewModel.settings.MainDelay * 2);
+                return true;
             }
             catch (Exception)
             {
-                NLog.LogManager.GetCurrentClassLogger().Info($"Подтверждаем");
-                driver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ml-15px py-10px mt-5px ng-star-inserted']")).Click();
-                Thread.Sleep(MainWindowViewModel.settings.MainDelay * 2);
+                return false;
             }
-
-            NLog.LogManager.GetCurrentClassLogger().Info($"Подтвержаем");
-            driver.FindElement(By.XPath("//button[@class='swal2-confirm btn btn-light swal2-styled']")).Click();
-            Thread.Sleep(14000);
-
-            NLog.LogManager.GetCurrentClassLogger().Info($"Подтвержаем");
-            driver.FindElement(By.XPath("//button[@class='swal2-confirm btn btn-light swal2-styled']")).Click();
-            Thread.Sleep(MainWindowViewModel.settings.MainDelay * 2);
+        
         }
 
         public bool LoginToBitclout(IWebDriver driver, string phrase)

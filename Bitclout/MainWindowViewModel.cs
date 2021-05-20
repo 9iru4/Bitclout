@@ -549,6 +549,10 @@ namespace Bitclout
                         NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
                         iserr = true;
                     }
+                    finally
+                    {
+                        chromeWorker.RegChromeDriver = null;
+                    }
                     try
                     {
                         if (iserr)
@@ -620,7 +624,7 @@ namespace Bitclout
         {
             while (!stop && (settings.BotWorkMode.Type == WorkType.SellReg || settings.BotWorkMode.Type == WorkType.RegAndSell || settings.BotWorkMode.Type == WorkType.MerlinAndSellReg))
             {
-                bool err = false;
+                bool err = true;
                 UserInfo usr = null;
                 try
                 {
@@ -633,13 +637,15 @@ namespace Bitclout
                         chromeWorker.SellChromeDriver.Manage().Window.Maximize();
                         chromeWorker.LoginToBitclout(chromeWorker.SellChromeDriver, usr.BitcloutSeedPhrase);
 
-                        chromeWorker.SendAllBitclout(settings.PublicKey, chromeWorker.SellChromeDriver);
+                        if (!chromeWorker.SendAllBitclout(settings.PublicKey, chromeWorker.SellChromeDriver))
+                            throw new FailSendBitcloutException("Не удалось прожать битклаут");
+                        else
+                            err = false;
                     }
                 }
                 catch (FailToStartBitcloutChromeDriverException ex)
                 {
                     NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
-                    err = true;
                     break;
                 }
                 catch (FailSendBitcloutException ex)
@@ -659,11 +665,23 @@ namespace Bitclout
                         UserInfo.SaveRegistredUsers(RegistredUsers.ToList());
                         try
                         {
-                            chromeWorker.EndRegistration(chromeWorker.SellChromeDriver);
+                            if (chromeWorker.SellChromeDriver != null)
+                                try
+                                {
+                                    chromeWorker.EndRegistration(chromeWorker.SellChromeDriver);
+                                }
+                                catch (Exception)
+                                {
+                                    chromeWorker.SellChromeDriver.Quit();
+                                }
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
-                            chromeWorker.SellChromeDriver.Quit();
+                            NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
+                        }
+                        finally
+                        {
+                            chromeWorker.SellChromeDriver = null;
                         }
                     }
                     Thread.Sleep(7000);
