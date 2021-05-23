@@ -68,8 +68,10 @@
                         <ColumnDefinition Width="295*"/>
                         <ColumnDefinition Width="333*"/>
                     </Grid.ColumnDefinitions>
-                    <DataGrid ItemsSource="{Binding RegistrationInfo}" HorizontalAlignment="Left" Height="286" Margin="31,27,0,0" VerticalAlignment="Top" Width="573" Grid.ColumnSpan="2"/>
+                    <DataGrid ItemsSource="{Binding RegistrationInfo}" HorizontalAlignment="Left" Height="275" Margin="31,38,0,0" VerticalAlignment="Top" Width="573" Grid.ColumnSpan="2"/>
                     <Button Content="Добавить" Command="{Binding AddUsersCommand}" HorizontalAlignment="Left" Margin="282,338,0,0" VerticalAlignment="Top" Width="75" Grid.ColumnSpan="2"/>
+                    <Label Content="Count" HorizontalAlignment="Left" Margin="74,10,0,0" VerticalAlignment="Top"/>
+                    <TextBox HorizontalAlignment="Left" Height="23" Margin="140,10,0,0" TextWrapping="Wrap" Text="{Binding UsersCount,Mode=OneWay}" IsReadOnly="True" VerticalAlignment="Top" Width="120"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Прокси">

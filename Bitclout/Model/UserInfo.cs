@@ -163,6 +163,36 @@ namespace Bitclout.Model
             }
         }
 
+        bool _IsUpdate = false;
+
+        public bool IsUpdate
+        {
+            get
+            {
+                return _IsUpdate;
+            }
+            set
+            {
+                _IsUpdate = value;
+                OnPropertyChanged("IsUpdate");
+            }
+        }
+
+        bool _IsError = false;
+
+        public bool IsError
+        {
+            get
+            {
+                return _IsError;
+            }
+            set
+            {
+                _IsError = value;
+                OnPropertyChanged("IsError");
+            }
+        }
+
         public UserInfo()
         {
 
