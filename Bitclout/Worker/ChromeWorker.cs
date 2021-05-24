@@ -553,44 +553,174 @@ namespace Bitclout
             {
                 NLog.LogManager.GetCurrentClassLogger().Info($"Отправляем Bitclout ->");
 
-                driver.Navigate().GoToUrl($"https://bitclout.com/send-bitclout");
+                driver.Navigate().GoToUrl($"https://bitclout.com/wallet");
+                Thread.Sleep(3000);
+
+                foreach (var item in driver.FindElements(By.XPath("//a[@class='cursor-pointer fs-15px text-grey5']")))
+                {
+                    if (item.Text.Contains("Send BitClout"))
+                    {
+                        item.Click();
+                        break;
+                    }
+                }
+
                 Thread.Sleep(7000);
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Вводим публичный ключ");
 
-                driver.FindElement(By.XPath("//input[@class='form-control w-100 fs-15px lh-15px mt-5px ng-untouched ng-pristine ng-valid']")).SendKeys(publicKey);
-                Thread.Sleep(MainWindowViewModel.settings.MainDelay * 2);
-
-                driver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ml-5px py-10px']")).Click();
-                Thread.Sleep(MainWindowViewModel.settings.MainDelay * 2);
-
                 try
                 {
-                    NLog.LogManager.GetCurrentClassLogger().Info($"Подтверждаем");
-                    driver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ml-15px py-10px mt-5px']")).Click();
+                    driver.FindElement(By.XPath("//input[@class='form-control w-100 fs-15px lh-15px mt-5px ng-untouched ng-pristine ng-valid']")).SendKeys(publicKey);
                     Thread.Sleep(MainWindowViewModel.settings.MainDelay * 2);
+
+                    driver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ml-5px py-10px']")).Click();
+                    Thread.Sleep(MainWindowViewModel.settings.MainDelay * 3);
+
                 }
                 catch (Exception)
                 {
-                    NLog.LogManager.GetCurrentClassLogger().Info($"Подтверждаем");
-                    driver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ml-15px py-10px mt-5px ng-star-inserted']")).Click();
-                    Thread.Sleep(MainWindowViewModel.settings.MainDelay * 2);
+
                 }
 
-                NLog.LogManager.GetCurrentClassLogger().Info($"Подтвержаем");
-                driver.FindElement(By.XPath("//button[@class='swal2-confirm btn btn-light swal2-styled']")).Click();
-                Thread.Sleep(14000);
+                if (driver.FindElements(By.XPath("//button[@class='tn btn-primary font-weight-bold fs-15px ml-15px py-10px mt-5px']")).Count == 0)
+                {
+                    try
+                    {
+                        bool isok = false;
+                        for (int i = 0; i < 10; i++)
+                        {
+                            try
+                            {
+                                driver.SwitchTo().DefaultContent();
+                                driver.SwitchTo().Frame(1);
+                                driver.FindElement(By.XPath("//div[@class='captcha-solver']")).Click();//Кликаем на капчесолвер решить
+                                isok = true;
+                                break;
+                            }
+                            catch
+                            {
+                                Thread.Sleep(3000);
+                            }
+                        }
+                        if (!isok)
+                            throw new BadProxyException("Не прожимается некст");
 
-                NLog.LogManager.GetCurrentClassLogger().Info($"Подтвержаем");
-                driver.FindElement(By.XPath("//button[@class='swal2-confirm btn btn-light swal2-styled']")).Click();
-                Thread.Sleep(MainWindowViewModel.settings.MainDelay * 2);
-                return true;
+
+                        Thread.Sleep(50000);//Время на решение капчи
+                        int br = 0;
+                        for (int i = 0; i < 30; i++)
+                        {
+                            try
+                            {
+                                try
+                                {
+                                    driver.SwitchTo().DefaultContent();
+                                    driver.SwitchTo().Frame(1);
+                                    var txt = driver.FindElement(By.XPath("//div[@class='captcha-solver']")).Text;//Поиск капчасолвера и текста на нем
+                                    if (txt.Contains("решена"))
+                                        br++;
+                                    if (txt.Contains("API"))
+                                        throw new BadProxyException("Капча решена, но не решена");
+                                    if (txt.Contains("ERROR"))
+                                        throw new BadProxyException("Капча решена, но не решена");
+                                }
+                                catch (BadProxyException ex)
+                                {
+                                    NLog.LogManager.GetCurrentClassLogger().Info(ex, $"Ошибка в капчасолвере");
+                                    throw ex;
+                                }
+                                catch (Exception ex)
+                                {
+                                    NLog.LogManager.GetCurrentClassLogger().Info(ex, $"Ошибка в поиске капчасолвере");
+                                }
+
+                                if (br == 2)
+                                    throw new BadProxyException("Капча решена, но не решена");
+
+                                var txt1 = driver.FindElement(By.XPath("//input[@class='form-control w-100 fs-15px lh-15px mt-5px ng-untouched ng-pristine ng-valid']"));
+                                if (txt1 != null)
+                                {
+                                    NLog.LogManager.GetCurrentClassLogger().Info($"Вводим публичный ключ");
+
+                                    driver.FindElement(By.XPath("//input[@class='form-control w-100 fs-15px lh-15px mt-5px ng-untouched ng-pristine ng-valid']")).SendKeys(publicKey);
+                                    Thread.Sleep(MainWindowViewModel.settings.MainDelay * 2);
+
+                                    driver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ml-5px py-10px']")).Click();
+                                    Thread.Sleep(MainWindowViewModel.settings.MainDelay * 3);
+
+                                    try
+                                    {
+                                        NLog.LogManager.GetCurrentClassLogger().Info($"Подтверждаем");
+                                        driver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ml-15px py-10px mt-5px']")).Click();
+                                        Thread.Sleep(MainWindowViewModel.settings.MainDelay * 2);
+                                    }
+                                    catch (Exception)
+                                    {
+                                        NLog.LogManager.GetCurrentClassLogger().Info($"Подтверждаем");
+                                        driver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ml-15px py-10px mt-5px ng-star-inserted']")).Click();
+                                        Thread.Sleep(MainWindowViewModel.settings.MainDelay * 2);
+                                    }
+
+                                    NLog.LogManager.GetCurrentClassLogger().Info($"Подтвержаем");
+                                    driver.FindElement(By.XPath("//button[@class='swal2-confirm btn btn-light swal2-styled']")).Click();
+                                    Thread.Sleep(14000);
+
+                                    NLog.LogManager.GetCurrentClassLogger().Info($"Подтвержаем");
+                                    driver.FindElement(By.XPath("//button[@class='swal2-confirm btn btn-light swal2-styled']")).Click();
+                                    Thread.Sleep(MainWindowViewModel.settings.MainDelay * 2);
+                                    return true;
+                                }
+                            }
+                            catch (BadProxyException ex)
+                            {
+                                throw ex;
+                            }
+                            catch
+                            {
+                                Thread.Sleep(5000);
+                            }
+                        }
+
+                        if (driver.FindElements(By.XPath("//div[@class='mt-15px mb-15px fs-24px font-weight-bold']")).Count == 0)
+                            throw new BadProxyException("Проблемы с решением капчи");
+                    }
+                    catch (BadProxyException ex)
+                    {
+                        throw ex;
+                    }
+                }
+                else
+                {
+                    try
+                    {
+                        NLog.LogManager.GetCurrentClassLogger().Info($"Подтверждаем");
+                        driver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ml-15px py-10px mt-5px']")).Click();
+                        Thread.Sleep(MainWindowViewModel.settings.MainDelay * 2);
+                    }
+                    catch (Exception)
+                    {
+                        NLog.LogManager.GetCurrentClassLogger().Info($"Подтверждаем");
+                        driver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ml-15px py-10px mt-5px ng-star-inserted']")).Click();
+                        Thread.Sleep(MainWindowViewModel.settings.MainDelay * 2);
+                    }
+
+                    NLog.LogManager.GetCurrentClassLogger().Info($"Подтвержаем");
+                    driver.FindElement(By.XPath("//button[@class='swal2-confirm btn btn-light swal2-styled']")).Click();
+                    Thread.Sleep(14000);
+
+                    NLog.LogManager.GetCurrentClassLogger().Info($"Подтвержаем");
+                    driver.FindElement(By.XPath("//button[@class='swal2-confirm btn btn-light swal2-styled']")).Click();
+                    Thread.Sleep(MainWindowViewModel.settings.MainDelay * 2);
+                    return true;
+                }
             }
             catch (Exception ex)
             {
                 NLog.LogManager.GetCurrentClassLogger().Info(ex, $"Ошибка в отправки битклаут");
                 return false;
             }
+            return false;
         }
 
         public bool LoginToBitclout(IWebDriver driver, string phrase)

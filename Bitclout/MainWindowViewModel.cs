@@ -611,7 +611,10 @@ namespace Bitclout
                     if (settings.BotWorkMode.Type != WorkType.SellMain || settings.BotWorkMode.Type != WorkType.SellReg)//Если не только продажа обновляем профайл
                     {
                         usr = RegistredUsers.Where(x => !x.IsUpdate && !x.IsError).FirstOrDefault();
-                        isupd = true;
+                        if (usr != null)
+                            isupd = true;
+                        else
+                            usr = usr = RegistredUsers.Where(x => !x.IsSell && !x.IsError).FirstOrDefault();
                     }
                     else//Иначе только продаем
                         usr = RegistredUsers.Where(x => !x.IsSell && !x.IsError).FirstOrDefault();
