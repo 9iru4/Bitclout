@@ -113,11 +113,30 @@ namespace Bitclout
             if (driver.FindElements(By.XPath("//h1[@class='inline-block md:block mr-2 md:mb-2 font-light text-60 md:text-3xl text-black-dark leading-tight']")).Count != 0)
                 throw new OutOfProxyException("Ошибка с сервером cloudfire");
 
-            NLog.LogManager.GetCurrentClassLogger().Info($"Жмем кнопку регистрация");
-            driver.FindElement(By.XPath("//a[@class='btn btn-primary landing__sign-up']")).Click();//Кликаем дальше
-            Thread.Sleep(7000);
+            try
+            {
+                NLog.LogManager.GetCurrentClassLogger().Info($"Жмем кнопку регистрация");
+                driver.FindElement(By.XPath("//a[@class='btn btn-primary landing__sign-up']")).Click();//Кликаем дальше
+                Thread.Sleep(7000);
 
-            driver.SwitchTo().Window(driver.WindowHandles[1]);
+                driver.SwitchTo().Window(driver.WindowHandles[1]);
+            }
+            catch (Exception)
+            {
+                NLog.LogManager.GetCurrentClassLogger().Info($"Выбираем аккаунт");
+                driver.FindElement(By.XPath("//div[@class='change-account-selector__ellipsis-restriction cursor-pointer']")).Click();//Кликаем дальше
+                Thread.Sleep(MainWindowViewModel.settings.MainDelay);
+
+                NLog.LogManager.GetCurrentClassLogger().Info($"Жмем добавить новый");
+                driver.FindElement(By.XPath("//div[@class='pl-10px pr-10px pt-10px font-weight-bold change-account-selector__hover']")).Click();//Кликаем дальше
+                Thread.Sleep(7000);
+
+                driver.SwitchTo().Window(driver.WindowHandles[1]);
+
+                NLog.LogManager.GetCurrentClassLogger().Info($"Нажимаем добавить новый");
+                driver.FindElement(By.CssSelector("[href*='/sign-up']")).Click();//Кликаем дальше
+                Thread.Sleep(MainWindowViewModel.settings.MainDelay);
+            }
 
             userInfo.BitcloutSeedPhrase = driver.FindElement(By.XPath("//div[@class='p-15px']")).Text;//Получаем фразу
             NLog.LogManager.GetCurrentClassLogger().Info($"Получаем фразу-логин {userInfo.BitcloutSeedPhrase}");
@@ -392,7 +411,7 @@ namespace Bitclout
             bool regok = false;
             for (int i = 0; i < 20; i++)
             {
-                if (RegChromeDriver.Url == "https://bitclout.com/sign-up?stepNum=4")
+                if (RegChromeDriver.Url.Contains("https://bitclout.com/sign-up?stepNum=4"))
                 {
                     regok = true;
                     break;
@@ -404,7 +423,7 @@ namespace Bitclout
                 throw new BadProxyException("Не удалось подтвердить код");
 
             driver.Navigate().GoToUrl($"https://bitclout.com/browse?feedTab=Global");//Страница реги
-            Thread.Sleep(7000);
+            Thread.Sleep(14000);
 
             if (driver.FindElement(By.XPath("//div[@class='d-flex align-items-center justify-content-end flex-wrap']")).Text.Contains("$0.00 USD"))
                 if (!MainWindowViewModel.settings.SendBitlout)
@@ -575,16 +594,24 @@ namespace Bitclout
                     Thread.Sleep(MainWindowViewModel.settings.MainDelay * 2);
 
                     driver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ml-5px py-10px']")).Click();
-                    Thread.Sleep(MainWindowViewModel.settings.MainDelay * 3);
+                    Thread.Sleep(MainWindowViewModel.settings.MainDelay * 2);
 
+                    try
+                    {
+                        NLog.LogManager.GetCurrentClassLogger().Info($"Подтверждаем");
+                        driver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ml-15px py-10px mt-5px']")).Click();
+                        Thread.Sleep(MainWindowViewModel.settings.MainDelay * 2);
+                    }
+                    catch (Exception)
+                    {
+                        NLog.LogManager.GetCurrentClassLogger().Info($"Подтверждаем");
+                        driver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ml-15px py-10px mt-5px ng-star-inserted']")).Click();
+                        Thread.Sleep(MainWindowViewModel.settings.MainDelay * 2);
+                    }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-
-                }
-
-                if (driver.FindElements(By.XPath("//button[@class='tn btn-primary font-weight-bold fs-15px ml-15px py-10px mt-5px']")).Count == 0)
-                {
+                    NLog.LogManager.GetCurrentClassLogger().Info(ex, $"Ошибка в отправке");
                     try
                     {
                         bool isok = false;
@@ -625,14 +652,14 @@ namespace Bitclout
                                     if (txt.Contains("ERROR"))
                                         throw new BadProxyException("Капча решена, но не решена");
                                 }
-                                catch (BadProxyException ex)
+                                catch (BadProxyException exx)
                                 {
-                                    NLog.LogManager.GetCurrentClassLogger().Info(ex, $"Ошибка в капчасолвере");
-                                    throw ex;
+                                    NLog.LogManager.GetCurrentClassLogger().Info(exx, $"Ошибка в капчасолвере");
+                                    throw exx;
                                 }
-                                catch (Exception ex)
+                                catch (Exception exx)
                                 {
-                                    NLog.LogManager.GetCurrentClassLogger().Info(ex, $"Ошибка в поиске капчасолвере");
+                                    NLog.LogManager.GetCurrentClassLogger().Info(exx, $"Ошибка в поиске капчасолвере");
                                 }
 
                                 if (br == 2)
@@ -642,12 +669,13 @@ namespace Bitclout
                                 if (txt1 != null)
                                 {
                                     NLog.LogManager.GetCurrentClassLogger().Info($"Вводим публичный ключ");
+                                    Thread.Sleep(MainWindowViewModel.settings.MainDelay * 2);
 
                                     driver.FindElement(By.XPath("//input[@class='form-control w-100 fs-15px lh-15px mt-5px ng-untouched ng-pristine ng-valid']")).SendKeys(publicKey);
                                     Thread.Sleep(MainWindowViewModel.settings.MainDelay * 2);
 
                                     driver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ml-5px py-10px']")).Click();
-                                    Thread.Sleep(MainWindowViewModel.settings.MainDelay * 3);
+                                    Thread.Sleep(MainWindowViewModel.settings.MainDelay * 2);
 
                                     try
                                     {
@@ -661,66 +689,39 @@ namespace Bitclout
                                         driver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ml-15px py-10px mt-5px ng-star-inserted']")).Click();
                                         Thread.Sleep(MainWindowViewModel.settings.MainDelay * 2);
                                     }
-
-                                    NLog.LogManager.GetCurrentClassLogger().Info($"Подтвержаем");
-                                    driver.FindElement(By.XPath("//button[@class='swal2-confirm btn btn-light swal2-styled']")).Click();
-                                    Thread.Sleep(14000);
-
-                                    NLog.LogManager.GetCurrentClassLogger().Info($"Подтвержаем");
-                                    driver.FindElement(By.XPath("//button[@class='swal2-confirm btn btn-light swal2-styled']")).Click();
-                                    Thread.Sleep(MainWindowViewModel.settings.MainDelay * 2);
-                                    return true;
+                                    break;
                                 }
                             }
-                            catch (BadProxyException ex)
+                            catch (BadProxyException exx)
                             {
-                                throw ex;
+                                throw exx;
                             }
                             catch
                             {
                                 Thread.Sleep(5000);
                             }
                         }
-
-                        if (driver.FindElements(By.XPath("//div[@class='mt-15px mb-15px fs-24px font-weight-bold']")).Count == 0)
-                            throw new BadProxyException("Проблемы с решением капчи");
                     }
-                    catch (BadProxyException ex)
+                    catch (BadProxyException exx)
                     {
-                        throw ex;
+                        throw exx;
                     }
                 }
-                else
-                {
-                    try
-                    {
-                        NLog.LogManager.GetCurrentClassLogger().Info($"Подтверждаем");
-                        driver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ml-15px py-10px mt-5px']")).Click();
-                        Thread.Sleep(MainWindowViewModel.settings.MainDelay * 2);
-                    }
-                    catch (Exception)
-                    {
-                        NLog.LogManager.GetCurrentClassLogger().Info($"Подтверждаем");
-                        driver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ml-15px py-10px mt-5px ng-star-inserted']")).Click();
-                        Thread.Sleep(MainWindowViewModel.settings.MainDelay * 2);
-                    }
 
-                    NLog.LogManager.GetCurrentClassLogger().Info($"Подтвержаем");
-                    driver.FindElement(By.XPath("//button[@class='swal2-confirm btn btn-light swal2-styled']")).Click();
-                    Thread.Sleep(14000);
+                NLog.LogManager.GetCurrentClassLogger().Info($"Подтвержаем");
+                driver.FindElement(By.XPath("//button[@class='swal2-confirm btn btn-light swal2-styled']")).Click();
+                Thread.Sleep(14000);
 
-                    NLog.LogManager.GetCurrentClassLogger().Info($"Подтвержаем");
-                    driver.FindElement(By.XPath("//button[@class='swal2-confirm btn btn-light swal2-styled']")).Click();
-                    Thread.Sleep(MainWindowViewModel.settings.MainDelay * 2);
-                    return true;
-                }
+                NLog.LogManager.GetCurrentClassLogger().Info($"Подтвержаем");
+                driver.FindElement(By.XPath("//button[@class='swal2-confirm btn btn-light swal2-styled']")).Click();
+                Thread.Sleep(MainWindowViewModel.settings.MainDelay * 2);
+                return true;
             }
             catch (Exception ex)
             {
                 NLog.LogManager.GetCurrentClassLogger().Info(ex, $"Ошибка в отправки битклаут");
                 return false;
             }
-            return false;
         }
 
         public bool LoginToBitclout(IWebDriver driver, string phrase)
@@ -729,11 +730,30 @@ namespace Bitclout
             driver.Navigate().GoToUrl($"https://bitclout.com/");//Страница реги
             Thread.Sleep(7000);
 
-            NLog.LogManager.GetCurrentClassLogger().Info($"Жмем кнопку регистрация");
-            driver.FindElement(By.XPath("//a[@class='landing__log-in d-none d-md-block']")).Click();//Кликаем дальше
-            Thread.Sleep(7000);
+            try
+            {
+                NLog.LogManager.GetCurrentClassLogger().Info($"Жмем кнопку регистрация");
+                driver.FindElement(By.XPath("//a[@class='landing__log-in d-none d-md-block']")).Click();//Кликаем дальше
+                Thread.Sleep(7000);
 
-            driver.SwitchTo().Window(driver.WindowHandles[1]);
+                driver.SwitchTo().Window(driver.WindowHandles[1]);
+            }
+            catch (Exception)
+            {
+                NLog.LogManager.GetCurrentClassLogger().Info($"Выбираем аккаунт");
+                driver.FindElement(By.XPath("//div[@class='change-account-selector__ellipsis-restriction cursor-pointer']")).Click();//Кликаем дальше
+                Thread.Sleep(MainWindowViewModel.settings.MainDelay);
+
+                NLog.LogManager.GetCurrentClassLogger().Info($"Жмем добавить новый");
+                driver.FindElement(By.XPath("//div[@class='pl-10px pr-10px pt-10px font-weight-bold change-account-selector__hover']")).Click();//Кликаем дальше
+                Thread.Sleep(7000);
+
+                driver.SwitchTo().Window(driver.WindowHandles[1]);
+
+                NLog.LogManager.GetCurrentClassLogger().Info($"Нажимаем добавить новый");
+                driver.FindElement(By.XPath("//*[text()='Load another account']")).Click();
+                Thread.Sleep(MainWindowViewModel.settings.MainDelay);
+            }
 
             NLog.LogManager.GetCurrentClassLogger().Info($"Отправляем фразу");
             driver.FindElement(By.XPath("//textarea[@class='form-control fs-15px ng-untouched ng-pristine ng-valid']")).SendKeys(phrase);

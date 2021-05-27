@@ -362,8 +362,10 @@ namespace Bitclout
 
         void StartReg()
         {
+            int acc = 0;
             while (!stop)
             {
+                acc++;
                 bool iserr = false;
                 try
                 {
@@ -513,7 +515,13 @@ namespace Bitclout
                         if (chromeWorker.RegChromeDriver != null)
                             try
                             {
-                                chromeWorker.EndRegistration(chromeWorker.RegChromeDriver);
+                                if (acc == 25)
+                                {
+                                    acc = 0;
+                                    chromeWorker.EndRegistration(chromeWorker.RegChromeDriver);
+                                }
+                                else
+                                    chromeWorker.RegChromeDriver.Quit();
                             }
                             catch (Exception)
                             {
@@ -600,9 +608,10 @@ namespace Bitclout
 
         void StartUpdateAndSell()
         {
+            int acc = 0;
             while (!stop)
             {
-
+                acc++;
                 bool err = true;
                 bool isupd = false;
                 UserInfo usr = null;
@@ -621,12 +630,14 @@ namespace Bitclout
 
                     if (usr != null)
                     {
-                        chromeWorker.SellChromeDriver = chromeWorker.InitializeChromeDriver(@"\SellChrome", isIncognito: true);
+                        chromeWorker.SellChromeDriver = chromeWorker.InitializeChromeDriver(@"\SellChrome", isIncognito:true);
                         chromeWorker.SellChromeDriver.Manage().Window.Maximize();
                         chromeWorker.LoginToBitclout(chromeWorker.SellChromeDriver, usr.BitcloutSeedPhrase);
 
                         if (isupd)
                             usr = chromeWorker.UpdateProfile(usr, chromeWorker.SellChromeDriver);
+
+
 
                         if (settings.BotWorkMode.Type == WorkType.MerlinAndSellReg || settings.BotWorkMode.Type == WorkType.RegAndSell || settings.BotWorkMode.Type == WorkType.SellReg)//Если отправка всех коинов
                         {
@@ -708,7 +719,8 @@ namespace Bitclout
                             if (chromeWorker.SellChromeDriver != null)
                                 try
                                 {
-                                    chromeWorker.EndRegistration(chromeWorker.SellChromeDriver);
+                                  
+                                        chromeWorker.SellChromeDriver.Quit();
                                 }
                                 catch (Exception)
                                 {
