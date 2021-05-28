@@ -468,6 +468,8 @@ namespace Bitclout
                 catch (BadProxyException ex)//+
                 {
                     NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
+                    if (ex.Message.Contains("вы были заблокированы"))
+                        chromeWorker.ClearChromeData(chromeWorker.RegChromeDriver);
                     if (settings.CurrentProxy == null || settings.ProxyType.Type == PrxType.OnlyFirst) continue;
                     if (settings.ProxyType.Type == PrxType.SOAX)
                     {
@@ -630,7 +632,7 @@ namespace Bitclout
 
                     if (usr != null)
                     {
-                        chromeWorker.SellChromeDriver = chromeWorker.InitializeChromeDriver(@"\SellChrome", isIncognito:true);
+                        chromeWorker.SellChromeDriver = chromeWorker.InitializeChromeDriver(@"\SellChrome", isIncognito: true);
                         chromeWorker.SellChromeDriver.Manage().Window.Maximize();
                         chromeWorker.LoginToBitclout(chromeWorker.SellChromeDriver, usr.BitcloutSeedPhrase);
 
@@ -719,8 +721,8 @@ namespace Bitclout
                             if (chromeWorker.SellChromeDriver != null)
                                 try
                                 {
-                                  
-                                        chromeWorker.SellChromeDriver.Quit();
+
+                                    chromeWorker.SellChromeDriver.Quit();
                                 }
                                 catch (Exception)
                                 {

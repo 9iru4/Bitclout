@@ -196,12 +196,25 @@ namespace Bitclout
                 try
                 {
                     bool isok = false;
+                    bool isblc = false;
                     for (int i = 0; i < 10; i++)
                     {
                         try
                         {
                             driver.SwitchTo().DefaultContent();
                             driver.SwitchTo().Frame(1);
+                            try
+                            {
+                                var blc = driver.FindElement(By.XPath("//div[@class='captcha__human__title']")).Text;//Поиск капчасолвера и текста на нем
+                                if (blc.Contains("заблоки"))
+                                {
+                                    isblc = true;
+                                    break;
+                                }
+                            }
+                            catch
+                            {
+                            }
                             driver.FindElement(By.XPath("//div[@class='captcha-solver']")).Click();//Кликаем на капчесолвер решить
                             isok = true;
                             break;
@@ -211,6 +224,8 @@ namespace Bitclout
                             Thread.Sleep(3000);
                         }
                     }
+                    if (isblc)
+                        throw new BadProxyException("вы были заблокированы");
                     if (!isok)
                         throw new BadProxyException("Не прожимается некст");
 
@@ -644,6 +659,17 @@ namespace Bitclout
                                 {
                                     driver.SwitchTo().DefaultContent();
                                     driver.SwitchTo().Frame(1);
+                                    try
+                                    {
+                                        var blc = driver.FindElement(By.XPath("//div[@class='captcha__human__title']")).Text;//Поиск капчасолвера и текста на нем
+                                        if (blc.Contains("заблоки"))
+                                            throw new Exception("block");
+                                    }
+                                    catch (Exception exx)
+                                    {
+                                        if (exx.Message.Contains("block"))
+                                            throw new BadProxyException("вы были заблокированы");
+                                    }
                                     var txt = driver.FindElement(By.XPath("//div[@class='captcha-solver']")).Text;//Поиск капчасолвера и текста на нем
                                     if (txt.Contains("решена"))
                                         br++;
