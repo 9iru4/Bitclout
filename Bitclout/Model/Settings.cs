@@ -319,6 +319,21 @@ namespace Bitclout.Model
             }
         }
 
+        bool _incognito = false;
+
+        public bool incognito
+        {
+            get
+            {
+                return _incognito;
+            }
+            set
+            {
+                _incognito = value;
+                OnPropertyChanged("v");
+            }
+        }
+
         bool _IsSyncBots = false;
 
         public bool IsSyncBots

@@ -405,7 +405,7 @@ namespace Bitclout
 
                     if (settings.BotWorkMode.Type != WorkType.SellReg || settings.BotWorkMode.Type != WorkType.SellMain)
                     {
-                        chromeWorker.RegChromeDriver = chromeWorker.InitializeChromeDriver(@"\Chrome", settings.CurrentProxy);
+                        chromeWorker.RegChromeDriver = chromeWorker.InitializeChromeDriver(@"\Chrome", settings.CurrentProxy, settings.incognito);
 
                         chromeWorker.RegChromeDriver.Manage().Window.Maximize();
 
@@ -469,7 +469,14 @@ namespace Bitclout
                 {
                     NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
                     if (ex.Message.Contains("вы были заблокированы"))
-                        chromeWorker.ClearChromeData(chromeWorker.RegChromeDriver);
+                        try
+                        {
+                            chromeWorker.ClearChromeData(chromeWorker.RegChromeDriver);
+                        }
+                        catch (Exception exx)
+                        {
+                            NLog.LogManager.GetCurrentClassLogger().Info(exx, exx.Message);
+                        }
                     if (settings.CurrentProxy == null || settings.ProxyType.Type == PrxType.OnlyFirst) continue;
                     if (settings.ProxyType.Type == PrxType.SOAX)
                     {
@@ -517,13 +524,7 @@ namespace Bitclout
                         if (chromeWorker.RegChromeDriver != null)
                             try
                             {
-                                if (acc == 25)
-                                {
-                                    acc = 0;
-                                    chromeWorker.EndRegistration(chromeWorker.RegChromeDriver);
-                                }
-                                else
-                                    chromeWorker.RegChromeDriver.Quit();
+                                chromeWorker.EndRegistration(chromeWorker.RegChromeDriver);
                             }
                             catch (Exception)
                             {
@@ -551,7 +552,6 @@ namespace Bitclout
                             {
                                 KillProcessAndChildrens(item.Id);
                             }
-
                         }
                     }
                     catch (Exception ex)
@@ -638,8 +638,6 @@ namespace Bitclout
 
                         if (isupd)
                             usr = chromeWorker.UpdateProfile(usr, chromeWorker.SellChromeDriver);
-
-
 
                         if (settings.BotWorkMode.Type == WorkType.MerlinAndSellReg || settings.BotWorkMode.Type == WorkType.RegAndSell || settings.BotWorkMode.Type == WorkType.SellReg)//Если отправка всех коинов
                         {

@@ -138,6 +138,14 @@ namespace Bitclout
                 Thread.Sleep(MainWindowViewModel.settings.MainDelay);
             }
 
+            NLog.LogManager.GetCurrentClassLogger().Info($"Кликаем с помощью сидфразы");
+            driver.FindElement(By.XPath("//li[@class='list-group-item list-group-item-action cursor-pointer text-center']")).Click();//Кликаем дальше
+            Thread.Sleep(MainWindowViewModel.settings.MainDelay);
+
+            NLog.LogManager.GetCurrentClassLogger().Info($"Нажимаем анонимно");
+            driver.FindElement(By.CssSelector("[href*='/sign-up']")).Click();//Кликаем дальше
+            Thread.Sleep(MainWindowViewModel.settings.MainDelay);
+
             userInfo.BitcloutSeedPhrase = driver.FindElement(By.XPath("//div[@class='p-15px']")).Text;//Получаем фразу
             NLog.LogManager.GetCurrentClassLogger().Info($"Получаем фразу-логин {userInfo.BitcloutSeedPhrase}");
 
@@ -302,10 +310,7 @@ namespace Bitclout
 
             PhoneWorker.MessageSend(MainWindowViewModel.pn);
 
-            Thread.Sleep(10000);
-            driver.FindElements(By.LinkText("Resend"))[0].Click();
-
-            Thread.Sleep(20000);
+            Thread.Sleep(30000);
 
             for (int i = 0; i < 20; i++)//Ждем еще проверяя каждые 3 секунды
             {
@@ -382,10 +387,7 @@ namespace Bitclout
 
                     PhoneWorker.MessageSend(MainWindowViewModel.pn);
 
-                    Thread.Sleep(10000);
-                    driver.FindElements(By.LinkText("Resend"))[0].Click();
-
-                    Thread.Sleep(20000);
+                    Thread.Sleep(30000);
 
                     for (int i = 0; i < 20; i++)//Ждем еще проверяя каждые 3 секунды
                     {
@@ -398,6 +400,8 @@ namespace Bitclout
                 catch (Exception ex)
                 {
                     NLog.LogManager.GetCurrentClassLogger().Info(ex, $"Ошибка в получении нового номера");
+                    if (ex.Message.Contains("btn btn-outline-primary font-weight-bold fs-15px"))
+                        throw new BadProxyException("Ошибка в прогрузке страницы");
                 }
             }
 
@@ -759,7 +763,7 @@ namespace Bitclout
             try
             {
                 NLog.LogManager.GetCurrentClassLogger().Info($"Жмем кнопку регистрация");
-                driver.FindElement(By.XPath("//a[@class='landing__log-in d-none d-md-block']")).Click();//Кликаем дальше
+                driver.FindElement(By.XPath("//a[@class='btn btn-primary landing__sign-up']")).Click();//Кликаем дальше
                 Thread.Sleep(7000);
 
                 driver.SwitchTo().Window(driver.WindowHandles[1]);
@@ -777,9 +781,17 @@ namespace Bitclout
                 driver.SwitchTo().Window(driver.WindowHandles[1]);
 
                 NLog.LogManager.GetCurrentClassLogger().Info($"Нажимаем добавить новый");
-                driver.FindElement(By.XPath("//*[text()='Load another account']")).Click();
+                driver.FindElement(By.CssSelector("[href*='/sign-up']")).Click();//Кликаем дальше
                 Thread.Sleep(MainWindowViewModel.settings.MainDelay);
             }
+
+            NLog.LogManager.GetCurrentClassLogger().Info($"Кликаем с помощью сидфразы");
+            driver.FindElement(By.XPath("//li[@class='list-group-item list-group-item-action cursor-pointer text-center']")).Click();//Кликаем дальше
+            Thread.Sleep(MainWindowViewModel.settings.MainDelay);
+
+            NLog.LogManager.GetCurrentClassLogger().Info($"Нажимаем анонимно");
+            driver.FindElement(By.CssSelector("[href*='/sign-up']")).Click();//Кликаем дальше
+            Thread.Sleep(MainWindowViewModel.settings.MainDelay);
 
             NLog.LogManager.GetCurrentClassLogger().Info($"Отправляем фразу");
             driver.FindElement(By.XPath("//textarea[@class='form-control fs-15px ng-untouched ng-pristine ng-valid']")).SendKeys(phrase);

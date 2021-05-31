@@ -59,6 +59,7 @@
                     <Label Content="WorkMode" HorizontalAlignment="Left" Margin="58,5,0,0" VerticalAlignment="Top"/>
                     <TextBox Text="{Binding settings.PublicKey}" HorizontalAlignment="Left" Height="23" Margin="127,182,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="469"/>
                     <Label Content="PublicKey" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="51,180,0,0" Height="28"/>
+                    <CheckBox IsChecked="{Binding settings.incognito}" Content="incognito" HorizontalAlignment="Left" Margin="58,236,0,0" VerticalAlignment="Top"/>
 
                 </Grid>
             </TabItem>
