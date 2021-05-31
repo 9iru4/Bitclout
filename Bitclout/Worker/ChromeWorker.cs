@@ -159,18 +159,21 @@ namespace Bitclout
 
             NLog.LogManager.GetCurrentClassLogger().Info($"Кликаем дальше");
             driver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px ml-10px']")).Click();//Кликаем дальше
+            Thread.Sleep(MainWindowViewModel.settings.MainDelay);
+
+            NLog.LogManager.GetCurrentClassLogger().Info($"Выбираем аккаунт");
+            driver.FindElement(By.XPath("//li[@class='list-group-item list-group-item-action cursor-pointer']")).Click();
             Thread.Sleep(7000);
 
             driver.SwitchTo().Window(driver.WindowHandles[0]);
 
-            NLog.LogManager.GetCurrentClassLogger().Info($"Кликаем на выбор кода страны");
-            driver.FindElement(By.XPath("//div[@class='iti__selected-flag dropdown-toggle']")).Click();//кликаем на выбор кода страны
-            Thread.Sleep(MainWindowViewModel.settings.MainDelay);
+            NLog.LogManager.GetCurrentClassLogger().Info($"Переходим на страницу обновления профайла");
+            driver.Navigate().GoToUrl($"https://bitclout.com/update-profile");//Страница реги
+            Thread.Sleep(7000);
 
-            NLog.LogManager.GetCurrentClassLogger().Info($"Выбираем Россию");
-            driver.FindElement(By.Id(MainWindowViewModel.settings.SMSCountry.SMSHTMLCode)).Click();//Кликаем на россию
-            Thread.Sleep(MainWindowViewModel.settings.MainDelay);
-
+            NLog.LogManager.GetCurrentClassLogger().Info($"Getstartedbitclout");
+            driver.FindElement(By.XPath("//a[@class='mt-15px btn btn-primary br-12px']")).Click();
+            Thread.Sleep(MainWindowViewModel.settings.MainDelay); // Кликаем дальше
 
             while (MainWindowViewModel.pn == null)//Получаем номер, пока не получим
             {
@@ -180,12 +183,12 @@ namespace Bitclout
 
 
             NLog.LogManager.GetCurrentClassLogger().Info($"Вводим номер {MainWindowViewModel.pn.Number}");
-            driver.FindElement(By.Id("phone")).SendKeys(MainWindowViewModel.pn.Number);//Вводим полученный номер
+            driver.FindElement(By.Id("phone")).SendKeys("+7" + MainWindowViewModel.pn.Number);//Вводим полученный номер
             Thread.Sleep(MainWindowViewModel.settings.MainDelay);
 
             NLog.LogManager.GetCurrentClassLogger().Info($"Кликаем отправить код");
             driver.FindElement(By.XPath("//a[@class='btn btn-primary font-weight-bold fs-15px ml-10px']")).Click();//Кликаем отправить код
-            Thread.Sleep(MainWindowViewModel.settings.MainDelay);
+            Thread.Sleep(MainWindowViewModel.settings.MainDelay*3);
 
             var errors = driver.FindElements(By.XPath("//div[@class='mt-10px ng-star-inserted']"));
 
@@ -198,7 +201,7 @@ namespace Bitclout
                 }
             }
 
-            if (driver.FindElements(By.XPath("//div[@class='mt-15px mb-15px fs-24px font-weight-bold']")).Count == 0)
+            if (driver.FindElements(By.Name("verificationCode")).Count == 0)
             {
 
                 try
@@ -269,19 +272,10 @@ namespace Bitclout
                             if (br == 2)
                                 throw new BadProxyException("Капча решена, но не решена");
 
-                            var txt1 = driver.FindElement(By.XPath("//div[@class='mt-15px fs-24px font-weight-bold']")).Text;
-                            if (txt1.Contains("Get Starter BitClout"))
+                            if (driver.FindElements(By.Id("phone")).Count != 0)
                             {
-                                NLog.LogManager.GetCurrentClassLogger().Info($"Кликаем на выбор кода страны");
-                                driver.FindElement(By.XPath("//div[@class='iti__selected-flag dropdown-toggle']")).Click();//кликаем на выбор кода страны
-                                Thread.Sleep(MainWindowViewModel.settings.MainDelay);
-
-                                NLog.LogManager.GetCurrentClassLogger().Info($"Выбираем Россию");
-                                driver.FindElement(By.Id(MainWindowViewModel.settings.SMSCountry.SMSHTMLCode)).Click();//Кликаем на россию
-                                Thread.Sleep(MainWindowViewModel.settings.MainDelay);
-
                                 NLog.LogManager.GetCurrentClassLogger().Info($"Вводим номер {MainWindowViewModel.pn.Number}");
-                                driver.FindElement(By.Id("phone")).SendKeys(MainWindowViewModel.pn.Number);//Вводим полученный номер
+                                driver.FindElement(By.Id("phone")).SendKeys("+7" + MainWindowViewModel.pn.Number);//Вводим полученный номер
                                 Thread.Sleep(MainWindowViewModel.settings.MainDelay);
                                 NLog.LogManager.GetCurrentClassLogger().Info($"Кликаем отправить код");
                                 driver.FindElement(By.XPath("//a[@class='btn btn-primary font-weight-bold fs-15px ml-10px']")).Click();//Кликаем отправить код
@@ -298,9 +292,6 @@ namespace Bitclout
                             Thread.Sleep(5000);
                         }
                     }
-
-                    if (driver.FindElements(By.XPath("//div[@class='mt-15px mb-15px fs-24px font-weight-bold']")).Count == 0)
-                        throw new BadProxyException("Проблемы с решением капчи");
                 }
                 catch (BadProxyException ex)
                 {
@@ -319,91 +310,8 @@ namespace Bitclout
                     Thread.Sleep(2000);
                 else break;
             }
-
-            while (MainWindowViewModel.pn == null || MainWindowViewModel.pn.Code == "")//Возврат на страницу с вводом номера
-            {
-
-                try
-                {
-                    PhoneWorker.DeclinePhone(MainWindowViewModel.pn);
-                }
-                catch (Exception ex)
-                {
-                    NLog.LogManager.GetCurrentClassLogger().Info(ex, $"Ошибка в отмене номера");
-                }
-
-                try
-                {
-                    MainWindowViewModel.pn = null;
-
-                    NLog.LogManager.GetCurrentClassLogger().Info($"Кликаем назад");
-                    driver.FindElement(By.XPath("//a[@class='btn btn-outline-primary font-weight-bold fs-15px']")).Click();//кликаем назад
-                    Thread.Sleep(MainWindowViewModel.settings.MainDelay);
-
-                    NLog.LogManager.GetCurrentClassLogger().Info($"Кликаем на выбор кода страны");
-                    driver.FindElement(By.XPath("//div[@class='iti__selected-flag dropdown-toggle']")).Click();//кликаем на выбор кода страны
-                    Thread.Sleep(MainWindowViewModel.settings.MainDelay);
-
-                    NLog.LogManager.GetCurrentClassLogger().Info($"Выбираем Россию");
-                    driver.FindElement(By.Id(MainWindowViewModel.settings.SMSCountry.SMSHTMLCode)).Click();//Кликаем на россию
-                    Thread.Sleep(MainWindowViewModel.settings.MainDelay);
-
-                    while (MainWindowViewModel.pn == null)//Получаем номер, пока не получим
-                    {
-                        MainWindowViewModel.pn = PhoneWorker.GetPhoneNumber(ServiceCodes.lt);
-                        Thread.Sleep(MainWindowViewModel.settings.MainDelay);
-                    }
-
-                    NLog.LogManager.GetCurrentClassLogger().Info($"Очищаем поле для ввода номера");
-                    driver.FindElement(By.Id("phone")).Clear();
-                    Thread.Sleep(MainWindowViewModel.settings.MainDelay);
-
-                    NLog.LogManager.GetCurrentClassLogger().Info($"Вводим номер {MainWindowViewModel.pn.Number}");
-                    Thread.Sleep(MainWindowViewModel.settings.MainDelay);
-                    driver.FindElement(By.Id("phone")).SendKeys(MainWindowViewModel.pn.Number);//Вводим полученный номер
-
-                    NLog.LogManager.GetCurrentClassLogger().Info($"Кликаем отправить код");
-                    driver.FindElement(By.XPath("//a[@class='btn btn-primary font-weight-bold fs-15px ml-10px']")).Click();//Кликаем отправить код
-
-                    Thread.Sleep(MainWindowViewModel.settings.MainDelay);
-
-                    var errors1 = driver.FindElements(By.XPath("//div[@class='mt-10px ng-star-inserted']"));
-
-                    if (errors1.Count != 0)
-                    {
-                        try
-                        {
-                            foreach (var item in errors1)
-                            {
-                                if (item.Text.Contains("This phone number is being used"))
-                                    throw new PhoneNumberAlreadyUsedException("Телефон уже зарегистрирован");
-                            }
-                        }
-                        catch (Exception)
-                        {
-                            continue;
-                        }
-                    }
-
-                    PhoneWorker.MessageSend(MainWindowViewModel.pn);
-
-                    Thread.Sleep(30000);
-
-                    for (int i = 0; i < 20; i++)//Ждем еще проверяя каждые 3 секунды
-                    {
-                        MainWindowViewModel.pn = PhoneWorker.GetCode(MainWindowViewModel.pn);
-                        if (MainWindowViewModel.pn.Code == "")
-                            Thread.Sleep(2000);
-                        else break;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    NLog.LogManager.GetCurrentClassLogger().Info(ex, $"Ошибка в получении нового номера");
-                    if (ex.Message.Contains("btn btn-outline-primary font-weight-bold fs-15px"))
-                        throw new BadProxyException("Ошибка в прогрузке страницы");
-                }
-            }
+            if (MainWindowViewModel.pn.Code == "")
+                throw new PhoneCodeNotSendException("Не прислали код");
 
             PhoneWorker.NumberConformation(MainWindowViewModel.pn);//Подтверждаем номер
 
@@ -430,7 +338,7 @@ namespace Bitclout
             bool regok = false;
             for (int i = 0; i < 20; i++)
             {
-                if (RegChromeDriver.Url.Contains("https://bitclout.com/sign-up?stepNum=4"))
+                if (driver.FindElements(By.XPath("//a[@class='btn btn-outline-primary font-weight-bold fs-15px mt-5px mr-15px mb-5px']")).Count != 0)
                 {
                     regok = true;
                     break;
@@ -763,7 +671,7 @@ namespace Bitclout
             try
             {
                 NLog.LogManager.GetCurrentClassLogger().Info($"Жмем кнопку регистрация");
-                driver.FindElement(By.XPath("//a[@class='btn btn-primary landing__sign-up']")).Click();//Кликаем дальше
+                driver.FindElement(By.XPath("//a[@class='landing__log-in d-none d-sm-block']")).Click();//Кликаем дальше
                 Thread.Sleep(7000);
 
                 driver.SwitchTo().Window(driver.WindowHandles[1]);
@@ -789,10 +697,6 @@ namespace Bitclout
             driver.FindElement(By.XPath("//li[@class='list-group-item list-group-item-action cursor-pointer text-center']")).Click();//Кликаем дальше
             Thread.Sleep(MainWindowViewModel.settings.MainDelay);
 
-            NLog.LogManager.GetCurrentClassLogger().Info($"Нажимаем анонимно");
-            driver.FindElement(By.CssSelector("[href*='/sign-up']")).Click();//Кликаем дальше
-            Thread.Sleep(MainWindowViewModel.settings.MainDelay);
-
             NLog.LogManager.GetCurrentClassLogger().Info($"Отправляем фразу");
             driver.FindElement(By.XPath("//textarea[@class='form-control fs-15px ng-untouched ng-pristine ng-valid']")).SendKeys(phrase);
             Thread.Sleep(MainWindowViewModel.settings.MainDelay);
@@ -801,10 +705,9 @@ namespace Bitclout
             Thread.Sleep(MainWindowViewModel.settings.MainDelay);
 
             NLog.LogManager.GetCurrentClassLogger().Info($"Выбираем аккаунт");
-            driver.FindElement(By.XPath("//li[@class='list-group-item list-group-item-action cursor-pointer active']")).Click();
+            driver.FindElement(By.XPath("//li[@class='list-group-item list-group-item-action cursor-pointer']")).Click();
             Thread.Sleep(MainWindowViewModel.settings.MainDelay);
 
-            driver.FindElement(By.XPath("//button[@class='btn btn-primary font-weight-bold fs-15px']")).Click();
             Thread.Sleep(7000);
 
             driver.SwitchTo().Window(driver.WindowHandles[0]);
