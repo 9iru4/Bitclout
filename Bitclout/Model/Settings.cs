@@ -166,6 +166,23 @@ namespace Bitclout.Model
             }
         }
 
+        string _UserAgent = "User Agent Mozilla/5.0 (iPhone; CPU iPhone OS 13_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/90.0.4430.216 Mobile/15E148 Safari/604.1";
+        /// <summary>
+        /// Логин Bitclout
+        /// </summary>
+        public string UserAgent
+        {
+            get
+            {
+                return _UserAgent;
+            }
+            set
+            {
+                _UserAgent = value;
+                OnPropertyChanged("UserAgent");
+            }
+        }
+
         Proxy _CurrentProxy;
         /// <summary>
         /// Текущий прокси

@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 namespace Bitclout.Model
 {
     public enum WorkType
-    { OnlyReg, SellMain, SellReg, RegAndSell, OnlyBuyCoins, BuyCoinsAndSellMain, OnlyMerlin, MerlinAndSellReg }
+    { OnlyReg, SellMain, SellReg, RegAndSell, OnlyBuyCoins, BuyCoinsAndSellMain, OnlyMerlin, MerlinAndSellReg, SellMerlin }
     [Serializable]
     public class BotWorkMode : INotifyPropertyChanged
     {

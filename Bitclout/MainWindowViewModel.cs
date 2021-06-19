@@ -128,6 +128,9 @@ namespace Bitclout
                     case "SellReg":
                         settings.BotWorkMode = new BotWorkMode(WorkType.SellReg, "SellReg");
                         break;
+                    case "SellMerlin":
+                        settings.BotWorkMode = new BotWorkMode(WorkType.SellMerlin, "SellMerlin");
+                        break;
                     case "RegAndSell":
                         settings.BotWorkMode = new BotWorkMode(WorkType.RegAndSell, "RegAndSell");
                         break;
@@ -246,6 +249,20 @@ namespace Bitclout
             }
         }
 
+        private RelayCommand _AddRegistredUsersCommand;
+        public RelayCommand AddRegistredUsersCommand
+        {
+            get
+            {
+                return _AddRegistredUsersCommand ??
+                    (_AddRegistredUsersCommand = new RelayCommand(obj =>
+                    {
+                        NLog.LogManager.GetCurrentClassLogger().Info("Добавление новых зарегистрированных пользователей из файла ->");
+                        GetRegidtredUsersFromFile();
+                    }));
+            }
+        }
+
         private RelayCommand _AddProxyCommand;
         public RelayCommand AddProxyCommand
         {
@@ -284,6 +301,7 @@ namespace Bitclout
             BotWorkModes.Add("OnlyReg");
             BotWorkModes.Add("SellMain");
             BotWorkModes.Add("SellReg");
+            BotWorkModes.Add("SellMerlin");
             BotWorkModes.Add("RegAndSell");
             BotWorkModes.Add("OnlyBuyCoins");
             BotWorkModes.Add("BuyCoinsAndSellMain");
@@ -360,6 +378,47 @@ namespace Bitclout
                 NLog.LogManager.GetCurrentClassLogger().Info("Диологовое окно выбора файла пользователей закрыто");
         }
 
+        void GetRegidtredUsersFromFile()
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Multiselect = false;
+            openFileDialog.Filter = "Text files (*.txt)|*.txt";
+            if (openFileDialog.ShowDialog() == true)
+            {
+                try
+                {
+                    using (StreamReader sr = new StreamReader(openFileDialog.FileName, Encoding.Default))
+                    {
+                        while (sr.Peek() >= 0)
+                        {
+                            var str = sr.ReadLine();
+
+                            if (RegistredUsers.Where(x => x.BitcloutSeedPhrase == str).Count() == 0)
+                            {
+                                RegistredUsers.Add(new UserInfo() { BitcloutSeedPhrase = str, Description = RegistrationInfo[0].Description, Name = RegistrationInfo[0].Name, IsError = false, IsSell = false, IsUpdate = false });
+                                UserInfo.SaveRegistredUsers(RegistredUsers.ToList());
+                            }
+
+                            if (RegistrationInfo.Count != 0)
+                            {
+                                Application.Current.Dispatcher.Invoke(() => { RegistrationInfo.RemoveAt(0); });
+                                UserRegistrationInfo.SaveUsers(RegistrationInfo.ToList());
+                            }
+                            else
+                                throw new Exception("Нету акков для заполнения");
+                        }
+                        NLog.LogManager.GetCurrentClassLogger().Info($"Все зарегистрированные пользователи из файла получены");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    NLog.LogManager.GetCurrentClassLogger().Info(ex, "Произошла ошибка при попытке получения зарегистрированных пользователей из файла");
+                }
+            }
+            else
+                NLog.LogManager.GetCurrentClassLogger().Info("Диологовое окно выбора файла зарегистрированных пользователей закрыто");
+        }
+
         void StartReg()
         {
             int acc = 0;
@@ -390,33 +449,27 @@ namespace Bitclout
                     if (RegistrationInfo.Count == 0)
                         throw new OutOfRegistrationInfoException("Закончились аккаунты для регистрации");
 
-                    NLog.LogManager.GetCurrentClassLogger().Info("Запуск драйвера для Bitclout ->");
-
-                    if ((settings.SendBitlout || settings.BotWorkMode.Type == WorkType.OnlyBuyCoins || settings.BotWorkMode.Type == WorkType.BuyCoinsAndSellMain || settings.BotWorkMode.Type == WorkType.SellMain) && !bitcloutMain)
+                    if (settings.BotWorkMode.Type != WorkType.SellReg && settings.BotWorkMode.Type != WorkType.SellMain && settings.BotWorkMode.Type != WorkType.SellMerlin)
                     {
-                        bitcloutMain = true;
+                        if (chromeWorker.RegChromeDriver == null)
+                        {
+                            NLog.LogManager.GetCurrentClassLogger().Info("Запуск драйвера для Bitclout ->");
+                            acc = 0;
+                            chromeWorker.RegChromeDriver = chromeWorker.InitializeChromeDriver(@"\Chrome", settings.CurrentProxy, settings.incognito, true);
 
-                        chromeWorker.BitcloutChromeDriver = chromeWorker.InitializeChromeDriver(@"\MainChrome");
+                            chromeWorker.RegChromeDriver.Manage().Window.Maximize();
+                        }
 
-                        chromeWorker.BitcloutChromeDriver.Manage().Window.Maximize();
-
-                        chromeWorker.LoginToBitclout(chromeWorker.BitcloutChromeDriver, settings.BitcloutSeedPhrase);
-                    }
-
-                    if (settings.BotWorkMode.Type != WorkType.SellReg || settings.BotWorkMode.Type != WorkType.SellMain)
-                    {
-                        chromeWorker.RegChromeDriver = chromeWorker.InitializeChromeDriver(@"\Chrome", settings.CurrentProxy, settings.incognito);
-
-                        chromeWorker.RegChromeDriver.Manage().Window.Maximize();
-
-                        RegistredUsers.Add(chromeWorker.RegNewBitclout(RegistrationInfo[0], chromeWorker.RegChromeDriver));
+                        RegistredUsers.Add(chromeWorker.RegNewBitclout(RegistrationInfo[0], chromeWorker.RegChromeDriver, acc == 0 ? false : true));
+                        UserInfo.SaveRegistredUsers(RegistredUsers.ToList());
 
                         if (settings.CurrentProxy != null)
                             settings.CurrentProxy.CurrentStatus = ProxyStatus.Good;
 
-                        UserInfo.SaveRegistredUsers(RegistredUsers.ToList());
+                        if (RegistrationInfo.Count != 0)
+                            Application.Current.Dispatcher.Invoke(() => { RegistrationInfo.RemoveAt(0); });
 
-                        PhoneWorker.NumberConformation(pn);
+                        UserRegistrationInfo.SaveUsers(RegistrationInfo.ToList());
 
                         NLog.LogManager.GetCurrentClassLogger().Info($"Конец автоматической регистрации");
                     }
@@ -471,11 +524,14 @@ namespace Bitclout
                     if (ex.Message.Contains("вы были заблокированы"))
                         try
                         {
-                            chromeWorker.ClearChromeData(chromeWorker.RegChromeDriver);
+                            chromeWorker.EndRegistration(chromeWorker.RegChromeDriver);
+                            chromeWorker.RegChromeDriver = null;
                         }
                         catch (Exception exx)
                         {
                             NLog.LogManager.GetCurrentClassLogger().Info(exx, exx.Message);
+                            iserr = true;
+                            chromeWorker.RegChromeDriver = null;
                         }
                     if (settings.CurrentProxy == null || settings.ProxyType.Type == PrxType.OnlyFirst) continue;
                     if (settings.ProxyType.Type == PrxType.SOAX)
@@ -505,7 +561,8 @@ namespace Bitclout
                 {
                     try
                     {
-                        PhoneWorker.DeclinePhone(pn);
+                        if (pn != null)
+                            PhoneWorker.DeclinePhone(pn);
                     }
                     catch
                     {
@@ -515,16 +572,18 @@ namespace Bitclout
                         pn = null;
                     }
 
-                    if (RegistrationInfo.Count != 0)
-                        Application.Current.Dispatcher.Invoke(() => { RegistrationInfo.RemoveAt(0); });
 
-                    UserRegistrationInfo.SaveUsers(RegistrationInfo.ToList());
                     try
                     {
                         if (chromeWorker.RegChromeDriver != null)
                             try
                             {
-                                chromeWorker.EndRegistration(chromeWorker.RegChromeDriver);
+                                if (acc == 20)
+                                {
+                                    chromeWorker.EndRegistration(chromeWorker.RegChromeDriver);
+                                    chromeWorker.RegChromeDriver = null;
+                                    acc = 0;
+                                }
                             }
                             catch (Exception)
                             {
@@ -533,6 +592,7 @@ namespace Bitclout
                                 else
                                     settings.CurrentProxy.CurrentStatus = ProxyStatus.Died;
                                 chromeWorker.RegChromeDriver.Quit();
+                                chromeWorker.RegChromeDriver = null;
                             }
                     }
                     catch (Exception ex)
@@ -540,14 +600,11 @@ namespace Bitclout
                         NLog.LogManager.GetCurrentClassLogger().Info(ex, ex.Message);
                         iserr = true;
                     }
-                    finally
-                    {
-                        chromeWorker.RegChromeDriver = null;
-                    }
                     try
                     {
                         if (iserr)
                         {
+                            chromeWorker.RegChromeDriver = null;
                             foreach (var item in Process.GetProcessesByName("chromedriver"))
                             {
                                 KillProcessAndChildrens(item.Id);
@@ -615,31 +672,24 @@ namespace Bitclout
             {
                 acc++;
                 bool err = true;
-                bool isupd = false;
                 UserInfo usr = null;
                 try
                 {
-                    if (settings.BotWorkMode.Type != WorkType.SellMain || settings.BotWorkMode.Type != WorkType.SellReg)//Если не только продажа обновляем профайл
-                    {
+                    if (settings.BotWorkMode.Type == WorkType.SellMerlin || settings.BotWorkMode.Type == WorkType.MerlinAndSellReg)//Если не только продажа обновляем профайл
                         usr = RegistredUsers.Where(x => !x.IsUpdate && !x.IsError).FirstOrDefault();
-                        if (usr != null)
-                            isupd = true;
-                        else
-                            usr = usr = RegistredUsers.Where(x => !x.IsSell && !x.IsError).FirstOrDefault();
-                    }
                     else//Иначе только продаем
                         usr = RegistredUsers.Where(x => !x.IsSell && !x.IsError).FirstOrDefault();
 
-                    if (usr != null)
+                    if (usr != null && (settings.BotWorkMode.Type != WorkType.OnlyReg && settings.BotWorkMode.Type != WorkType.OnlyMerlin))
                     {
                         chromeWorker.SellChromeDriver = chromeWorker.InitializeChromeDriver(@"\SellChrome", isIncognito: true);
                         chromeWorker.SellChromeDriver.Manage().Window.Maximize();
                         chromeWorker.LoginToBitclout(chromeWorker.SellChromeDriver, usr.BitcloutSeedPhrase);
 
-                        if (isupd)
+                        if (!usr.IsUpdate)
                             usr = chromeWorker.UpdateProfile(usr, chromeWorker.SellChromeDriver);
 
-                        if (settings.BotWorkMode.Type == WorkType.MerlinAndSellReg || settings.BotWorkMode.Type == WorkType.RegAndSell || settings.BotWorkMode.Type == WorkType.SellReg)//Если отправка всех коинов
+                        if (settings.BotWorkMode.Type == WorkType.MerlinAndSellReg || settings.BotWorkMode.Type == WorkType.RegAndSell || settings.BotWorkMode.Type == WorkType.SellReg || settings.BotWorkMode.Type == WorkType.SellMerlin)//Если отправка всех коинов
                         {
                             chromeWorker.SendAllBitclout(settings.PublicKey, chromeWorker.SellChromeDriver);
                             usr.IsSell = true;
